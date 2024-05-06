@@ -1,4 +1,4 @@
-# Smooth USDT PWA
+# Smooth PWA
 
 This is a PWA built in React which provides access to the [SmoothUSDT API](https://info.smoothusdt.com/) for the everyday person.
 
