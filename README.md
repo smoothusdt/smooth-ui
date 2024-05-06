@@ -1,6 +1,10 @@
 # Smooth PWA
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f16f0d2d-8bf1-4289-a098-5b2a735f6944/deploy-status)](https://app.netlify.com/sites/smoothusdt/deploys)
+
 This is a PWA built in React which provides access to the [SmoothUSDT API](https://info.smoothusdt.com/) for the everyday person.
+
+Live at [https://smoothusdt.netlify.app](https://smoothusdt.netlify.app).
 
 ## Expanding the ESLint configuration
 
