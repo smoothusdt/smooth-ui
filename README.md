@@ -1,13 +1,13 @@
-# React + TypeScript + Vite
+# Smooth USDT PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a PWA built in React which provides access to the [SmoothUSDT API](https://info.smoothusdt.com/) for the everyday person.
+
+## Expanding the ESLint configuration
 
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
