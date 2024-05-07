@@ -1,7 +1,7 @@
 import { useTronWeb } from "./hooks/useTronWeb"
 import { useState } from "react";
-import { SelectWalletPrototype } from "./components/SelectWalletPrototype";
 import styled from "styled-components";
+import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
 
 function App() {
 
@@ -23,7 +23,7 @@ function App() {
         <Button onClick={handleNewWalletClicked}>
           New wallet
         </Button>
-        <SelectWalletPrototype />
+        <WalletActionButton style={{textAlign: "center"}}/>
       </Card> : <WordList list={phrase}/> }
       <p>
         Smooth is a work in progress. <Link href='https://info.smoothusdt.com/'>Learn more.</Link>
@@ -49,9 +49,8 @@ const WordList = (props: {list: string[]}) => {
  * Just the Vite button styles as a sc.
  */
 const Button = styled.button`
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
@@ -60,6 +59,9 @@ const Button = styled.button`
   transition: border-color 0.25s;
   transition: filter 300ms;
   will-change: filter;
+  line-height: 48px;
+  padding: 0 24px;
+
 
 
   &:hover {
@@ -95,7 +97,7 @@ const Link = styled.a`
 
 const Card = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 16px;
   padding: 2rem;
 `;
