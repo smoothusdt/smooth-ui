@@ -1,5 +1,7 @@
 import { useTronWeb } from "./hooks/useTronWeb"
 import { useState } from "react";
+import { SelectWalletPrototype } from "./components/SelectWalletPrototype";
+import styled from "styled-components";
 
 function App() {
 
@@ -16,16 +18,15 @@ function App() {
   return (
     <>
       <h1>Smooth USDT</h1>
-      { phrase.length === 0 ? <div className="card">
-        <button onClick={handleNewWalletClicked}>
+      <p>Making USDT TRC-20 payments cheap and easy.</p>
+      { phrase.length === 0 ? <Card>
+        <Button onClick={handleNewWalletClicked}>
           New wallet
-        </button>
-        <button>
-          Import your wallet
-        </button>
-      </div> : <WordList list={phrase}/> }
-      <p className="read-the-docs">
-        Smooth is a work in progress. <a href='https://info.smoothusdt.com/'>Learn more.</a>
+        </Button>
+        <SelectWalletPrototype />
+      </Card> : <WordList list={phrase}/> }
+      <p>
+        Smooth is a work in progress. <Link href='https://info.smoothusdt.com/'>Learn more.</Link>
       </p>
     </>
   )
@@ -43,3 +44,58 @@ const WordList = (props: {list: string[]}) => {
     </div>
   )
 }
+
+/**
+ * Just the Vite button styles as a sc.
+ */
+const Button = styled.button`
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  transition: filter 300ms;
+  will-change: filter;
+
+
+  &:hover {
+    border-color: #646cff;
+    filter: drop-shadow(0 0 1em #646cffaa);
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+
+  @media (prefers-color-scheme: light) {
+    background-color: #f9f9f9;
+  }
+`;
+
+const Link = styled.a`
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+
+  &:hover {
+    color: #535bf2;
+  }
+
+  @media (prefers-color-scheme: light) {
+    &:hover {
+      color: #747bff;
+    }
+  }
+`;
+
+const Card = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 2rem;
+`;

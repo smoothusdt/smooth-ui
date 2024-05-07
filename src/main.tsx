@@ -2,11 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { TronWebProvider } from './hooks/useTronWeb.tsx'
 import { ErrorFallback } from './components/ErrorFallback.tsx'
 import { ErrorBoundary } from 'react-error-boundary'
-
-
+import { Tron } from './components/Tron.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -14,9 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       FallbackComponent={ErrorFallback}
       onReset={() => window.location.reload()}
     >
-      <TronWebProvider>
+      <Tron>
         <App />
-      </TronWebProvider>
+      </Tron>
     </ErrorBoundary>
   </React.StrictMode>,
 )

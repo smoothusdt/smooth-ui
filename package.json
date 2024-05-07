@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tronweb3/tronwallet-abstract-adapter": "^1.1.6",
+    "@tronweb3/tronwallet-adapter-react-hooks": "^1.1.7",
+    "@tronweb3/tronwallet-adapter-react-ui": "^1.1.8",
+    "@tronweb3/tronwallet-adapters": "^1.2.1",
     "buffer": "^6.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -30,5 +34,8 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-pwa": "^0.20.0"
+  },
+  "overrides": {
+    "@ledgerhq/errors": "6.16.3"
   }
 }

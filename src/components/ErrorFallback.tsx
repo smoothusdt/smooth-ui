@@ -7,11 +7,17 @@ export const ErrorFallback = (props: FallbackProps) => {
   return (
     <Root>
       <b>An error occurred:</b>
-      <pre>{error.message}</pre>
+      <PreWrap>{error.message}</PreWrap>
       <button onClick={resetErrorBoundary} >Refresh</button>
     </Root>
   );
 };
+
+const PreWrap = styled.pre`
+  overflow-wrap: break-word;
+  white-space:pre-wrap;
+  max-width: 50ch;
+`;
 
 const Root = styled.div.attrs({ role: "alert" })`
   display: flex;
