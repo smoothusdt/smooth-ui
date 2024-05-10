@@ -4,7 +4,13 @@
 
 This is a PWA built in React which provides access to the [SmoothUSDT API](https://info.smoothusdt.com/) for the everyday person.
 
-Live at [https://app.smoothusdt.com/](https://app.smoothusdt.com/) and [https://smoothusdt.netlify.app](https://smoothusdt.netlify.app).
+Live at [app.smoothusdt.com](https://app.smoothusdt.com/).
+
+## Quickstart
+
+1. `git clone https://github.com/smoothusdt/smooth-pwa.git`
+2. `npm i`
+3. `npm run dev`
 
 ## Expanding the ESLint configuration
 
