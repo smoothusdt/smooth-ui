@@ -24,14 +24,13 @@ export const useTronWeb = () => {
   const [tronWeb, setTronWeb] = useTronWebContext();
 
   if (tronWeb === null) {
-    console.log("new");
     const tw = new TronWeb({
-      fullHost: "https://api.trongrid.io",
+      // fullHost: "https://api.trongrid.io",
+      fullHost: "https://api.shasta.trongrid.io",
     });
     setTronWeb(tw);
     return tw;
   } else {
-    console.log("existing");
     return tronWeb;
   }
 };

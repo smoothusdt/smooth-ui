@@ -1,31 +1,32 @@
-import { useTronWeb } from "./hooks/useTronWeb";
-import { useState } from "react";
+// import { useTronWeb } from "./hooks/useTronWeb";
+// import { useState } from "react";
 import styled from "styled-components";
 import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
+// import { Button } from "./components/Button";
+import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { Send } from "./components/Send";
 
 function App() {
-  const tronWeb = useTronWeb();
+  // const tronWeb = useTronWeb();
+  const { connected } = useWallet();
 
   // Quick and dirty test of the tronWeb context
-  const [phrase, setPhrase] = useState<string[]>([]);
-  const handleNewWalletClicked = () => {
-    // TODO: Is this doing anything on the blockchain?
-    const p = tronWeb.createRandom();
-    setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
-  };
+  // const [phrase, setPhrase] = useState<string[]>([]);
+  // const handleNewWalletClicked = () => {
+  //   // TODO: Is this doing anything on the blockchain?
+  //   const p = tronWeb.createRandom();
+  //   setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
+  // };
 
   return (
     <>
       <h1>Smooth USDT</h1>
       <p>Making USDT TRC-20 payments cheap and easy.</p>
-      {phrase.length === 0 ? (
-        <Card>
-          <Button onClick={handleNewWalletClicked}>New wallet</Button>
-          <WalletActionButton style={{ textAlign: "center" }} />
-        </Card>
-      ) : (
-        <WordList list={phrase} />
-      )}
+      <Card>
+        {/* <Button onClick={handleNewWalletClicked}>New wallet</Button> */}
+        <WalletActionButton style={{ textAlign: "center" }} />
+      </Card>
+      {connected && <Send />}
       <p>
         Smooth is a work in progress.{" "}
         <Link href="https://info.smoothusdt.com/">Learn more.</Link>
@@ -60,41 +61,9 @@ const WordList = (props: { list: string[] }) => {
   );
 };
 
-/**
- * Just the Vite button styles as a sc.
- */
-const Button = styled.button`
-  border-radius: 4px;
-  border: 1px solid transparent;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  transition: filter 300ms;
-  will-change: filter;
-  line-height: 48px;
-  padding: 0 24px;
-
-  &:hover {
-    border-color: #646cff;
-    filter: drop-shadow(0 0 1em #646cffaa);
-  }
-
-  &:focus,
-  &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
-
-  @media (prefers-color-scheme: light) {
-    background-color: #f9f9f9;
-  }
-`;
-
 const Link = styled.a`
   font-weight: 500;
-  color: #646cff;
+  color: var(--theme-color);
   text-decoration: inherit;
 
   &:hover {
@@ -113,4 +82,5 @@ const Card = styled.div`
   flex-direction: row;
   gap: 16px;
   padding: 2rem;
+  justify-content: center;
 `;
