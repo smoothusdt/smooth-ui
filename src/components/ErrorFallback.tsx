@@ -8,14 +8,14 @@ export const ErrorFallback = (props: FallbackProps) => {
     <Root>
       <b>An error occurred:</b>
       <PreWrap>{error.message}</PreWrap>
-      <button onClick={resetErrorBoundary} >Refresh</button>
+      <button onClick={resetErrorBoundary}>Refresh</button>
     </Root>
   );
 };
 
 const PreWrap = styled.pre`
   overflow-wrap: break-word;
-  white-space:pre-wrap;
+  white-space: pre-wrap;
   max-width: 50ch;
 `;
 

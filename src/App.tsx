@@ -1,10 +1,9 @@
-import { useTronWeb } from "./hooks/useTronWeb"
+import { useTronWeb } from "./hooks/useTronWeb";
 import { useState } from "react";
 import styled from "styled-components";
 import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
 
 function App() {
-
   const tronWeb = useTronWeb();
 
   // Quick and dirty test of the tronWeb context
@@ -13,37 +12,53 @@ function App() {
     // TODO: Is this doing anything on the blockchain?
     const p = tronWeb.createRandom();
     setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
-  }
-  
+  };
+
   return (
     <>
       <h1>Smooth USDT</h1>
       <p>Making USDT TRC-20 payments cheap and easy.</p>
-      { phrase.length === 0 ? <Card>
-        <Button onClick={handleNewWalletClicked}>
-          New wallet
-        </Button>
-        <WalletActionButton style={{textAlign: "center"}}/>
-      </Card> : <WordList list={phrase}/> }
+      {phrase.length === 0 ? (
+        <Card>
+          <Button onClick={handleNewWalletClicked}>New wallet</Button>
+          <WalletActionButton style={{ textAlign: "center" }} />
+        </Card>
+      ) : (
+        <WordList list={phrase} />
+      )}
       <p>
-        Smooth is a work in progress. <Link href='https://info.smoothusdt.com/'>Learn more.</Link>
+        Smooth is a work in progress.{" "}
+        <Link href="https://info.smoothusdt.com/">Learn more.</Link>
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
 
 /**
  * Quick and dirty component to display the mnemonic
  */
-const WordList = (props: {list: string[]}) => {
+const WordList = (props: { list: string[] }) => {
   return (
-    <div style={{display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gridTemplateRows: "repeat(4, 1fr)", gap: 8}}>
-      {props.list.map(word => <div style={{background: "rgba(184, 184, 184, 0.1)", borderRadius: 4}}>{word}</div>)}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gridTemplateRows: "repeat(4, 1fr)",
+        gap: 8,
+      }}
+    >
+      {props.list.map((word) => (
+        <div
+          style={{ background: "rgba(184, 184, 184, 0.1)", borderRadius: 4 }}
+        >
+          {word}
+        </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
 /**
  * Just the Vite button styles as a sc.
@@ -61,8 +76,6 @@ const Button = styled.button`
   will-change: filter;
   line-height: 48px;
   padding: 0 24px;
-
-
 
   &:hover {
     border-color: #646cff;

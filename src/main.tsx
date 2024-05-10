@@ -1,14 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { ErrorFallback } from './components/ErrorFallback.tsx'
-import { ErrorBoundary } from 'react-error-boundary'
-import { Tron } from './components/Tron.tsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import { ErrorFallback } from "./components/ErrorFallback.tsx";
+import { ErrorBoundary } from "react-error-boundary";
+import { Tron } from "./components/Tron.tsx";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-     <ErrorBoundary
+    <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onReset={() => window.location.reload()}
     >
@@ -17,4 +17,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </Tron>
     </ErrorBoundary>
   </React.StrictMode>,
-)
+);
