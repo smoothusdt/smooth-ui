@@ -1,17 +1,34 @@
 import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { useState } from "react";
-import { useTronWeb } from "../hooks/useTronWeb";
 import { Button } from "./Button";
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
+import { useSmooth } from "../hooks/useSmooth/useSmooth";
+import { smoothFee } from "../hooks/useSmooth/constants";
+import { getTronScanLink } from "../hooks/useSmooth/util";
+import { Link } from "./Link";
 
 export const Send = () => {
-  const { signTransaction, address } = useWallet();
-  const tronWeb = useTronWeb();
+  const { address } = useWallet();
   const [receiver, setReceiver] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number | undefined>();
+  const [sending, setSending] = useState(false);
 
-  async function onSignTransaction() {
+  const sendDisabled =
+    sending || address === null || amount === 0 || receiver === "";
+
+  const reset = () => {
+    setAmount(undefined);
+    setReceiver("");
+    setSending(false);
+  };
+
+  // TODO: Use approve. This only works for accounts which are already approved
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, transfer] = useSmooth();
+
+  const handleTransferClicked = async () => {
+    // Check obvious things
     if (address == null) {
       console.error("address is null");
       toast.error("Transfer failed. Check console.");
@@ -24,37 +41,54 @@ export const Send = () => {
       return;
     }
 
-    if (amount === 0) {
+    if (amount === 0 || amount === undefined) {
       console.error("amount is empty");
       toast.error("Transfer failed. Check console.");
       return;
     }
 
-    try {
-      const transaction = await tronWeb.transactionBuilder.sendTrx(
-        receiver,
-        Number(tronWeb.toSun(amount)), // TODO: does Number('string | BigNumber' work?
-        address,
-        { blockHeader: { fee_limit: 10000000 } },
-      );
+    // Set up a fn that will execute the transfer so that we can toast this
+    const doTransfer = async () => {
+      setSending(true);
+      const res = await transfer(receiver, amount);
+      const obj = await res.json();
+      reset();
 
-      const signedTransaction = await signTransaction(transaction);
-      // const signedTransaction = await tronWeb.trx.sign(transaction); //https://stackoverflow.com/questions/65582802/tron-web-validate-transfercontract-error-no-owneraccount-tron-link
-      const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-
-      if (res.result) {
-        toast.success("Transfer broadcast: " + res.transaction);
+      if (res.ok) {
+        console.log("Response:", obj);
+        return obj;
       } else {
-        console.error(res.code, res.message);
-        toast.error("Transfer failed. Check console.");
+        console.error(res);
+        throw new Error("Response not ok, check console");
       }
-    } catch (e) {
-      console.error(e);
-      toast.error("Transfer failed. Check console.");
-    }
-  }
+    };
 
-  const transferDisabled = address === null || amount === 0 || receiver === "";
+    // Do the transfer and display the process using a toast
+    toast.promise(
+      doTransfer(),
+      {
+        loading: "Sending...",
+        success: (data) => (
+          <span>
+            Sent!{" "}
+            <Link href={getTronScanLink(data.txID, true)}>
+              View on TronScan
+            </Link>
+          </span>
+        ),
+        error: (err) => `Failed to send: ${err.toString()}`,
+      },
+      {
+        style: {
+          minWidth: "250px",
+        },
+        success: {
+          duration: 6000,
+          icon: "🔥",
+        },
+      },
+    );
+  };
 
   return (
     <SendRoot>
@@ -64,16 +98,27 @@ export const Send = () => {
         type="text"
         value={receiver}
         onChange={(e) => setReceiver(e.target.value)}
+        placeholder="tron wallet address"
       />
-      <Label htmlFor="text-input-amount">Amount (TRX)</Label>
+      <Label htmlFor="text-input-amount">Amount (USDT)</Label>
       <Input
         id="text-input-amount"
         type="number"
-        value={amount}
+        value={amount === undefined ? "" : amount}
         onChange={(e) => setAmount(Number(e.target.value))}
+        min={0}
+        placeholder="10"
       />
-      <Button disabled={transferDisabled} onClick={onSignTransaction}>
-        Transfer
+      <Subtitle>
+        Fee: {smoothFee} <Unit>USDT</Unit>
+      </Subtitle>
+      {amount && amount > 0 && (
+        <Subtitle>
+          Total: <strong>{amount + smoothFee}</strong> <Unit>USDT</Unit>
+        </Subtitle>
+      )}
+      <Button disabled={sendDisabled} onClick={handleTransferClicked}>
+        {sending ? "Sending" : "Send"}
       </Button>
       <Toaster />
     </SendRoot>
@@ -102,6 +147,8 @@ const Input = styled.input`
   border-radius: 4px;
   transition: 180ms box-shadow ease-in-out;
 
+  text-overflow: ellipsis;
+
   &:focus {
     border-color: var(--theme-color);
     box-shadow: 0 0 0 3px var(--theme-color);
@@ -111,10 +158,32 @@ const Input = styled.input`
   @media (prefers-color-scheme: light) {
     background-color: #f9f9f9;
   }
+
+  /* Hide increment buttons */
+  /* Chrome, Safari, Edge, Opera */
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  &[type="number"] {
+    -moz-appearance: textfield;
+  }
 `;
 
 const Label = styled.label`
   font-size: 1.125rem;
   font-weight: 500;
   line-height: 1;
+`;
+
+const Subtitle = styled.span`
+  color: #7d868d;
+  font-size: 0.8rem;
+`;
+
+const Unit = styled.span`
+  font-size: 0.5rem;
 `;
