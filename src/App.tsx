@@ -3,8 +3,8 @@
 // import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
 // import { Button } from "./components/Button";
 // import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+// import styled from "styled-components";
 
-import styled from "styled-components";
 import { Send } from "./components/Send";
 import { Link } from "./components/Link";
 import { privateKey } from "./hooks/useSmooth/constants";
@@ -53,34 +53,35 @@ const ConnectMessage = () => {
     </span>
   );
 };
+
 /**
  * Quick and dirty component to display the mnemonic
  */
-const WordList = (props: { list: string[] }) => {
-  return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gridTemplateRows: "repeat(4, 1fr)",
-        gap: 8,
-      }}
-    >
-      {props.list.map((word) => (
-        <div
-          style={{ background: "rgba(184, 184, 184, 0.1)", borderRadius: 4 }}
-        >
-          {word}
-        </div>
-      ))}
-    </div>
-  );
-};
+// const WordList = (props: { list: string[] }) => {
+//   return (
+//     <div
+//       style={{
+//         display: "grid",
+//         gridTemplateColumns: "repeat(3, 1fr)",
+//         gridTemplateRows: "repeat(4, 1fr)",
+//         gap: 8,
+//       }}
+//     >
+//       {props.list.map((word) => (
+//         <div
+//           style={{ background: "rgba(184, 184, 184, 0.1)", borderRadius: 4 }}
+//         >
+//           {word}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
 
-const Card = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  padding: 2rem;
-  justify-content: center;
-`;
+// const Card = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   gap: 16px;
+//   padding: 2rem;
+//   justify-content: center;
+// `;
