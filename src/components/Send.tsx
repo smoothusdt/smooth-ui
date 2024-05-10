@@ -1,4 +1,3 @@
-import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { useState } from "react";
 import { Button } from "./Button";
 import styled from "styled-components";
@@ -9,13 +8,12 @@ import { getTronScanLink } from "../hooks/useSmooth/util";
 import { Link } from "./Link";
 
 export const Send = () => {
-  const { address } = useWallet();
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [sending, setSending] = useState(false);
 
   const sendDisabled =
-    sending || address === null || amount === 0 || receiver === "";
+    sending || amount === 0 || amount === undefined || receiver === "";
 
   const reset = () => {
     setAmount(undefined);
@@ -29,12 +27,6 @@ export const Send = () => {
 
   const handleTransferClicked = async () => {
     // Check obvious things
-    if (address == null) {
-      console.error("address is null");
-      toast.error("Transfer failed. Check console.");
-      return;
-    }
-
     if (receiver == "") {
       console.error("receiver is empty");
       toast.error("Transfer failed. Check console.");
