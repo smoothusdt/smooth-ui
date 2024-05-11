@@ -115,7 +115,7 @@ export async function transferViaRouter(
   const feeAmount = BigNumber(smoothFee);
 
   // Get nonce from smooth contract
-  const smoothContract = tw.contract(smoothAbi, SmoothRouterBase58);
+  const smoothContract = tw.contract(smoothAbi as any, SmoothRouterBase58);
   const nonce = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
   const nonceAsNumber = (nonce as BigNumber).toNumber();
   console.log("nonce: ", nonce);
