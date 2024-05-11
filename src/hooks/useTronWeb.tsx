@@ -29,9 +29,10 @@ export const useTronWeb = () => {
   if (tronWeb === null) {
     const tw = new TronWeb({
       fullHost: NetworkConfig.rpcUrl,
-      headers: {
-        "TRON-PRO-API-KEY": NetworkConfig.tronProApiKey,
-      } as any,
+      // Don't need API key to interact with Shasta https://github.com/tronprotocol/tronweb/issues/494#issuecomment-2006761745
+      // headers: {
+      //   "TRON-PRO-API-KEY": NetworkConfig.tronProApiKey,
+      // } as any,
       privateKey: privateKey,
     });
     setTronWeb(tw);
