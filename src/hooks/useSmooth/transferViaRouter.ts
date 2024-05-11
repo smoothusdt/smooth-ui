@@ -18,6 +18,7 @@ import {
   keccak256,
   sliceHex,
 } from "viem";
+import { smoothAbi } from "./constants/smoothAbi";
 
 async function signTransferMessage(
   tronWeb: TronWeb,
@@ -113,8 +114,12 @@ export async function transferViaRouter(
   const feeCollector = SmoothFeeCollector;
   const feeAmount = BigNumber(smoothFee);
 
-  // ⚠️ REMEMBER TO MANUALLY INCREMENT NONCE ⚠️
-  const nonce = 0;
+  // Get nonce from smooth contract
+  const smoothContract = tw.contract(smoothAbi, SmoothRouterBase58);
+  const nonce = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
+  const nonceAsNumber = (nonce as BigNumber).toNumber();
+  console.log("nonce: ", nonce);
+  console.log("nonceAsNumber: ", nonceAsNumber);
 
   // Sign the transfer message
   const signature = await signTransferMessage(
@@ -127,7 +132,7 @@ export async function transferViaRouter(
     transferAmount,
     feeCollector,
     feeAmount,
-    BigInt(nonce),
+    BigInt(nonceAsNumber),
   );
   console.log("Signature: ", signature);
 
@@ -137,22 +142,24 @@ export async function transferViaRouter(
   console.log("r s v: ", { r, s, v });
 
   // Send transfer tx to API and profile.
+  const body = JSON.stringify({
+    usdtAddress,
+    from: fromBase58,
+    to: toBase58,
+    transferAmount: humanToUint(transferAmount, USDTDecimals),
+    feeCollector,
+    feeAmount: humanToUint(feeAmount, USDTDecimals),
+    nonce: nonceAsNumber,
+    v,
+    r,
+    s,
+  });
+  console.log(body);
   console.log("Sending the transfer tx to the api...");
   const startTs = Date.now();
   const response = await fetch(`${smoothURL}/transfer`, {
     method: "POST",
-    body: JSON.stringify({
-      usdtAddress,
-      from: fromBase58,
-      to: toBase58,
-      transferAmount: humanToUint(transferAmount, USDTDecimals),
-      feeCollector,
-      feeAmount: humanToUint(feeAmount, USDTDecimals),
-      nonce,
-      v,
-      r,
-      s,
-    }),
+    body: body,
     headers: {
       "Content-Type": "application/json",
     },

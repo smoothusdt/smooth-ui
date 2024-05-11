@@ -41,17 +41,21 @@ export const Send = () => {
 
     // Set up a fn that will execute the transfer so that we can toast this
     const doTransfer = async () => {
-      setSending(true);
-      const res = await transfer(receiver, amount);
-      const obj = await res.json();
-      reset();
-
-      if (res.ok) {
-        console.log("Response:", obj);
-        return obj;
-      } else {
-        console.error(res);
-        throw new Error("Response not ok, check console");
+      try {
+        setSending(true);
+        const res = await transfer(receiver, amount);
+        const obj = await res.json();
+        if (res.ok) {
+          console.log("Response:", obj);
+          return obj;
+        } else {
+          console.error(obj);
+          throw new Error("Transfer failed. Check console.");
+        }
+      } catch (e) {
+        reset();
+        console.error(e);
+        throw e;
       }
     };
 

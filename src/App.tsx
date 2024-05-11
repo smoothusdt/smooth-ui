@@ -8,11 +8,15 @@
 import { Send } from "./components/Send";
 import { Link } from "./components/Link";
 import { privateKey } from "./hooks/useSmooth/constants";
+import { useUSDTBalance } from "./hooks/useUSDTBalance";
+import { PropsWithChildren } from "react";
 
 function App() {
   // const tronWeb = useTronWeb();
   // const { connected } = useWallet();
   const connected = privateKey && privateKey !== undefined && privateKey !== "";
+
+  const balance = useUSDTBalance();
 
   // Quick and dirty test of the tronWeb context
   // const [phrase, setPhrase] = useState<string[]>([]);
@@ -26,6 +30,7 @@ function App() {
     <>
       <h1>Smooth USDT</h1>
       <p>Making USDT TRC-20 payments cheap and easy.</p>
+      <Balance>{balance}</Balance>
       {/* <Card>
         <Button onClick={handleNewWalletClicked}>New wallet</Button>
         <WalletActionButton style={{ textAlign: "center" }} />
@@ -85,3 +90,14 @@ const ConnectMessage = () => {
 //   padding: 2rem;
 //   justify-content: center;
 // `;
+
+const Balance: React.FC<PropsWithChildren> = (props) => {
+  return (
+    <div>
+      <h1>
+        {props.children}
+        <span style={{ fontSize: "1rem" }}> USDT</span>
+      </h1>
+    </div>
+  );
+};
