@@ -1,103 +1,38 @@
-// import { useTronWeb } from "./hooks/useTronWeb";
-// import { useState } from "react";
-// import { WalletActionButton } from "@tronweb3/tronwallet-adapter-react-ui";
-// import { Button } from "./components/Button";
-// import { useWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
-// import styled from "styled-components";
-
 import { Send } from "./components/Send";
+import { ImportAccount } from "./components/ImportAccount";
+import { useWallet } from "./hooks/useWallet";
+import { Balance } from "./components/Balance";
 import { Link } from "./components/Link";
-import { privateKey } from "./hooks/useSmooth/constants";
-import { useUSDTBalance } from "./hooks/useUSDTBalance";
-import { PropsWithChildren } from "react";
 
 function App() {
-  // const tronWeb = useTronWeb();
-  // const { connected } = useWallet();
-  const connected = privateKey && privateKey !== undefined && privateKey !== "";
-
-  const balance = useUSDTBalance();
-
-  // Quick and dirty test of the tronWeb context
-  // const [phrase, setPhrase] = useState<string[]>([]);
-  // const handleNewWalletClicked = () => {
-  //   // TODO: Is this doing anything on the blockchain?
-  //   const p = tronWeb.createRandom();
-  //   setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
-  // };
+  const { connected } = useWallet();
 
   return (
-    <>
-      <h1>Smooth USDT</h1>
-      <p>Making USDT TRC-20 payments cheap and easy.</p>
-      <Balance>{balance}</Balance>
-      {/* <Card>
-        <Button onClick={handleNewWalletClicked}>New wallet</Button>
-        <WalletActionButton style={{ textAlign: "center" }} />
-      </Card> */}
-      {connected ? <Send /> : <ConnectMessage />}
-      <p>
+    <main className="container mx-auto w-96 flex flex-col justify-center gap-4">
+      <div>
+        <h1 className="text-3xl font-semibold">Smooth USDT</h1>
+        <span className="text-sm text-muted-foreground">
+          Cheap, easy USDT TRC-20 payments
+        </span>
+      </div>
+
+      {connected ? (
+        <>
+          <Balance />
+          <Send />
+        </>
+      ) : (
+        <ImportAccount />
+      )}
+
+      <span className="text-sm text-muted-foreground">
         Smooth is a work in progress.{" "}
         <Link href="https://info.smoothusdt.com/">Learn more.</Link>
-        <br /> ❗ Only works for approved accounts currently. ❗
-      </p>
-    </>
+        <br />
+        Accounts must be activated and approved.
+      </span>
+    </main>
   );
 }
 
 export default App;
-
-const ConnectMessage = () => {
-  return (
-    <span>
-      Set a private key in{" "}
-      <strong>
-        <code>.env</code>
-      </strong>{" "}
-      to connect.
-    </span>
-  );
-};
-
-/**
- * Quick and dirty component to display the mnemonic
- */
-// const WordList = (props: { list: string[] }) => {
-//   return (
-//     <div
-//       style={{
-//         display: "grid",
-//         gridTemplateColumns: "repeat(3, 1fr)",
-//         gridTemplateRows: "repeat(4, 1fr)",
-//         gap: 8,
-//       }}
-//     >
-//       {props.list.map((word) => (
-//         <div
-//           style={{ background: "rgba(184, 184, 184, 0.1)", borderRadius: 4 }}
-//         >
-//           {word}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// const Card = styled.div`
-//   display: flex;
-//   flex-direction: row;
-//   gap: 16px;
-//   padding: 2rem;
-//   justify-content: center;
-// `;
-
-const Balance: React.FC<PropsWithChildren> = (props) => {
-  return (
-    <div>
-      <h1>
-        {props.children}
-        <span style={{ fontSize: "1rem" }}> USDT</span>
-      </h1>
-    </div>
-  );
-};

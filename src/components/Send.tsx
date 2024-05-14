@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { Button } from "./Button";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Link } from "./Link";
+
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
+
 import { useSmooth } from "../hooks/useSmooth/useSmooth";
 import { smoothFee } from "../hooks/useSmooth/constants";
 import { getTronScanLink } from "../hooks/useSmooth/util";
-import { Link } from "./Link";
 
 export const Send = () => {
   const [receiver, setReceiver] = useState("");
@@ -14,6 +19,7 @@ export const Send = () => {
 
   const sendDisabled =
     sending || amount === 0 || amount === undefined || receiver === "";
+  // TODO: amount is greater than balance
 
   const reset = () => {
     setAmount(undefined);
@@ -87,7 +93,7 @@ export const Send = () => {
   };
 
   return (
-    <SendRoot>
+    <div className="flex flex-col gap-3">
       <Label htmlFor="text-input-to">To</Label>
       <Input
         id="text-input-to"
@@ -105,80 +111,21 @@ export const Send = () => {
         min={0}
         placeholder="10"
       />
-      <Subtitle>
+      <span className="text-sm text-muted-foreground">
         Fee: {smoothFee} <Unit>USDT</Unit>
-      </Subtitle>
+      </span>
       {amount && amount > 0 && (
-        <Subtitle>
+        <span className="text-sm text-muted-foreground">
           Total: <strong>{amount + smoothFee}</strong> <Unit>USDT</Unit>
-        </Subtitle>
+        </span>
       )}
       <Button disabled={sendDisabled} onClick={handleTransferClicked}>
         {sending ? "Sending" : "Send"}
       </Button>
       <Toaster />
-    </SendRoot>
+    </div>
   );
 };
-
-const SendRoot = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 2rem;
-  text-align: left;
-`;
-
-// https://moderncss.dev/custom-css-styles-for-form-inputs-and-textareas/
-const Input = styled.input`
-  font-size: 16px;
-  font-size: max(16px, 1em);
-  font-family: inherit;
-  line-height: 1;
-  height: 2.25rem;
-
-  padding: 0.25em 0.5em;
-  background-color: #1a1a1a;
-  border: 2px solid var(--input-border);
-  border-radius: 4px;
-  transition: 180ms box-shadow ease-in-out;
-
-  text-overflow: ellipsis;
-
-  &:focus {
-    border-color: var(--theme-color);
-    box-shadow: 0 0 0 3px var(--theme-color);
-    outline: 3px solid transparent;
-  }
-
-  @media (prefers-color-scheme: light) {
-    background-color: #f9f9f9;
-  }
-
-  /* Hide increment buttons */
-  /* Chrome, Safari, Edge, Opera */
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    appearance: none;
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  /* Firefox */
-  &[type="number"] {
-    -moz-appearance: textfield;
-  }
-`;
-
-const Label = styled.label`
-  font-size: 1.125rem;
-  font-weight: 500;
-  line-height: 1;
-`;
-
-const Subtitle = styled.span`
-  color: #7d868d;
-  font-size: 0.8rem;
-`;
 
 const Unit = styled.span`
   font-size: 0.5rem;

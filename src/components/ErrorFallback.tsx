@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import { FallbackProps } from "react-error-boundary";
+import { Button } from "./ui/button";
 
 export const ErrorFallback = (props: FallbackProps) => {
   const { error, resetErrorBoundary } = props;
@@ -8,7 +9,7 @@ export const ErrorFallback = (props: FallbackProps) => {
     <Root>
       <b>An error occurred:</b>
       <PreWrap>{error.message}</PreWrap>
-      <button onClick={resetErrorBoundary}>Refresh</button>
+      <Button onClick={resetErrorBoundary}>Refresh</Button>
     </Root>
   );
 };

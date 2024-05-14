@@ -1,24 +1,26 @@
 import { BigNumber } from "tronweb";
-import { useTronWeb } from "./useTronWeb";
 import { useEffect, useState } from "react";
-import {
-  USDTAddressBase58,
-  USDTDecimals,
-  privateKey,
-} from "./useSmooth/constants";
+import { USDTAddressBase58, USDTDecimals } from "./useSmooth/constants";
 import { USDTAbi } from "./useSmooth/constants/usdtAbi";
+import { useWallet } from "./useWallet";
+import { useTronWeb } from "./useTronWeb";
 
 export const useUSDTBalance = () => {
+  const { wallet, connected } = useWallet();
   const tw = useTronWeb();
-  const fromBase58 = tw.address.fromPrivateKey(privateKey) as string;
-  const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
-
   const [balance, setBalance] = useState<number | undefined>();
+
+  const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
 
   useEffect(() => {
     async function getBalance() {
+      if (!connected) {
+        return;
+        wallet;
+      }
+
       let balanceUint: BigNumber = await USDTContract.methods
-        .balanceOf(fromBase58)
+        .balanceOf(wallet.address)
         .call();
       balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
 

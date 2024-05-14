@@ -43,9 +43,11 @@ export const Tron: React.FC<React.PropsWithChildren> = (props) => {
 
   return (
     <TronWebProvider>
-      <WalletProvider onError={onError} adapters={adapters}>
-        <WalletModalProvider>{props.children}</WalletModalProvider>
-      </WalletProvider>
+      {/* <WalletProvider onError={onError} adapters={adapters}>
+        <WalletModalProvider> */}
+      {props.children}
+      {/* </WalletModalProvider>
+      </WalletProvider> */}
     </TronWebProvider>
   );
 };

@@ -10,7 +10,7 @@ import { Buffer } from "buffer/";
 import { privateKey } from "./useSmooth/constants";
 globalThis.Buffer = Buffer as unknown as typeof globalThis.Buffer;
 
-// Intentionally not destructured to allow TSDoc on DebugProvider
+// Intentionally not destructured to allow TSDoc on the provider
 const hookAndProvider = createStateContext<TronWeb | null>(null);
 const useTronWebContext = hookAndProvider[0];
 

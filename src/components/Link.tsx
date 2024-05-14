@@ -1,20 +1,19 @@
-import styled from "styled-components";
-
 /**
- * Just the Vite link styles as a sc.
+ * Styled `<a>` tag.
  */
-export const Link = styled.a`
-  font-weight: 500;
-  color: var(--theme-color);
-  text-decoration: inherit;
-
-  &:hover {
-    color: #535bf2;
-  }
-
-  @media (prefers-color-scheme: light) {
-    &:hover {
-      color: #747bff;
-    }
-  }
-`;
+export const Link: React.FC<
+  React.DetailedHTMLProps<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    HTMLAnchorElement
+  >
+> = (props) => {
+  const { children, ...rest } = props;
+  return (
+    <a
+      className="underline underline-offset-4 text-foreground-primary"
+      {...rest}
+    >
+      {children}
+    </a>
+  );
+};
