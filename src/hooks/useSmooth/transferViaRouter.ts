@@ -5,7 +5,6 @@ import {
   SmoothRouterBase58,
   USDTAddressBase58,
   USDTDecimals,
-  privateKey,
   smoothFee,
   smoothURL,
 } from "./constants";
@@ -88,26 +87,33 @@ async function signTransferMessage(
   const digestBytes = hexToBytes(digestHex);
   console.log("Digest:", digestHex, digestBytes);
 
-  const signature = tronWeb.trx.signMessageV2(digestBytes, privateKey) as Hex;
+  const signature = tronWeb.trx.signMessageV2(
+    digestBytes,
+    tronWeb.defaultPrivateKey,
+  ) as Hex;
   return signature;
 }
 
 /**
  * Send a transfer transaction to the smoothUSDT API.
  *
- * @param tw The TronWeb instance to use
+ * @param tronWeb The TronWeb instance to use (should have public and private keys set)
  * @returns the response from calling the smoothUSDT API.
  */
 export async function transferViaRouter(
-  tw: TronWeb,
+  tronWeb: TronWeb,
   toBase58: string,
   amount: number,
 ) {
   console.log("Begin transfer process");
 
-  // Derive public address
-  const fromBase58 = tw.address.fromPrivateKey(privateKey) as string;
+  // Note, the tw instance should have the address set correctly
+  const fromBase58 = tronWeb.defaultAddress.base58;
   console.log("Transferring from:", fromBase58);
+
+  if (!fromBase58) {
+    throw new Error("TronWeb instance does not have address set correctly");
+  }
 
   const usdtAddress = USDTAddressBase58;
   const transferAmount = BigNumber(amount);
@@ -115,15 +121,14 @@ export async function transferViaRouter(
   const feeAmount = BigNumber(smoothFee);
 
   // Get nonce from smooth contract
-  const smoothContract = tw.contract(smoothAbi as any, SmoothRouterBase58);
-  const nonce = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
-  const nonceAsNumber = (nonce as BigNumber).toNumber();
+  const smoothContract = tronWeb.contract(smoothAbi as any, SmoothRouterBase58);
+  const nonceBigNumber = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
+  const nonce = (nonceBigNumber as BigNumber).toNumber();
   console.log("nonce: ", nonce);
-  console.log("nonceAsNumber: ", nonceAsNumber);
 
   // Sign the transfer message
   const signature = await signTransferMessage(
-    tw,
+    tronWeb,
     BigInt(ChainID),
     SmoothRouterBase58,
     usdtAddress,
@@ -132,7 +137,7 @@ export async function transferViaRouter(
     transferAmount,
     feeCollector,
     feeAmount,
-    BigInt(nonceAsNumber),
+    BigInt(nonce),
   );
   console.log("Signature: ", signature);
 
@@ -149,7 +154,7 @@ export async function transferViaRouter(
     transferAmount: humanToUint(transferAmount, USDTDecimals),
     feeCollector,
     feeAmount: humanToUint(feeAmount, USDTDecimals),
-    nonce: nonceAsNumber,
+    nonce: nonce,
     v,
     r,
     s,

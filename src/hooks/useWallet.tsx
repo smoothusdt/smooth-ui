@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
 
 export interface Wallet {
-  privateKey: string;
+  privateKey: string /** Private key without 0x */;
   address: string;
 }
 
@@ -20,6 +21,14 @@ export const WalletProvider = hookAndProvider[1];
  */
 export const useWallet = () => {
   const [wallet, setWallet] = useWalletContext(); // TODO: Persist the wallet in IndexedDB or localstorage
+
+  // When the app loads, check for a .env key and use that
+  useEffect(() => {
+    const key = import.meta.env.VITE_USER_PRIVATE_KEY;
+    if (key) {
+      setKey(key);
+    }
+  }, []);
 
   /** Is there a connected? */
   const connected = wallet !== null;
@@ -40,7 +49,7 @@ export const useWallet = () => {
       throw new Error("Could not set key");
     }
 
-    setWallet({ privateKey, address });
+    setWallet({ privateKey: key, address });
   };
 
   // TODO: How to make it so that wallet is not typed as null when connected = true?

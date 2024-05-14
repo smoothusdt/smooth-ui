@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+
 import "./index.css";
+
+import App from "./App.tsx";
 import { ErrorFallback } from "./components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
-import { Tron } from "./components/Tron.tsx";
+
 import { WalletProvider } from "./hooks/useWallet.tsx";
+import { TronWebProvider } from "./hooks/useTronWeb.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -13,11 +16,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       FallbackComponent={ErrorFallback}
       onReset={() => window.location.reload()}
     >
-      <Tron>
-        <WalletProvider>
+      <WalletProvider>
+        <TronWebProvider>
           <App />
-        </WalletProvider>
-      </Tron>
+        </TronWebProvider>
+      </WalletProvider>
     </ErrorBoundary>
   </React.StrictMode>,
 );

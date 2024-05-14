@@ -53,9 +53,11 @@ export const Send = () => {
         const obj = await res.json();
         if (res.ok) {
           console.log("Response:", obj);
+          reset();
           return obj;
         } else {
           console.error(obj);
+          reset();
           throw new Error("Transfer failed. Check console.");
         }
       } catch (e) {
