@@ -8,14 +8,22 @@ import { Label } from "./ui/label";
 export const ImportAccount = () => {
   const { setKey } = useWallet();
   const [mnemonic, setMnemonic] = useState("");
+  const [importing, setImporting] = useState(false); // TODO: More sophisticated routing
 
   const handleImportClicked = () => {
     setKey(TronWeb.fromMnemonic(mnemonic.trim()).privateKey);
   };
 
+  // const [phrase, setPhrase] = useState<string[]>([]);
+  const handleNewWalletClicked = () => {
+    // TODO: Is this doing anything on the blockchain?
+    // const p = tronWeb.createRandom();
+    // setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
+  };
+
   const disabled = mnemonic === "";
 
-  return (
+  return importing ? (
     <div className="grid w-full gap-2">
       <Label htmlFor="seed-phrase">Import from seed phrase</Label>
       <Textarea
@@ -28,8 +36,27 @@ export const ImportAccount = () => {
       <Button disabled={disabled} onClick={handleImportClicked}>
         Import
       </Button>
-      {/* <Button onClick={handleNewWalletClicked}>New wallet</Button> */}
     </div>
+  ) : (
+    <>
+      <Button onClick={() => setImporting(true)}>Import a wallet</Button>
+      <Button disabled={true} onClick={handleNewWalletClicked}>
+        Create a wallet
+      </Button>
+      {import.meta.env.DEV && <EnvConnectMessage />}
+    </>
+  );
+};
+
+const EnvConnectMessage = () => {
+  return (
+    <span className="text-sm text-muted-foreground">
+      Or set a private key in{" "}
+      <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+        .env
+      </code>{" "}
+      to connect.
+    </span>
   );
 };
 
@@ -54,25 +81,5 @@ export const ImportAccount = () => {
 //         </div>
 //       ))}
 //     </div>
-//   );
-// };
-
-// Quick and dirty test of the tronWeb context
-// const [phrase, setPhrase] = useState<string[]>([]);
-// const handleNewWalletClicked = () => {
-//   // TODO: Is this doing anything on the blockchain?
-//   const p = tronWeb.createRandom();
-//   setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
-// };
-
-// const ConnectMessage = () => {
-//   return (
-//     <span>
-//       Set a private key in{" "}
-//       <strong>
-//         <code>.env</code>
-//       </strong>{" "}
-//       to connect.
-//     </span>
 //   );
 // };
