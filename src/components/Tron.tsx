@@ -13,7 +13,7 @@ import "@tronweb3/tronwallet-adapter-react-ui/style.css";
 import { TronWebProvider } from "../hooks/useTronWeb";
 
 /**
- * Wrap children in everything they need to work with the Tron network.
+ * Wrap children in everything they need to work with the Tron network. CURRENTLY UNUSED
  */
 export const Tron: React.FC<React.PropsWithChildren> = (props) => {
   function onError(e: WalletError) {
@@ -43,11 +43,9 @@ export const Tron: React.FC<React.PropsWithChildren> = (props) => {
 
   return (
     <TronWebProvider>
-      {/* <WalletProvider onError={onError} adapters={adapters}>
-        <WalletModalProvider> */}
-      {props.children}
-      {/* </WalletModalProvider>
-      </WalletProvider> */}
+      <WalletProvider onError={onError} adapters={adapters}>
+        <WalletModalProvider>{props.children}</WalletModalProvider>
+      </WalletProvider>
     </TronWebProvider>
   );
 };

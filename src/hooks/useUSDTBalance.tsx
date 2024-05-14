@@ -16,11 +16,10 @@ export const useUSDTBalance = () => {
     async function getBalance() {
       if (!connected) {
         return;
-        wallet;
       }
 
       let balanceUint: BigNumber = await USDTContract.methods
-        .balanceOf(wallet.address)
+        .balanceOf(wallet!.address)
         .call();
       balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
 
