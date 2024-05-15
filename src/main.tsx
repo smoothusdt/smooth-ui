@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import "./index.css";
+import "./global.css";
 
-import App from "./App.tsx";
-import { ErrorFallback } from "./components/ErrorFallback.tsx";
+import App from "@/components/App.tsx";
+import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { WalletProvider } from "./hooks/useWallet.tsx";
