@@ -97,6 +97,7 @@ export const Send = () => {
   return (
     <div className="flex flex-col gap-3">
       <Label htmlFor="text-input-to">To</Label>
+      {/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */}
       <Input
         id="text-input-to"
         type="text"
