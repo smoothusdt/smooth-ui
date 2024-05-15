@@ -5,16 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Back } from "@/components/Back";
 import { Link } from "@/components/Link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { AlertCircle, Loader2 } from "lucide-react";
 
-import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { smoothFee } from "@/hooks/useSmooth/constants";
 import { getTronScanLink } from "@/hooks/useSmooth/util";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 
 export const Send = () => {
@@ -129,11 +128,12 @@ export const Send = () => {
         placeholder="10"
       />
       <span className="text-sm text-muted-foreground">
-        Fee: {smoothFee} <Unit>USDT</Unit>
+        Fee: {smoothFee} <span className="text-[0.5rem]">USDT</span>
       </span>
       {amount && amount > 0 && (
         <span className="text-sm text-muted-foreground">
-          Total: <strong>{amount + smoothFee}</strong> <Unit>USDT</Unit>
+          Total: <strong>{amount + smoothFee}</strong>{" "}
+          <span className="text-[0.5rem]">USDT</span>
         </span>
       )}
       {isOverspending && (
@@ -151,7 +151,3 @@ export const Send = () => {
     </div>
   );
 };
-
-const Unit = styled.span`
-  font-size: 0.5rem;
-`;
