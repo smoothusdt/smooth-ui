@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Back } from "@/components/Back";
 import { Link } from "@/components/Link";
 
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
@@ -14,15 +14,26 @@ import toast, { Toaster } from "react-hot-toast";
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { smoothFee } from "@/hooks/useSmooth/constants";
 import { getTronScanLink } from "@/hooks/useSmooth/util";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 
 export const Send = () => {
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [sending, setSending] = useState(false);
+  const balance = useUSDTBalance();
+
+  const isOverspending =
+    amount !== undefined &&
+    balance !== undefined &&
+    amount + smoothFee > balance;
 
   const sendDisabled =
-    sending || amount === 0 || amount === undefined || receiver === "";
-  // TODO: amount is greater than balance
+    sending ||
+    amount === 0 ||
+    amount === undefined ||
+    receiver === "" ||
+    isOverspending;
 
   const reset = () => {
     setAmount(undefined);
@@ -31,8 +42,7 @@ export const Send = () => {
   };
 
   // TODO: Use approve. This only works for accounts which are already approved
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, transfer] = useSmooth();
+  const [, transfer] = useSmooth();
 
   const handleTransferClicked = async () => {
     // Check obvious things
@@ -125,6 +135,13 @@ export const Send = () => {
         <span className="text-sm text-muted-foreground">
           Total: <strong>{amount + smoothFee}</strong> <Unit>USDT</Unit>
         </span>
+      )}
+      {isOverspending && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Whoops</AlertTitle>
+          <AlertDescription>You can't send USDT than you have</AlertDescription>
+        </Alert>
       )}
       <Button disabled={sendDisabled} onClick={handleTransferClicked}>
         {sending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
