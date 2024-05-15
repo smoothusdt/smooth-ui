@@ -12,10 +12,6 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
-    "@tronweb3/tronwallet-abstract-adapter": "^1.1.6",
-    "@tronweb3/tronwallet-adapter-react-hooks": "^1.1.7",
-    "@tronweb3/tronwallet-adapter-react-ui": "^1.1.8",
-    "@tronweb3/tronwallet-adapters": "^1.2.1",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -29,7 +25,8 @@
     "styled-components": "^6.1.9",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "tronweb": "^6.0.0-beta.2"
+    "tronweb": "^6.0.0-beta.2",
+    "viem": "^2.10.5"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
