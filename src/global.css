@@ -25,6 +25,7 @@
   --radius: 0.5rem;
 }
 
+/* TODO: Support dark mode https://v2.tailwindcss.com/docs/dark-mode */
 .dark {
   --background: 180 50% 5%;
   --foreground: 180 5% 90%;
