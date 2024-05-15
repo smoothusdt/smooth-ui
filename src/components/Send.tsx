@@ -5,14 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "./Link";
 
+import { ChevronLeft, Loader2 } from "lucide-react";
+
 import styled from "styled-components";
 import toast, { Toaster } from "react-hot-toast";
 
-import { useSmooth } from "../hooks/useSmooth/useSmooth";
-import { smoothFee } from "../hooks/useSmooth/constants";
-import { getTronScanLink } from "../hooks/useSmooth/util";
-import { ChevronLeft, Loader2 } from "lucide-react";
-import { GoesBack } from "./Home";
+import { useSmooth } from "@/hooks/useSmooth/useSmooth";
+import { smoothFee } from "@/hooks/useSmooth/constants";
+import { getTronScanLink } from "@/hooks/useSmooth/util";
+
+import { type GoesBack } from "./Home";
 
 export const Send: React.FC<GoesBack> = (props) => {
   const [receiver, setReceiver] = useState("");

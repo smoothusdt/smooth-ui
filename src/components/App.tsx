@@ -1,5 +1,5 @@
-import { ImportAccount } from "./components/ImportAccount";
-import { useWallet } from "./hooks/useWallet";
+import { ImportAccount } from "@/components/ImportAccount";
+import { useWallet } from "@/hooks/useWallet";
 import { Link } from "@/components/Link";
 import { Home } from "@/components/Home";
 

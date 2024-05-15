@@ -1,5 +1,5 @@
-import { useUSDTBalance } from "../hooks/useUSDTBalance";
-import { Skeleton } from "./ui/skeleton";
+import { useUSDTBalance } from "@/hooks/useUSDTBalance";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Balance: React.FC = () => {
   const balance = useUSDTBalance();
