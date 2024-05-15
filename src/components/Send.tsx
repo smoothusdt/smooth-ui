@@ -11,6 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useSmooth } from "../hooks/useSmooth/useSmooth";
 import { smoothFee } from "../hooks/useSmooth/constants";
 import { getTronScanLink } from "../hooks/useSmooth/util";
+import { Loader2 } from "lucide-react";
 
 export const Send = () => {
   const [receiver, setReceiver] = useState("");
@@ -123,6 +124,7 @@ export const Send = () => {
         </span>
       )}
       <Button disabled={sendDisabled} onClick={handleTransferClicked}>
+        {sending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {sending ? "Sending" : "Send"}
       </Button>
       <Toaster />
