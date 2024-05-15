@@ -5,7 +5,7 @@ export const Balance: React.FC = () => {
   const balance = useUSDTBalance();
 
   return balance === undefined ? (
-    <Skeleton className="h-4 w-36" />
+    <Skeleton className="w-36 h-9" />
   ) : (
     <h1 className="text-3xl font-semibold">
       {balance}
