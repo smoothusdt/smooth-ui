@@ -4,7 +4,7 @@ import { TronWeb } from "tronweb";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
-import { ChevronLeft } from "lucide-react";
+import { Back } from "./Back";
 
 export const ImportAccount = () => {
   const { setKey } = useWallet();
@@ -26,13 +26,7 @@ export const ImportAccount = () => {
 
   return importing ? (
     <div className="grid w-full gap-2">
-      <Button
-        variant="ghost"
-        className="w-fit self-start"
-        onClick={() => setImporting(false)}
-      >
-        <ChevronLeft /> Back
-      </Button>
+      <Back onClick={() => setImporting(false)} />
       <Label htmlFor="seed-phrase">Import from seed phrase</Label>
       <Textarea
         id="seed-phrase"
