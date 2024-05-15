@@ -1,8 +1,7 @@
-import { Send } from "./components/Send";
 import { ImportAccount } from "./components/ImportAccount";
 import { useWallet } from "./hooks/useWallet";
-import { Balance } from "./components/Balance";
-import { Link } from "./components/Link";
+import { Link } from "@/components/Link";
+import { Home } from "@/components/Home";
 
 function App() {
   const { connected } = useWallet();
@@ -16,14 +15,7 @@ function App() {
         </span>
       </div>
 
-      {connected ? (
-        <>
-          <Balance />
-          <Send />
-        </>
-      ) : (
-        <ImportAccount />
-      )}
+      {connected ? <Home /> : <ImportAccount />}
 
       <span className="text-sm text-muted-foreground">
         Smooth is a work in progress.{" "}
