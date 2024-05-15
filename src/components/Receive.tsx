@@ -1,14 +1,16 @@
 import { useWallet } from "@/hooks/useWallet";
-import { Button } from "./ui/button";
-import { ChevronLeft, ClipboardCheck, ClipboardCopy } from "lucide-react";
-import { GoesBack } from "./Home";
-import { Input } from "./ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Back } from "@/components/Back";
+
+import { ClipboardCheck, ClipboardCopy } from "lucide-react";
+
 import { useState } from "react";
 
 import { QRCodeSVG } from "qrcode.react";
 import { useCopyToClipboard } from "react-use";
 
-export const Receive: React.FC<GoesBack> = (props) => {
+export const Receive = () => {
   const [copied, setCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
   const { wallet } = useWallet();
@@ -21,13 +23,7 @@ export const Receive: React.FC<GoesBack> = (props) => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <Button
-        variant="ghost"
-        className="w-fit self-start"
-        onClick={props.onBack}
-      >
-        <ChevronLeft /> Back
-      </Button>
+      <Back />
       <div className="py-9">
         <QRCodeSVG
           className="p-3 rotate-45 border-2 border-primary rounded-md"

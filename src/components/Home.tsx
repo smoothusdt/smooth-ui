@@ -1,29 +1,28 @@
-import { useState } from "react";
-import { Balance } from "./Balance";
-import { Send } from "./Send";
-import { Button } from "./ui/button";
-import { Receive } from "./Receive";
+import { Balance } from "@/components/Balance";
+import { Send } from "@/components/Send";
+import { Button } from "@/components/ui/button";
+import { Receive } from "@/components/Receive";
 
-// Super minimal navigation setup
-type Mode = "send" | "receive";
-export interface GoesBack {
-  onBack: () => void;
-}
+import { useLocation, useRoute } from "wouter";
 
 export const Home = () => {
-  const [mode, setMode] = useState<Mode>();
+  // minimal navigation setup
+  const [home] = useRoute("/");
+  const [send] = useRoute("/send");
+  const [receive] = useRoute("/receive");
+  const [, navigate] = useLocation();
 
   return (
     <div className="w-full h-ful flex flex-col justify-center gap-4">
-      {!mode && (
+      {home && (
         <>
           <Balance />
-          <Button onClick={() => setMode("send")}>Send</Button>
-          <Button onClick={() => setMode("receive")}>Receive</Button>
+          <Button onClick={() => navigate("send")}>Send</Button>
+          <Button onClick={() => navigate("receive")}>Receive</Button>
         </>
       )}
-      {mode === "send" && <Send onBack={() => setMode(undefined)} />}
-      {mode === "receive" && <Receive onBack={() => setMode(undefined)} />}
+      {send && <Send />}
+      {receive && <Receive />}
     </div>
   );
 };
