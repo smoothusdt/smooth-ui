@@ -4,7 +4,7 @@ import { Link } from "@/components/Link";
 import { Home } from "@/components/Home";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { Badge } from "@/components/ui/badge";
-import { PWA } from "./pwa";
+// import { PWA } from "./pwa";
 import { usePwa } from "@dotmind/react-use-pwa";
 import {
   Popover,
