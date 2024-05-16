@@ -12,6 +12,10 @@ Live at [app.smoothusdt.com](https://app.smoothusdt.com/).
 2. `npm i`
 3. `npm run dev`
 
+## Updating the logo
+
+The source of truth for the logo is `public/logo.svg`. This is a logo designed elsewhere and exported. To update the logo, update `public/logo.svg` and run `npm run generate-pwa-assets`. Make sure to copy the output to the web app manifest in `vite.config.ts` if names changed. [Learn more](https://vite-pwa-org.netlify.app/assets-generator/cli.html).
+
 ## Expanding the ESLint configuration
 
 Currently, two official plugins are available:
