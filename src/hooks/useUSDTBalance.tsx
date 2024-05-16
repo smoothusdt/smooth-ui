@@ -8,6 +8,8 @@ import { useTronWeb } from "./useTronWeb";
 export const useUSDTBalance = () => {
   const { wallet, connected } = useWallet();
   const tw = useTronWeb();
+
+  // TODO: cache this and void going to the network every time?
   const [balance, setBalance] = useState<number | undefined>();
 
   const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
