@@ -65,7 +65,7 @@ body,
 #root,
 main {
   @apply h-full;
-  overscroll-behavior-y: contain;
+  overscroll-behavior-y: none;
 }
 
 /* Remove arrows from number inputs */
