@@ -3,9 +3,18 @@ import { useWallet } from "@/hooks/useWallet";
 import { Link } from "@/components/Link";
 import { Home } from "@/components/Home";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { Badge } from "@/components/ui/badge";
+import { PWA } from "./pwa";
+import { usePwa } from "@dotmind/react-use-pwa";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function App() {
   const { connected } = useWallet();
+  const { isOffline } = usePwa();
 
   return (
     <main className="container mx-auto w-96 flex flex-col justify-center">
@@ -16,10 +25,20 @@ function App() {
             <span className="text-sm text-muted-foreground">
               Cheap, easy USDT TRC-20 payments
             </span>
+            {isOffline && (
+              <Popover>
+                <PopoverTrigger>
+                  <Badge variant="destructive">offline</Badge>
+                </PopoverTrigger>
+                <PopoverContent>
+                  Balance may be inaccurate and sending is not available.
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
           <ThemeSwitch />
         </div>
-
+        {/* <PWA> */}
         {connected ? <Home /> : <ImportAccount />}
 
         <span className="text-sm text-muted-foreground self-center">
@@ -28,6 +47,7 @@ function App() {
           <br />
           Accounts must be activated and approved.
         </span>
+        {/* </PWA> */}
       </div>
     </main>
   );
