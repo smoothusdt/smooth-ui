@@ -33,6 +33,7 @@ export const Send = () => {
     amount === undefined ||
     receiver === "" ||
     isOverspending;
+  // TODO: Sending should probably be disabled when offline
 
   const reset = () => {
     setAmount(undefined);
