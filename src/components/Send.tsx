@@ -15,12 +15,14 @@ import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { smoothFee } from "@/hooks/useSmooth/constants";
 import { getTronScanLink } from "@/hooks/useSmooth/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
+import { usePwa } from "@dotmind/react-use-pwa";
 
 export const Send = () => {
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [sending, setSending] = useState(false);
   const balance = useUSDTBalance();
+  const { isOffline } = usePwa();
 
   const isOverspending =
     amount !== undefined &&
@@ -32,8 +34,8 @@ export const Send = () => {
     amount === 0 ||
     amount === undefined ||
     receiver === "" ||
-    isOverspending;
-  // TODO: Sending should probably be disabled when offline
+    isOverspending ||
+    isOffline;
 
   const reset = () => {
     setAmount(undefined);

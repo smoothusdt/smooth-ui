@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Receive } from "@/components/Receive";
 
 import { useLocation, useRoute } from "wouter";
+import { usePwa } from "@dotmind/react-use-pwa";
 
 export const Home = () => {
   // minimal navigation setup
@@ -12,12 +13,16 @@ export const Home = () => {
   const [receive] = useRoute("/receive");
   const [, navigate] = useLocation();
 
+  const { isOffline } = usePwa();
+
   return (
     <div className="w-full h-ful flex flex-col justify-center gap-4">
       {home && (
         <>
           <Balance />
-          <Button onClick={() => navigate("send")}>Send</Button>
+          <Button disabled={isOffline} onClick={() => navigate("send")}>
+            Send
+          </Button>
           <Button onClick={() => navigate("receive")}>Receive</Button>
         </>
       )}
