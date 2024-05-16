@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       FallbackComponent={ErrorFallback}
       onReset={() => window.location.reload()}
     >
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider>
         <WalletProvider>
           <TronWebProvider>
             <App />
