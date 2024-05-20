@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
 import { Mnemonic } from "tronweb/utils";
+import { MnemonicStorageKey } from "./useSmooth/constants";
 
 export interface Wallet {
   mnemonic: Mnemonic;
@@ -17,8 +18,6 @@ const useWalletContext = hookAndProvider[0];
  * Wrap components which wish to access the users wallet in this provider.
  */
 export const WalletProvider = hookAndProvider[1];
-
-const MnemonicStorageKey = "@SmoothUSDT/userMnemonic";
 
 /**
  * Abstracting to a separate function so that later it's easier to replace this

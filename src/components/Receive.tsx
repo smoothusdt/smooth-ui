@@ -9,11 +9,14 @@ import { useState } from "react";
 
 import { QRCodeSVG } from "qrcode.react";
 import { useCopyToClipboard } from "react-use";
+import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 
 export const Receive = () => {
   const [copied, setCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
   const { wallet } = useWallet();
+  const [checkApproval, _] = useSmooth();
+  checkApproval(); // fire and forget
 
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {

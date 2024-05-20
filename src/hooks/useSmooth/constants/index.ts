@@ -25,8 +25,12 @@ export const JustLendBase58 = NetworkConfig.justLendBase58;
 // Smooth API
 
 /** Base URL of the smooth USDT API. Note: no trailing slash. */
-export const smoothURL = "https://api.smoothusdt.com";
+export const SmoothApiURL = "https://api.smoothusdt.com";
 /** How much does smooth charge for a transaction */
-export const smoothFee = 1.5;
-/** We need the private key to sign transactions currently. To use the app, you need to set the VITE_USER_PRIVATE_KEY env variable */
-export const privateKey = import.meta.env.VITE_USER_PRIVATE_KEY;
+export const SmoothFee = 1.5;
+
+export const SmoothStoragePrefix = "@SmoothUSDT"
+export const MnemonicStorageKey = `${SmoothStoragePrefix}/userMnemonic`;
+export const ApprovalStatusStorageKey = `${SmoothStoragePrefix}/approvalStatus`
+export const ApprovalGrantedValue = 'granted'
+export const ApprovalInitiatedStorageKey = `${SmoothStoragePrefix}/approvaInitiatedAt` // at what timestamp (in milliseconds) the approval was initiated

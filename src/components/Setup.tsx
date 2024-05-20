@@ -15,6 +15,7 @@ export const SetupWallet = () => {
 
   const handleImportClicked = () => {
     setWalletMnemonic(mnemonic.trim());
+    navigate("home");
   };
 
   // const [phrase, setPhrase] = useState<string[]>([]);

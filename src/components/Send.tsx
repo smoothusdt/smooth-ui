@@ -12,7 +12,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
-import { smoothFee } from "@/hooks/useSmooth/constants";
+import { SmoothFee } from "@/hooks/useSmooth/constants";
 import { getTronScanLink } from "@/hooks/useSmooth/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@dotmind/react-use-pwa";
@@ -23,11 +23,13 @@ export const Send = () => {
   const [sending, setSending] = useState(false);
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
+  const [checkApproval, transfer] = useSmooth();
+  checkApproval(); // fire and forget
 
   const isOverspending =
     amount !== undefined &&
     balance !== undefined &&
-    amount + smoothFee > balance;
+    amount + SmoothFee > balance;
 
   const sendDisabled =
     sending ||
@@ -42,9 +44,6 @@ export const Send = () => {
     setReceiver("");
     setSending(false);
   };
-
-  // TODO: Use approve. This only works for accounts which are already approved
-  const [, transfer] = useSmooth();
 
   const handleTransferClicked = async () => {
     // Check obvious things
@@ -74,6 +73,8 @@ export const Send = () => {
         throw e;
       }
     };
+
+    await checkApproval(); // make sure the router is approved
 
     // Do the transfer and display the process using a toast
     toast.promise(
@@ -124,11 +125,11 @@ export const Send = () => {
         placeholder="10"
       />
       <span className="text-sm text-muted-foreground">
-        Fee: {smoothFee} <span className="text-[0.5rem]">USDT</span>
+        Fee: {SmoothFee} <span className="text-[0.5rem]">USDT</span>
       </span>
       {amount && amount > 0 && (
         <span className="text-sm text-muted-foreground">
-          Total: <strong>{amount + smoothFee}</strong>{" "}
+          Total: <strong>{amount + SmoothFee}</strong>{" "}
           <span className="text-[0.5rem]">USDT</span>
         </span>
       )}

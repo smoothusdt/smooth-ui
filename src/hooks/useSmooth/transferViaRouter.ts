@@ -5,8 +5,8 @@ import {
   SmoothRouterBase58,
   USDTAddressBase58,
   USDTDecimals,
-  smoothFee,
-  smoothURL,
+  SmoothFee,
+  SmoothApiURL,
 } from "./constants";
 import { humanToUint } from "./util";
 import {
@@ -134,7 +134,7 @@ export async function transferViaRouter(
   const usdtAddress = USDTAddressBase58;
   const transferAmount = BigNumber(amount);
   const feeCollector = SmoothFeeCollector;
-  const feeAmount = BigNumber(smoothFee);
+  const feeAmount = BigNumber(SmoothFee);
 
   // Get nonce from smooth contract
   const smoothContract = tronWeb.contract(smoothAbi as any, SmoothRouterBase58);
@@ -178,7 +178,7 @@ export async function transferViaRouter(
   console.log(body);
   console.log("Sending the transfer tx to the api...");
   const startTs = Date.now();
-  const response = await fetch(`${smoothURL}/transfer`, {
+  const response = await fetch(`${SmoothApiURL}/transfer`, {
     method: "POST",
     body: body,
     headers: {
