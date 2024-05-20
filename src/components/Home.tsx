@@ -1,33 +1,28 @@
 import { Balance } from "@/components/Balance";
-import { Send } from "@/components/Send";
 import { Button } from "@/components/ui/button";
-import { Receive } from "@/components/Receive";
 
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import { usePwa } from "@dotmind/react-use-pwa";
+import { useWallet } from "@/hooks/useWallet";
+import { useEffect } from "react";
 
 export const Home = () => {
-  // minimal navigation setup
-  const [home] = useRoute("/");
-  const [send] = useRoute("/send");
-  const [receive] = useRoute("/receive");
+  const { connected } = useWallet();
   const [, navigate] = useLocation();
-
   const { isOffline } = usePwa();
 
+  // The user wallet is not set up - cant do anything on this screen
+  useEffect(() => {
+    if (!connected) navigate("/");
+  }, []);
+
   return (
-    <div className="w-full h-ful flex flex-col justify-center gap-4">
-      {home && (
-        <>
-          <Balance />
-          <Button disabled={isOffline} onClick={() => navigate("send")}>
-            Send
-          </Button>
-          <Button onClick={() => navigate("receive")}>Receive</Button>
-        </>
-      )}
-      {send && <Send />}
-      {receive && <Receive />}
-    </div>
+    <>
+      <Balance />
+      <Button disabled={isOffline} onClick={() => navigate("send")}>
+        Send
+      </Button>
+      <Button onClick={() => navigate("receive")}>Receive</Button>
+    </>
   );
 };

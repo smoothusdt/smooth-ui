@@ -18,6 +18,7 @@ import {
   sliceHex,
 } from "viem";
 import { smoothAbi } from "./constants/smoothAbi";
+import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
 
 async function signTransferMessage(
   tronWeb: TronWeb,
@@ -94,11 +95,26 @@ async function signTransferMessage(
   return signature;
 }
 
+export async function getTxReceipt(tronWeb: TronWeb, txID: string): Promise<TransactionInfo> {
+  const startTs = Date.now()
+  const timeout = 60000 // should never timeout
+  while (true) {
+    const txInfo = await tronWeb.trx.getUnconfirmedTransactionInfo(txID)
+    if (txInfo && txInfo.id) {
+      return txInfo
+    }
+    if (Date.now() - startTs > timeout) {
+      throw new Error("Could not get the transaction receipt after a long time! This is extremly bad!!!!")
+    }
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }
+}
+
 /**
  * Send a transfer transaction to the smoothUSDT API.
  *
  * @param tronWeb The TronWeb instance to use (should have public and private keys set)
- * @returns the response from calling the smoothUSDT API.
+ * @returns txID of the executed transaction
  */
 export async function transferViaRouter(
   tronWeb: TronWeb,
@@ -171,5 +187,13 @@ export async function transferViaRouter(
   });
   console.log("API execution took:", Date.now() - startTs);
 
-  return response;
+  const data = await response.json();
+  const txID = data.txID as string;
+
+  // Await transaction execution
+  await getTxReceipt(tronWeb, txID)
+
+  return {
+    txID
+  };
 }

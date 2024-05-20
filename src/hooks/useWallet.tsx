@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
+import { Mnemonic } from "tronweb/utils";
 
 export interface Wallet {
+  mnemonic: Mnemonic;
   privateKey: string /** Private key without 0x */;
   address: string;
 }
@@ -16,42 +18,64 @@ const useWalletContext = hookAndProvider[0];
  */
 export const WalletProvider = hookAndProvider[1];
 
+const MnemonicStorageKey = "@SmoothUSDT/userMnemonic";
+
+/**
+ * Abstracting to a separate function so that later it's easier to replace this
+ * with a more secure approach.
+ */
+function storeMnemonic(mnemonic: string) {
+  localStorage.setItem(MnemonicStorageKey, mnemonic);
+}
+
+export function retrieveMnemonic(): string | null {
+  return localStorage.getItem(MnemonicStorageKey);
+}
+
 /**
  * Use this hook to access the wallet of the user instance inside a `<WalletProvider/>`
  */
 export const useWallet = () => {
-  const [wallet, setWallet] = useWalletContext(); // TODO: Persist the wallet in IndexedDB or localstorage
+  const [wallet, setWallet] = useWalletContext();
 
-  // When the app loads, check for a .env key and use that
   useEffect(() => {
-    const key = import.meta.env.VITE_USER_PRIVATE_KEY;
-    if (key) {
-      setKey(key);
+    // Check for a .env key and use that. For debugging only!
+    const mnemonic = import.meta.env.VITE_USER_MNEMONIC;
+    if (mnemonic) {
+      setMnemonic(mnemonic);
+      return;
     }
   }, []);
 
   /** Is there a connected? */
   const connected = wallet !== null;
 
-  /** setKey sets the private key of the wallet. Accepts 0x prefix and no prefix.*/
-  const setKey = (privateKey: string) => {
-    // Accepts 0x prefix and no prefix.
-    let key = privateKey;
-    if (privateKey.startsWith("0x")) {
-      key = privateKey.slice(2);
-      console.log("removing 0x: " + key);
+  /** sets mnemonic and the derived private key and user base58 address */
+  const setMnemonic = (rawMnemonic: string) => {
+    const { mnemonic, privateKey, address } = TronWeb.fromMnemonic(
+      rawMnemonic.trim(),
+    );
+    if (!mnemonic) {
+      throw new Error("Bad mnemonic entered. Couldnt set it.");
     }
+    const trimmedKey = privateKey.slice(2); // remove the 0x prefix
 
-    // Verify this is a legitimate key
-    // TODO: Any other verification?
-    const address = TronWeb.address.fromPrivateKey(key);
-    if (!address || !TronWeb.isAddress(address)) {
-      throw new Error("Could not set key");
-    }
+    storeMnemonic(mnemonic.phrase);
+    setWallet({ mnemonic, privateKey: trimmedKey, address });
+    console.log("Set wallet");
+  };
 
-    setWallet({ privateKey: key, address });
+  /** Generates a fresh new mnemonic */
+  const newMnemonic = (): string => {
+    const newWallet = TronWeb.createRandom();
+    return newWallet.mnemonic!.phrase;
   };
 
   // TODO: How to make it so that wallet is not typed as null when connected = true?
-  return { wallet, connected, setKey };
+  return {
+    wallet,
+    connected,
+    setMnemonic,
+    newMnemonic,
+  };
 };

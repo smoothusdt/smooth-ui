@@ -65,16 +65,9 @@ export const Send = () => {
       try {
         setSending(true);
         const res = await transfer(receiver, amount);
-        const obj = await res.json();
-        if (res.ok) {
-          console.log("Response:", obj);
-          reset();
-          return obj;
-        } else {
-          console.error(obj);
-          reset();
-          throw new Error("Transfer failed. Check console.");
-        }
+        reset();
+        console.log("Executed tx id:", res.txID);
+        return res;
       } catch (e) {
         reset();
         console.error(e);
@@ -89,8 +82,8 @@ export const Send = () => {
         loading: "Sending...",
         success: (data) => (
           <span>
-            Sent!{" "}
-            <Link href={getTronScanLink(data.txID, true)}>
+            Sent! {/* target=_blank to open in a new tab */}
+            <Link href={getTronScanLink(data.txID, true)} target="_blank">
               View on TronScan
             </Link>
           </span>
@@ -143,7 +136,7 @@ export const Send = () => {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Whoops</AlertTitle>
-          <AlertDescription>You can't send USDT than you have</AlertDescription>
+          <AlertDescription>You can't send more than you have</AlertDescription>
         </Alert>
       )}
       <Button disabled={sendDisabled} onClick={handleTransferClicked}>

@@ -1,7 +1,7 @@
-import { ImportAccount } from "@/components/ImportAccount";
+import { ImportWallet } from "@/components/ImportAccount";
 import { useWallet } from "@/hooks/useWallet";
 import { Link } from "@/components/Link";
-import { Home } from "@/components/Home";
+import { Router } from "@/components/Router";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { Badge } from "@/components/ui/badge";
 // import { PWA } from "./pwa";
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/popover";
 
 function App() {
-  const { connected } = useWallet();
   const { isOffline } = usePwa();
 
   return (
@@ -38,8 +37,7 @@ function App() {
           </div>
           <ThemeSwitch />
         </div>
-        {/* <PWA> */}
-        {connected ? <Home /> : <ImportAccount />}
+        <Router />
 
         <span className="text-sm text-muted-foreground self-center">
           Smooth is a work in progress.{" "}

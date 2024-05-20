@@ -1,25 +1,27 @@
 import { useState } from "react";
 import { useWallet } from "../hooks/useWallet";
-import { TronWeb } from "tronweb";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Back } from "./Back";
+import { TronWeb } from "tronweb";
+import { useLocation } from "wouter";
 
-export const ImportAccount = () => {
-  const { setKey } = useWallet();
+export const SetupWallet = () => {
+  const [, navigate] = useLocation();
+  const { setMnemonic: setWalletMnemonic, newMnemonic } = useWallet();
   const [mnemonic, setMnemonic] = useState("");
   const [importing, setImporting] = useState(false); // TODO: More sophisticated routing
 
   const handleImportClicked = () => {
-    setKey(TronWeb.fromMnemonic(mnemonic.trim()).privateKey);
+    setWalletMnemonic(mnemonic.trim());
   };
 
   // const [phrase, setPhrase] = useState<string[]>([]);
   const handleNewWalletClicked = () => {
-    // TODO: Is this doing anything on the blockchain?
-    // const p = tronWeb.createRandom();
-    // setPhrase(p.mnemonic?.wordlist.split(p.mnemonic.phrase) ?? []);
+    const generatedMnemonic = newMnemonic();
+    setWalletMnemonic(generatedMnemonic);
+    navigate("home");
   };
 
   const disabled = mnemonic === "";
@@ -42,9 +44,7 @@ export const ImportAccount = () => {
   ) : (
     <div className="grid w-full gap-2">
       <Button onClick={() => setImporting(true)}>Import a wallet</Button>
-      <Button disabled={true} onClick={handleNewWalletClicked}>
-        Create a wallet
-      </Button>
+      <Button onClick={handleNewWalletClicked}>Create a wallet</Button>
       {import.meta.env.DEV && <EnvConnectMessage />}
     </div>
   );
