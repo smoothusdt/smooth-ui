@@ -4,13 +4,19 @@ import { USDTAddressBase58, USDTDecimals } from "./useSmooth/constants";
 import { USDTAbi } from "./useSmooth/constants/usdtAbi";
 import { useWallet } from "./useWallet";
 import { useTronWeb } from "./useTronWeb";
+import { useSmooth } from "./useSmooth/useSmooth";
 
 export const useUSDTBalance = () => {
+  const [checkApproval, _] = useSmooth();
   const { wallet, connected } = useWallet();
   const tw = useTronWeb();
 
   // TODO: cache this and void going to the network every time?
   const [balance, setBalance] = useState<number | undefined>();
+
+  useEffect(() => {
+    checkApproval(); // fire and forget
+  }, [balance]);
 
   const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
 

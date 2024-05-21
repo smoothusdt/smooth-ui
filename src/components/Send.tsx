@@ -24,7 +24,6 @@ export const Send = () => {
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
-  checkApproval(); // fire and forget
 
   const isOverspending =
     amount !== undefined &&
