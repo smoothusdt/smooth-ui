@@ -121,7 +121,7 @@ export async function transferViaRouter(
   toBase58: string,
   amount: number,
 ) {
-  console.log("Begin transfer process");
+  console.log("Begin transfer process. Time:", Date.now());
 
   // Note, the tw instance should have the address set correctly
   const fromBase58 = tronWeb.defaultAddress.base58;
@@ -192,7 +192,7 @@ export async function transferViaRouter(
 
   // Await transaction execution
   await getTxReceipt(tronWeb, txID)
-
+  console.log("Transfer fully completed. Time:", Date.now())
   return {
     txID
   };

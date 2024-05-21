@@ -62,6 +62,7 @@ export const Send = () => {
     const doTransfer = async () => {
       try {
         setSending(true);
+        await checkApproval(); // make sure the router is approved
         const res = await transfer(receiver, amount);
         reset();
         console.log("Executed tx id:", res.txID);
@@ -72,8 +73,6 @@ export const Send = () => {
         throw e;
       }
     };
-
-    await checkApproval(); // make sure the router is approved
 
     // Do the transfer and display the process using a toast
     toast.promise(

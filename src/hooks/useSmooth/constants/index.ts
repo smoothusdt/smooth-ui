@@ -7,6 +7,7 @@ export interface SmoothResponse {
 // misc constants
 export const ChainID = NetworkConfig.chainId;
 export const ChainName = NetworkConfig.chainName;
+export const TronscanApi = NetworkConfig.tronscanApi
 
 // tokens constants
 export const USDTAddressBase58 = NetworkConfig.usdtAddressBase58;

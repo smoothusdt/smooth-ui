@@ -8,6 +8,7 @@ interface NetworkConfigInterface {
   relayerMinEnergy: number;
   delegateTrxForApproval: number;
   tronProApiKey?: string;
+  tronscanApi: string
 }
 
 const MainnetConfig: NetworkConfigInterface = {
@@ -19,6 +20,7 @@ const MainnetConfig: NetworkConfigInterface = {
   routerBase58: "", // TODO: deploy the updated version
   relayerMinEnergy: 150_000,
   delegateTrxForApproval: 8000_000000,
+  tronscanApi: "https://apilist.tronscanapi.com/api"
 };
 
 const ShastaConfig: NetworkConfigInterface = {
@@ -31,6 +33,7 @@ const ShastaConfig: NetworkConfigInterface = {
   relayerMinEnergy: 0,
   delegateTrxForApproval: 1000_000000,
   tronProApiKey: import.meta.env.VITE_TRON_PRO_API_KEY,
+  tronscanApi: "https://shastapi.tronscan.org/api"
 };
 
 export let NetworkConfig: NetworkConfigInterface;
