@@ -1,6 +1,6 @@
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
-import { NetworkConfig } from "./useSmooth/constants/networkConfig";
+import { NetworkConfig } from "../constants/networkConfig";
 
 // Apparently TronWeb requires Buffer to work.
 // https://github.com/tronprotocol/tronweb/issues/473

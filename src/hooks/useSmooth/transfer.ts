@@ -7,8 +7,8 @@ import {
   USDTDecimals,
   SmoothFee,
   SmoothApiURL,
-} from "./constants";
-import { humanToUint } from "./util";
+} from "../../constants";
+import { humanToUint } from "../../util";
 import {
   Hex,
   encodePacked,
@@ -17,7 +17,7 @@ import {
   keccak256,
   sliceHex,
 } from "viem";
-import { smoothAbi } from "./constants/smoothAbi";
+import { smoothAbi } from "../../constants/smoothAbi";
 import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
 
 async function signTransferMessage(

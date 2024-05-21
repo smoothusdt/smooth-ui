@@ -1,7 +1,7 @@
 import { BigNumber } from "tronweb";
 import { useEffect, useState } from "react";
-import { USDTAddressBase58, USDTDecimals } from "./useSmooth/constants";
-import { USDTAbi } from "./useSmooth/constants/usdtAbi";
+import { USDTAddressBase58, USDTDecimals } from "../constants";
+import { USDTAbi } from "../constants/usdtAbi";
 import { useWallet } from "./useWallet";
 import { useTronWeb } from "./useTronWeb";
 import { useSmooth } from "./useSmooth/useSmooth";

@@ -1,7 +1,7 @@
 import { BigNumber, TronWeb } from "tronweb";
-import { SmoothRouterBase58, USDTAddressBase58, USDTDecimals, SmoothFee, SmoothApiURL, ApprovalStatusStorageKey, ApprovalGrantedValue, ApprovalInitiatedStorageKey } from "./constants";
-import { recoverSigner } from "./util";
-import { USDTAbi } from "./constants/usdtAbi";
+import { SmoothRouterBase58, USDTAddressBase58, USDTDecimals, SmoothFee, SmoothApiURL, ApprovalStatusStorageKey, ApprovalGrantedValue, ApprovalInitiatedStorageKey } from "../../constants";
+import { recoverSigner } from "../../util";
+import { USDTAbi } from "../../constants/usdtAbi";
 import { Mutex } from "async-mutex"
 
 /**

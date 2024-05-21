@@ -1,5 +1,5 @@
-import { SmoothFee, SmoothFeeCollector, SmoothRouterBase58, TronscanApi, USDTAddressBase58, USDTDecimals } from "./hooks/useSmooth/constants";
-import { uintToHuman } from "./hooks/useSmooth/util";
+import { SmoothFee, SmoothFeeCollector, SmoothRouterBase58, TronscanApi, USDTAddressBase58, USDTDecimals } from "./constants";
+import { uintToHuman } from "./util";
 
 export interface HistoricalTransaction {
     txID: string

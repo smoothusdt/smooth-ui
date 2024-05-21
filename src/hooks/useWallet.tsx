@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
 import { Mnemonic } from "tronweb/utils";
-import { MnemonicStorageKey } from "./useSmooth/constants";
+import { MnemonicStorageKey } from "../constants";
 
 export interface Wallet {
   mnemonic: Mnemonic;

@@ -12,8 +12,8 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
-import { SmoothFee } from "@/hooks/useSmooth/constants";
-import { getTronScanLink } from "@/hooks/useSmooth/util";
+import { SmoothFee } from "@/constants";
+import { getTronScanLink } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@dotmind/react-use-pwa";
 

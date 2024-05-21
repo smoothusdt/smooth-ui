@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTronWeb } from "../useTronWeb";
-import { checkApproval, checkApprovalLoop } from "./makeApproval";
-import { transferViaRouter } from "./transferViaRouter";
+import { checkApproval, checkApprovalLoop } from "./approve";
+import { transferViaRouter } from "./transfer";
 
 /** Use within a `<TronWebProvider/>` to get access to the SmoothUSDT API. */
 export const useSmooth = (): [
