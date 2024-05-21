@@ -3,12 +3,11 @@ interface NetworkConfigInterface {
   chainName: string;
   rpcUrl: string;
   usdtAddressBase58: string;
-  justLendBase58: string;
   routerBase58: string;
-  relayerMinEnergy: number;
-  delegateTrxForApproval: number;
   tronProApiKey?: string;
-  tronscanApi: string
+  tronscanApi: string;
+  explorerUrl: string;
+  smoothApiURL: string
 }
 
 const MainnetConfig: NetworkConfigInterface = {
@@ -16,11 +15,10 @@ const MainnetConfig: NetworkConfigInterface = {
   chainName: "mainnet",
   rpcUrl: "https://api.trongrid.io",
   usdtAddressBase58: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-  justLendBase58: "TU2MJ5Veik1LRAgjeSzEdvmDYx7mefJZvd",
   routerBase58: "", // TODO: deploy the updated version
-  relayerMinEnergy: 150_000,
-  delegateTrxForApproval: 8000_000000,
-  tronscanApi: "https://apilist.tronscanapi.com/api"
+  tronscanApi: "https://apilist.tronscanapi.com/api",
+  explorerUrl: 'https://tronscan.org/#',
+  smoothApiURL: ''// TODO: deploy separate apis for shasta and mainnet
 };
 
 const ShastaConfig: NetworkConfigInterface = {
@@ -28,12 +26,11 @@ const ShastaConfig: NetworkConfigInterface = {
   chainName: "shasta",
   rpcUrl: "https://api.shasta.trongrid.io",
   usdtAddressBase58: "TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs",
-  justLendBase58: "TQgSxmKZBP2e1vs9PrgiLFUcrd2wGXPEA9",
   routerBase58: "TFAiKcphiJwyLNw2iQ9iJJauvz7PboisEH",
-  relayerMinEnergy: 0,
-  delegateTrxForApproval: 1000_000000,
   tronProApiKey: import.meta.env.VITE_TRON_PRO_API_KEY,
-  tronscanApi: "https://shastapi.tronscan.org/api"
+  tronscanApi: "https://shastapi.tronscan.org/api",
+  explorerUrl: 'https://shasta.tronscan.org/#',
+  smoothApiURL: 'https://api.smoothusdt.com'
 };
 
 export let NetworkConfig: NetworkConfigInterface;

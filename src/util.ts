@@ -5,6 +5,7 @@ import {
   recoverAddress,
 } from "tronweb/utils";
 import { BigNumber } from "tronweb";
+import { ExplorerUrl } from "./constants";
 
 export function humanToUint(amountHuman: BigNumber, decimals: number): number {
   return amountHuman
@@ -48,6 +49,6 @@ export function recoverSigner(
  * @param shasta Is this on the shasta network?
  * @returns A link to the transaction on TronScan.
  */
-export const getTronScanLink = (txID: string, shasta: boolean = false) => {
-  return `https://${shasta ? "shasta." : ""}tronscan.org/#/transaction/${txID}`;
+export const getTronScanLink = (txID: string) => {
+  return `https://${ExplorerUrl}/transaction/${txID}`;
 };
