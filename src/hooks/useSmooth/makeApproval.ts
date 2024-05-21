@@ -99,7 +99,7 @@ const ApprovalMutex = new Mutex()
  * Checks the user USDT balance and approval status.
  * If the user balance is >= than smooth tx fee (1.5 USDT) and the router
  * has not been approved yet - performs the approval.
- * @returns when the router is definitely approved. 
+ * @returns when the router is approved or if the balance is too low to approve. 
  * @throws if there was an approval initiated earlier and it took too long or something else went wrong. 
  * @param tronWeb has to have the proper private key set.
  */
@@ -157,5 +157,30 @@ export async function checkApproval(tronWeb: TronWeb) {
     localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue) // yeee boi, approved!
   } finally {
     releaseMutex()
+  }
+}
+
+// we need only one instance of this loop to run
+let checkApprovalLoopLaunched = false
+
+/**
+ * Constantly attempts to make an approval until it actually happens.
+ * This is redundant to just purely calling checkApproval, but we do this to minimize
+ * the probability of approval execution during sending which will cause delays and worse UX.
+ */
+export async function checkApprovalLoop(tronWeb: TronWeb) {
+  if (checkApprovalLoopLaunched) return;
+  checkApprovalLoopLaunched = true;
+  console.log('Starting the approval check loop');
+
+  while (true) {
+    const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
+    if (approvalGranted) {
+      console.log('Finishing the approval check loop')
+      return; // the approval is given and everything is good
+    }
+
+    await checkApproval(tronWeb)
+    await new Promise(resolve => setTimeout(resolve, 3000)) // sleep until next block
   }
 }
