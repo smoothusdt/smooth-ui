@@ -1,5 +1,6 @@
 import { Balance } from "@/components/Balance";
 import { Button } from "@/components/ui/button";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
 import { usePwa } from "@dotmind/react-use-pwa";
@@ -19,10 +20,20 @@ export const Home = () => {
   return (
     <>
       <Balance />
-      <Button disabled={isOffline} onClick={() => navigate("send")}>
-        Send
-      </Button>
-      <Button onClick={() => navigate("receive")}>Receive</Button>
+      <div className="w-full flex gap-4 justify-between">
+        <Button
+          className="w-96 h-14 gap-2"
+          disabled={isOffline}
+          onClick={() => navigate("send")}
+        >
+          <ArrowUp />
+          Send
+        </Button>
+        <Button className="w-96 h-14 gap-2" onClick={() => navigate("receive")}>
+          <ArrowDown />
+          Receive
+        </Button>
+      </div>
     </>
   );
 };
