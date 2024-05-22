@@ -82,7 +82,7 @@ export const Send = () => {
         success: (data) => (
           <span>
             Sent! {/* target=_blank to open in a new tab */}
-            <Link href={getTronScanLink(data.txID, true)} target="_blank">
+            <Link href={getTronScanLink(data.txID)} target="_blank">
               View on TronScan
             </Link>
           </span>
