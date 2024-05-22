@@ -1,5 +1,5 @@
 import { BigNumber, TronWeb } from "tronweb";
-import { SmoothRouterBase58, USDTAddressBase58, USDTDecimals, SmoothFee, SmoothApiURL, ApprovalStatusStorageKey, ApprovalGrantedValue, ApprovalInitiatedStorageKey } from "../../constants";
+import { SmoothRouterBase58, USDTAddressBase58, USDTDecimals, SmoothFee, SmoothApiURL, ApprovalStatusStorageKey, ApprovalGrantedValue } from "../../constants";
 import { USDTAbi } from "../../constants/usdtAbi";
 import { Mutex } from "async-mutex"
 import { PostHog } from "posthog-js";
@@ -10,7 +10,7 @@ import { PostHog } from "posthog-js";
  * @param tw The TronWeb instance to use
  * @returns the response from calling the smoothUSDT API.
  */
-async function makeApproval(tw: TronWeb, posthog: PostHog) {
+async function makeApprovalViaApi(tw: TronWeb, posthog: PostHog) {
   posthog.capture("Making approval")
   const startTs = Date.now()
 
@@ -71,27 +71,6 @@ async function queryAllowanceHumanAmount(tronWeb: TronWeb): Promise<BigNumber> {
   return allowanceHuman
 }
 
-/**
- * Waits until the given userAddress gives the approval to the router.
- * @param tronWeb an instance with the user private key set.
- */
-async function awaitApproval(tronWeb: TronWeb) {
-  const timeout = 60000 // 1 minute
-  const startedAt = Date.now()
-  for (; ;) {
-    const allowanceHuman = await queryAllowanceHumanAmount(tronWeb)
-    if (allowanceHuman.gt(1e18)) { // should be a very big number
-      return;
-    }
-
-    if (Date.now() - startedAt > timeout) {
-      throw new Error('Allowance was not sufficient even after waiting!')
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  }
-}
-
 // Prevents double initiation of approval if checkApproval
 // is called multiple times ~simultaneously.
 const ApprovalMutex = new Mutex()
@@ -111,33 +90,15 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
     if (approvalGranted) return; // the approval is given and everything is good
 
     console.log('The approval has not been given yet, performing checks')
-    const maxApprovalExecution = 600000; // throw if a previously initiated approval took more than 10 minutes
-    const approvalInitiatedAt = localStorage.getItem(ApprovalInitiatedStorageKey)
-    if (approvalInitiatedAt) {
-      console.log('The previous approval has been initiated at', approvalInitiatedAt)
-
-      // Maybe the allowance has changed since our last query - refresh it.
-      // Need to query it in case the app was closed while running approval
-      // and the success result was not saved to local storage.
-      // Note: a false maxApprovalExecution timeout can happen in rare cases when we
-      // set approvalInitiatedAt in storage, but the app gets closed while preparing & sending
-      // the actuall approval request to the API. TODO: fix this.
-      const allowanceHuman = await queryAllowanceHumanAmount(tronWeb);
-      if (allowanceHuman.gt(1e18)) {
-        posthog.capture("Detected a previously granted approval")
-        localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue)
-        return;
-      }
-
-      const initiatedAt = parseInt(approvalInitiatedAt)
-      if (Date.now() - initiatedAt > maxApprovalExecution) {
-        throw new Error(`Execution of a previously initiated approval took more than ${maxApprovalExecution}ms.`)
-      }
-
-      // implicit else. The approval is being executed by the call to `checkApproval`
-      // from some other place. Waiting for that call to finish.
-      await awaitApproval(tronWeb)
-      return; // approval has been granted!
+    // Maybe the allowance has changed since our last query - refresh it.
+    // Need to query it in case the app was closed while running approval
+    // and the success result was not saved to local storage. Or if the user
+    // imports a previously initialised Smooth USDT wallet.
+    const allowanceHuman = await queryAllowanceHumanAmount(tronWeb);
+    if (allowanceHuman.gt(1e18)) {
+      posthog.capture("Detected a previously granted approval")
+      localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue)
+      return;
     }
 
     const USDTContract = tronWeb.contract(USDTAbi, USDTAddressBase58);
@@ -153,8 +114,7 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
       return;
     }
 
-    localStorage.setItem(ApprovalInitiatedStorageKey, Date.now().toString())
-    await makeApproval(tronWeb, posthog) // approve
+    await makeApprovalViaApi(tronWeb, posthog) // approve
     localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue) // yeee boi, approved!
   } finally {
     releaseMutex()
@@ -173,15 +133,19 @@ export async function checkApprovalLoop(tronWeb: TronWeb, posthog: PostHog) {
   if (checkApprovalLoopLaunched) return;
   checkApprovalLoopLaunched = true;
 
+  const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
+  if (approvalGranted) return;
+
   posthog.capture('Starting the check approval loop');
   for (; ;) {
+    await checkApproval(tronWeb, posthog)
+
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
     if (approvalGranted) {
-      posthog.capture('Finishing the check approval loop')
+      posthog.capture('Approval granted! Finishing the check approval loop')
       return; // the approval is given and everything is good
     }
 
-    await checkApproval(tronWeb, posthog)
     await new Promise(resolve => setTimeout(resolve, 3000)) // sleep until next block
   }
 }

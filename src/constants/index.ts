@@ -28,4 +28,3 @@ export const SmoothStoragePrefix = "@SmoothUSDT"
 export const MnemonicStorageKey = `${SmoothStoragePrefix}/userMnemonic`;
 export const ApprovalStatusStorageKey = `${SmoothStoragePrefix}/approvalStatus`
 export const ApprovalGrantedValue = 'granted'
-export const ApprovalInitiatedStorageKey = `${SmoothStoragePrefix}/approvaInitiatedAt` // at what timestamp (in milliseconds) the approval was initiated
