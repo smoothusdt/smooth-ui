@@ -1,27 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useWallet } from "../hooks/useWallet";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Back } from "./Back";
 import { useLocation } from "wouter";
+import { usePostHog } from "posthog-js/react";
 
 export const SetupWallet = () => {
+  const posthog = usePostHog();
   const [, navigate] = useLocation();
-  const { setMnemonic: setWalletMnemonic, newMnemonic } = useWallet();
+  const { setMnemonic: setWalletMnemonic, newMnemonic, wallet } = useWallet();
   const [mnemonic, setMnemonic] = useState("");
   const [importing, setImporting] = useState(false); // TODO: More sophisticated routing
 
+  // Using a useEffect to wait until the `wallet` variable updates
+  // to log the wallet address to posthog.
+  useEffect(() => {
+    if (!wallet) return;
+
+    posthog.capture("Finished wallet setup", {
+      $set: {
+        walletAddress: wallet?.address || "unknown",
+        walletImported: importing,
+      },
+    });
+    navigate("home");
+  }, [wallet, importing, navigate, posthog]);
+
   const handleImportClicked = () => {
     setWalletMnemonic(mnemonic.trim());
-    navigate("home");
   };
 
   // const [phrase, setPhrase] = useState<string[]>([]);
   const handleNewWalletClicked = () => {
     const generatedMnemonic = newMnemonic();
     setWalletMnemonic(generatedMnemonic);
-    navigate("home");
   };
 
   const disabled = mnemonic === "";
