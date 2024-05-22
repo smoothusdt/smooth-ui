@@ -1,8 +1,9 @@
 import { SmoothFee, SmoothFeeCollector, SmoothRouterBase58, TronscanApi, USDTAddressBase58, USDTDecimals } from "./constants";
-import { uintToHuman } from "./util";
+import { getTronScanLink, uintToHuman } from "./util";
 
 export interface HistoricalTransaction {
     txID: string
+    explorerUrl: string
     block: number // block number
     timestamp: number // UTC
     from: string // Base 58
@@ -50,8 +51,10 @@ export async function queryUsdtHistory(userBase58: string): Promise<HistoricalTr
             triggerInfo.contract_address === SmoothRouterBase58 // transferred via Smooth USDT
         ) feeHuman = SmoothFee
 
+        const txID = transfer.transaction_id
         const tx: HistoricalTransaction = {
-            txID: transfer.transaction_id,
+            txID,
+            explorerUrl: getTronScanLink(txID),
             block: transfer.block,
             timestamp: transfer.block_ts,
             from,

@@ -50,5 +50,5 @@ export function recoverSigner(
  * @returns A link to the transaction on TronScan.
  */
 export const getTronScanLink = (txID: string) => {
-  return `https://${ExplorerUrl}/transaction/${txID}`;
+  return `${ExplorerUrl}/transaction/${txID}`;
 };
