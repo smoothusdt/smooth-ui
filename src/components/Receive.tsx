@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Back } from "@/components/Back";
 
-import { ClipboardCheck, ClipboardCopy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 
 import { useState } from "react";
 
@@ -18,7 +18,15 @@ export const Receive = () => {
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {
     wallet?.address && copyToClipboard(wallet?.address);
-    !state.error && setCopied(true); // IF all went well
+
+    if (!state.error) {
+      // UI confirms the copy, then resets. This is a common pattern.
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 1000);
+    }
+    // TODO: Set some kind of error if hte copy fails
   };
 
   return (
@@ -38,7 +46,7 @@ export const Receive = () => {
           value={wallet?.address}
         />
         <Button onClick={handleCopyClicked}>
-          {copied ? <ClipboardCheck /> : <ClipboardCopy />}
+          {copied ? <Check /> : <Copy />}
         </Button>
       </div>
     </div>
