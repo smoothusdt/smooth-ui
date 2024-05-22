@@ -13,7 +13,7 @@ export const useSmooth = (): [
   useEffect(() => {
     // run only once - upon initial setup
     checkApprovalLoop(tw); // fire and forget
-  }, []);
+  }, [tw]);
 
   return [
     () => checkApproval(tw),

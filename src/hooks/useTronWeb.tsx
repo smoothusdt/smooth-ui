@@ -12,15 +12,8 @@ import { useWallet } from "./useWallet";
 globalThis.Buffer = Buffer as unknown as typeof globalThis.Buffer;
 
 // Intentionally not destructured to allow TSDoc on the provider
-const hookAndProvider = createStateContext<TronWeb | null>(null);
+export const hookAndProvider = createStateContext<TronWeb | null>(null);
 const useTronWebContext = hookAndProvider[0];
-
-/**
- * Wrap components which wish to access `TronWeb` in this provider.
- *
- * Note that currently `TronWebProvider` needs to be wrapped in a `WalletProvider` (for access to keys)
- */
-export const TronWebProvider = hookAndProvider[1];
 
 /**
  * Use this hook to access the global `TronWeb` instance inside a `<TronWebProvider/>`

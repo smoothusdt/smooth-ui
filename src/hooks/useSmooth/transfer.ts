@@ -98,7 +98,7 @@ async function signTransferMessage(
 export async function getTxReceipt(tronWeb: TronWeb, txID: string): Promise<TransactionInfo> {
   const startTs = Date.now()
   const timeout = 60000 // should never timeout
-  while (true) {
+  for (; ;) {
     const txInfo = await tronWeb.trx.getUnconfirmedTransactionInfo(txID)
     if (txInfo && txInfo.id) {
       return txInfo
@@ -137,7 +137,7 @@ export async function transferViaRouter(
   const feeAmount = BigNumber(SmoothFee);
 
   // Get nonce from smooth contract
-  const smoothContract = tronWeb.contract(smoothAbi as any, SmoothRouterBase58);
+  const smoothContract = tronWeb.contract(smoothAbi as unknown as never, SmoothRouterBase58);
   const nonceBigNumber = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
   const nonce = (nonceBigNumber as BigNumber).toNumber();
   console.log("nonce: ", nonce);

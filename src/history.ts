@@ -17,7 +17,7 @@ export interface HistoricalTransaction {
 export async function queryUsdtHistory(userBase58: string): Promise<HistoricalTransaction[]> {
     const url = `${TronscanApi}/filter/trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&filterTokenValue=0&contract_address=${USDTAddressBase58}&relatedAddress=${userBase58}`
     const result = await (await fetch(url)).json()
-    const tokenTransfersRaw = result.token_transfers as any[]
+    const tokenTransfersRaw = result.token_transfers
     const history: HistoricalTransaction[] = []
 
     for (const transfer of tokenTransfersRaw) {
@@ -37,9 +37,9 @@ export async function queryUsdtHistory(userBase58: string): Promise<HistoricalTr
             // This is an ugly cringe that we unfortunatelly have to do because
             // tronscan uses some custom C# json encoding :(
             // Related: https://blog.yumasoft.pl/2021/08/how-to-fix-json-net-circular-references-ref-in-javascript/
-            const refPrefix = "$.token\_transfers["
-            const refPostfix = "].trigger\_info"
-            const trueIndex = parseInt(ref.substring(refPrefix.length + 1, ref.length - refPostfix.length - 1))
+            const refPrefix = "$.token\\_transfers["
+            const refPostfix = "].trigger\\_info"
+            const trueIndex = parseInt(ref.substring(refPrefix.length, ref.length - refPostfix.length))
             triggerInfo = tokenTransfersRaw[trueIndex].trigger_info
         }
 

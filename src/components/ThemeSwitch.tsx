@@ -5,9 +5,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Theme, Themes, useTheme } from "@/context/ThemeProvider";
 import { Moon, Sun, SunMoon } from "lucide-react";
 import clsx from "clsx";
+import { useTheme } from "@/hooks/useTheme";
+import { Theme, Themes } from "@/context/ThemeProvider";
 
 /**
  * Button to select the theme. Light, dark, or system.

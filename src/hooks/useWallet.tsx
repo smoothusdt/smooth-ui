@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
 import { Mnemonic } from "tronweb/utils";
@@ -11,13 +11,8 @@ export interface Wallet {
 }
 
 // Intentionally not destructured to allow TSDoc on the provider
-const hookAndProvider = createStateContext<Wallet | null>(null);
+export const hookAndProvider = createStateContext<Wallet | null>(null);
 const useWalletContext = hookAndProvider[0];
-
-/**
- * Wrap components which wish to access the users wallet in this provider.
- */
-export const WalletProvider = hookAndProvider[1];
 
 /**
  * Abstracting to a separate function so that later it's easier to replace this
@@ -37,6 +32,27 @@ export function retrieveMnemonic(): string | null {
 export const useWallet = () => {
   const [wallet, setWallet] = useWalletContext();
 
+  /** Is there a connected? */
+  const connected = wallet !== null;
+
+  /** sets mnemonic and the derived private key and user base58 address */
+  const setMnemonic = useCallback(
+    (rawMnemonic: string) => {
+      const { mnemonic, privateKey, address } = TronWeb.fromMnemonic(
+        rawMnemonic.trim(),
+      );
+      if (!mnemonic) {
+        throw new Error("Bad mnemonic entered. Couldnt set it.");
+      }
+      const trimmedKey = privateKey.slice(2); // remove the 0x prefix
+
+      storeMnemonic(mnemonic.phrase);
+      setWallet({ mnemonic, privateKey: trimmedKey, address });
+      console.log("Set wallet");
+    },
+    [setWallet],
+  );
+
   useEffect(() => {
     // Check for a .env key and use that. For debugging only!
     const mnemonic = import.meta.env.VITE_USER_MNEMONIC;
@@ -44,25 +60,7 @@ export const useWallet = () => {
       setMnemonic(mnemonic);
       return;
     }
-  }, []);
-
-  /** Is there a connected? */
-  const connected = wallet !== null;
-
-  /** sets mnemonic and the derived private key and user base58 address */
-  const setMnemonic = (rawMnemonic: string) => {
-    const { mnemonic, privateKey, address } = TronWeb.fromMnemonic(
-      rawMnemonic.trim(),
-    );
-    if (!mnemonic) {
-      throw new Error("Bad mnemonic entered. Couldnt set it.");
-    }
-    const trimmedKey = privateKey.slice(2); // remove the 0x prefix
-
-    storeMnemonic(mnemonic.phrase);
-    setWallet({ mnemonic, privateKey: trimmedKey, address });
-    console.log("Set wallet");
-  };
+  }, [setMnemonic]);
 
   /** Generates a fresh new mnemonic */
   const newMnemonic = (): string => {

@@ -1,5 +1,3 @@
-import { ImportWallet } from "@/components/ImportAccount";
-import { useWallet } from "@/hooks/useWallet";
 import { Link } from "@/components/Link";
 import { Router } from "@/components/Router";
 import { ThemeSwitch } from "@/components/ThemeSwitch";

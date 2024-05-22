@@ -1,13 +1,13 @@
-import { createContext, useContext, useEffect, useState } from "react";
-
-export const Themes = ["dark", "light", "system"] as const;
-export type Theme = (typeof Themes)[number];
+import { createContext, useEffect, useState } from "react";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
 };
+
+export const Themes = ["dark", "light", "system"] as const;
+export type Theme = (typeof Themes)[number];
 
 type ThemeProviderState = {
   theme: Theme;
@@ -20,7 +20,8 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 };
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+export const ThemeProviderContext =
+  createContext<ThemeProviderState>(initialState);
 
 /**
  * Theme provider from https://ui.shadcn.com/docs/dark-mode/vite
@@ -68,12 +69,3 @@ export function ThemeProvider({
     </ThemeProviderContext.Provider>
   );
 }
-
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
-
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider");
-
-  return context;
-};

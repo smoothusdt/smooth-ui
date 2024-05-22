@@ -7,10 +7,9 @@ import App from "@/components/App.tsx";
 import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { WalletProvider } from "@/hooks/useWallet.tsx";
-import { TronWebProvider } from "@/hooks/useTronWeb.tsx";
-
 import { ThemeProvider } from "@/context/ThemeProvider";
+import { WalletProvider } from "./context/WalletProvider";
+import { TronWebProvider } from "./context/TronWebProdiver";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

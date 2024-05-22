@@ -23,7 +23,7 @@ export const Root = () => {
     }
 
     navigate("setup");
-  }, [connected]);
+  }, [connected, navigate, setMnemonic]);
 
   // No need to show anything - we just need useEffect to run and
   // redirect the user to the proper page.

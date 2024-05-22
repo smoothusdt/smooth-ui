@@ -16,7 +16,7 @@ export const useUSDTBalance = () => {
 
   useEffect(() => {
     checkApproval(); // fire and forget
-  }, [balance]);
+  }, [balance, checkApproval]);
 
   const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
 

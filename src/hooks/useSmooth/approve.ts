@@ -77,7 +77,7 @@ async function queryAllowanceHumanAmount(tronWeb: TronWeb): Promise<BigNumber> {
 async function awaitApproval(tronWeb: TronWeb) {
   const timeout = 60000 // 1 minute
   const startedAt = Date.now()
-  while (true) {
+  for (; ;) {
     const allowanceHuman = await queryAllowanceHumanAmount(tronWeb)
     if (allowanceHuman.gt(1e18)) { // should be a very big number
       return;
@@ -137,7 +137,7 @@ export async function checkApproval(tronWeb: TronWeb) {
       // from some other place. Waiting for that call to finish.
       await awaitApproval(tronWeb)
       return; // approval has been granted!
-    };
+    }
 
     const USDTContract = tronWeb.contract(USDTAbi, USDTAddressBase58);
     let balanceUint: BigNumber = await USDTContract.methods
@@ -169,11 +169,11 @@ let checkApprovalLoopLaunched = false
  * the probability of approval execution during sending which will cause delays and worse UX.
  */
 export async function checkApprovalLoop(tronWeb: TronWeb) {
+  console.log('Starting the approval check loop');
   if (checkApprovalLoopLaunched) return;
   checkApprovalLoopLaunched = true;
-  console.log('Starting the approval check loop');
 
-  while (true) {
+  for (; ;) {
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
     if (approvalGranted) {
       console.log('Finishing the approval check loop')

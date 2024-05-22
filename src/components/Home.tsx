@@ -14,7 +14,7 @@ export const Home = () => {
   // The user wallet is not set up - cant do anything on this screen
   useEffect(() => {
     if (!connected) navigate("/");
-  }, []);
+  }, [connected, navigate]);
 
   return (
     <>

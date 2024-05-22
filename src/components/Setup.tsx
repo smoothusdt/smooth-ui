@@ -4,7 +4,6 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Back } from "./Back";
-import { TronWeb } from "tronweb";
 import { useLocation } from "wouter";
 
 export const SetupWallet = () => {
