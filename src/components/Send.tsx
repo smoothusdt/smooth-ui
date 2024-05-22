@@ -16,6 +16,7 @@ import { SmoothFee } from "@/constants";
 import { getTronScanLink } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@dotmind/react-use-pwa";
+import { usePostHog } from "posthog-js/react";
 
 export const Send = () => {
   const [receiver, setReceiver] = useState("");
@@ -24,6 +25,7 @@ export const Send = () => {
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
+  const posthog = usePostHog();
 
   const isOverspending =
     amount !== undefined &&
@@ -44,32 +46,22 @@ export const Send = () => {
     setSending(false);
   };
 
+  // The button is disabled until the data in the fields is valid, so we
+  // can omit validation here.
   const handleTransferClicked = async () => {
-    // Check obvious things
-    if (receiver == "") {
-      console.error("receiver is empty");
-      toast.error("Transfer failed. Check console.");
-      return;
-    }
-
-    if (amount === 0 || amount === undefined) {
-      console.error("amount is empty");
-      toast.error("Transfer failed. Check console.");
-      return;
-    }
-
     // Set up a fn that will execute the transfer so that we can toast this
     const doTransfer = async () => {
       try {
         setSending(true);
         await checkApproval(); // make sure the router is approved
-        const res = await transfer(receiver, amount);
+        const res = await transfer(receiver, amount!);
         reset();
-        console.log("Executed tx id:", res.txID);
         return res;
       } catch (e) {
         reset();
-        console.error(e);
+        posthog.capture("error", {
+          error: JSON.stringify(e, Object.getOwnPropertyNames(e)),
+        });
         throw e;
       }
     };

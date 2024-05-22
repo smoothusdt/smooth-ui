@@ -48,7 +48,6 @@ export const useWallet = () => {
 
       storeMnemonic(mnemonic.phrase);
       setWallet({ mnemonic, privateKey: trimmedKey, address });
-      console.log("Set wallet");
     },
     [setWallet],
   );

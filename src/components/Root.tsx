@@ -1,10 +1,12 @@
 import { retrieveMnemonic, useWallet } from "@/hooks/useWallet";
+import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
 export const Root = () => {
   const [, navigate] = useLocation();
   const { connected, setMnemonic } = useWallet();
+  const posthog = usePostHog();
 
   // Some checks that occur right after this component mounts.
   useEffect(() => {
@@ -18,12 +20,12 @@ export const Root = () => {
     const storedMnemonic = retrieveMnemonic();
     if (storedMnemonic) {
       setMnemonic(storedMnemonic);
-      console.log("Set mnemonic from Root. Connection status:", connected);
+      posthog.capture("Autoloaded mnemonic from local storage");
       return;
     }
 
     navigate("setup");
-  }, [connected, navigate, setMnemonic]);
+  }, [connected, navigate, setMnemonic, posthog]);
 
   // No need to show anything - we just need useEffect to run and
   // redirect the user to the proper page.

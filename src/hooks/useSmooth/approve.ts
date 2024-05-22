@@ -1,8 +1,8 @@
 import { BigNumber, TronWeb } from "tronweb";
 import { SmoothRouterBase58, USDTAddressBase58, USDTDecimals, SmoothFee, SmoothApiURL, ApprovalStatusStorageKey, ApprovalGrantedValue, ApprovalInitiatedStorageKey } from "../../constants";
-import { recoverSigner } from "../../util";
 import { USDTAbi } from "../../constants/usdtAbi";
 import { Mutex } from "async-mutex"
+import { PostHog } from "posthog-js";
 
 /**
  * Send an approve transaction to the smoothUSDT API.
@@ -10,8 +10,9 @@ import { Mutex } from "async-mutex"
  * @param tw The TronWeb instance to use
  * @returns the response from calling the smoothUSDT API.
  */
-async function makeApproval(tw: TronWeb) {
-  console.log("Signing approval transaction");
+async function makeApproval(tw: TronWeb, posthog: PostHog) {
+  posthog.capture("Making approval")
+  const startTs = Date.now()
 
   const functionSelector = "approve(address,uint256)";
   const parameter = [
@@ -25,15 +26,9 @@ async function makeApproval(tw: TronWeb) {
     parameter,
   );
   const signedTx = await tw.trx.sign(transaction);
-  console.log(
-    "Signed the approval with:",
-    recoverSigner(signedTx.txID, signedTx.signature[0]),
-  );
-  console.log(signedTx);
 
   // Send approval tx to API and profile.
-  console.log("Sending the approval tx to the api...");
-  const startTs = Date.now();
+  const beforeApiCall = Date.now();
   const response = await fetch(`${SmoothApiURL}/approve`, {
     method: "POST",
     body: JSON.stringify({
@@ -46,7 +41,13 @@ async function makeApproval(tw: TronWeb) {
       "Content-Type": "application/json",
     },
   });
-  console.log("API execution took:", Date.now() - startTs);
+  const afterApiCall = Date.now()
+
+  const endTs = Date.now()
+  posthog.capture("Approval completed", {
+    totalInterval: endTs - startTs,
+    apiCallInterval: afterApiCall - beforeApiCall,
+  })
 
   return response;
 }
@@ -103,7 +104,7 @@ const ApprovalMutex = new Mutex()
  * @throws if there was an approval initiated earlier and it took too long or something else went wrong. 
  * @param tronWeb has to have the proper private key set.
  */
-export async function checkApproval(tronWeb: TronWeb) {
+export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
   const releaseMutex = await ApprovalMutex.acquire()
   try {
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
@@ -123,7 +124,7 @@ export async function checkApproval(tronWeb: TronWeb) {
       // the actuall approval request to the API. TODO: fix this.
       const allowanceHuman = await queryAllowanceHumanAmount(tronWeb);
       if (allowanceHuman.gt(1e18)) {
-        console.log('Refreshed the allowance amount and now it is good!')
+        posthog.capture("Detected a previously granted approval")
         localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue)
         return;
       }
@@ -153,7 +154,7 @@ export async function checkApproval(tronWeb: TronWeb) {
     }
 
     localStorage.setItem(ApprovalInitiatedStorageKey, Date.now().toString())
-    await makeApproval(tronWeb) // approve
+    await makeApproval(tronWeb, posthog) // approve
     localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue) // yeee boi, approved!
   } finally {
     releaseMutex()
@@ -168,19 +169,19 @@ let checkApprovalLoopLaunched = false
  * This is redundant to just purely calling checkApproval, but we do this to minimize
  * the probability of approval execution during sending which will cause delays and worse UX.
  */
-export async function checkApprovalLoop(tronWeb: TronWeb) {
-  console.log('Starting the approval check loop');
+export async function checkApprovalLoop(tronWeb: TronWeb, posthog: PostHog) {
   if (checkApprovalLoopLaunched) return;
   checkApprovalLoopLaunched = true;
 
+  posthog.capture('Starting the check approval loop');
   for (; ;) {
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
     if (approvalGranted) {
-      console.log('Finishing the approval check loop')
+      posthog.capture('Finishing the check approval loop')
       return; // the approval is given and everything is good
     }
 
-    await checkApproval(tronWeb)
+    await checkApproval(tronWeb, posthog)
     await new Promise(resolve => setTimeout(resolve, 3000)) // sleep until next block
   }
 }

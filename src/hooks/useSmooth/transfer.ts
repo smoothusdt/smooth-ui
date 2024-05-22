@@ -19,6 +19,7 @@ import {
 } from "viem";
 import { smoothAbi } from "../../constants/smoothAbi";
 import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
+import { PostHog } from "posthog-js";
 
 async function signTransferMessage(
   tronWeb: TronWeb,
@@ -32,8 +33,6 @@ async function signTransferMessage(
   feeAmount: BigNumber,
   nonce: bigint,
 ): Promise<Hex> {
-  console.log("Signing transfer message");
-
   const routerHex = ("0x" +
     tronWeb.utils.address.toHex(routerBase58).slice(2)) as Hex;
   const usdtHex = ("0x" +
@@ -46,16 +45,6 @@ async function signTransferMessage(
   const transferAmountUint = BigInt(humanToUint(transferAmount, USDTDecimals));
   const feeAmountUint = BigInt(humanToUint(feeAmount, USDTDecimals));
 
-  console.log("Creating a signature with parameters:", {
-    chainId,
-    routerHex,
-    fromHex,
-    toHex,
-    transferAmountUint,
-    feeCollectorHex,
-    feeAmountUint,
-    nonce,
-  });
   const encodePackedValues = encodePacked(
     [
       "string",
@@ -82,11 +71,9 @@ async function signTransferMessage(
       nonce,
     ],
   );
-  console.log("EncodePacked values:", encodePackedValues);
 
   const digestHex = keccak256(encodePackedValues);
   const digestBytes = hexToBytes(digestHex);
-  console.log("Digest:", digestHex, digestBytes);
 
   const signature = tronWeb.trx.signMessageV2(
     digestBytes,
@@ -120,12 +107,13 @@ export async function transferViaRouter(
   tronWeb: TronWeb,
   toBase58: string,
   amount: number,
+  posthog: PostHog
 ) {
-  console.log("Begin transfer process. Time:", Date.now());
+  const startTs = Date.now()
+  posthog.capture("Beginning transfer process")
 
   // Note, the tw instance should have the address set correctly
   const fromBase58 = tronWeb.defaultAddress.base58;
-  console.log("Transferring from:", fromBase58);
 
   if (!fromBase58) {
     throw new Error("TronWeb instance does not have address set correctly");
@@ -140,7 +128,6 @@ export async function transferViaRouter(
   const smoothContract = tronWeb.contract(smoothAbi as unknown as never, SmoothRouterBase58);
   const nonceBigNumber = await smoothContract.methods.nonces(fromBase58).call(); // Can we get a type for this?
   const nonce = (nonceBigNumber as BigNumber).toNumber();
-  console.log("nonce: ", nonce);
 
   // Sign the transfer message
   const signature = await signTransferMessage(
@@ -155,12 +142,10 @@ export async function transferViaRouter(
     feeAmount,
     BigInt(nonce),
   );
-  console.log("Signature: ", signature);
 
   const r = sliceHex(signature, 0, 32);
   const s = sliceHex(signature, 32, 64);
   const v = hexToNumber(sliceHex(signature, 64));
-  console.log("r s v: ", { r, s, v });
 
   // Send transfer tx to API and profile.
   const body = JSON.stringify({
@@ -175,9 +160,8 @@ export async function transferViaRouter(
     r,
     s,
   });
-  console.log(body);
-  console.log("Sending the transfer tx to the api...");
-  const startTs = Date.now();
+
+  const beforeApiCall = Date.now();
   const response = await fetch(`${SmoothApiURL}/transfer`, {
     method: "POST",
     body: body,
@@ -185,14 +169,25 @@ export async function transferViaRouter(
       "Content-Type": "application/json",
     },
   });
-  console.log("API execution took:", Date.now() - startTs);
+  const afterApiCall = Date.now();
 
   const data = await response.json();
   const txID = data.txID as string;
 
   // Await transaction execution
   await getTxReceipt(tronWeb, txID)
-  console.log("Transfer fully completed. Time:", Date.now())
+
+  const endTs = Date.now()
+  posthog.capture("Transfer completed", {
+    txID,
+    nonce,
+    fromBase58,
+    toBase58,
+    amount,
+    totalInterval: endTs - startTs,
+    apiCallInterval: afterApiCall - beforeApiCall,
+  })
+
   return {
     txID
   };
