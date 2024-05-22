@@ -11,19 +11,28 @@ import { ThemeProvider } from "@/context/ThemeProvider";
 import { WalletProvider } from "./context/WalletProvider";
 import { TronWebProvider } from "./context/TronWebProdiver";
 
+// Initialize analytics
+import posthog from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
+posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
+  api_host: "https://us.i.posthog.com",
+});
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ErrorBoundary
-      FallbackComponent={ErrorFallback}
-      onReset={() => window.location.reload()}
-    >
-      <ThemeProvider>
-        <WalletProvider>
-          <TronWebProvider>
-            <App />
-          </TronWebProvider>
-        </WalletProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <PostHogProvider client={posthog}>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => window.location.reload()}
+      >
+        <ThemeProvider>
+          <WalletProvider>
+            <TronWebProvider>
+              <App />
+            </TronWebProvider>
+          </WalletProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </PostHogProvider>
   </React.StrictMode>,
 );
