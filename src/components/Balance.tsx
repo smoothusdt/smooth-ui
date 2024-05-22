@@ -8,6 +8,7 @@ export const Balance: React.FC = () => {
   const balance = useUSDTBalance();
 
   useEffect(() => {
+    if (balance === undefined) return;
     posthog.capture("Loaded user balance", { balance });
   }, [balance, posthog]);
 
