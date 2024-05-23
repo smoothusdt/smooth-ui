@@ -118,6 +118,7 @@ export const Send = () => {
       <Input
         id="text-input-amount"
         type="number"
+        inputMode="decimal"
         value={amount === undefined ? "" : amount}
         onChange={(e) => setAmount(Number(e.target.value))}
         min={0}
