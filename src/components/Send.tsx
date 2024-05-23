@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Back } from "@/components/Back";
 import { Link } from "@/components/Link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -21,7 +20,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
 export const Send = () => {
-  const { connected, wallet } = useWallet();
+  const { connected } = useWallet();
   const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
@@ -104,7 +103,6 @@ export const Send = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <Back />
       <Label htmlFor="text-input-to">To</Label>
       {/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */}
       <Input

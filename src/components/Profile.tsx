@@ -2,7 +2,6 @@ import { useWallet } from "@/hooks/useWallet";
 import { useEffect } from "react";
 
 import { useLocation } from "wouter";
-import { Back } from "./Back";
 import { Button } from "./ui/button";
 import { ThemeSwitch } from "./ThemeSwitch";
 
@@ -65,7 +64,6 @@ export const Profile = () => {
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <Back />
       <ThemeSwitch />
       <Button onClick={() => navigate("/backup/start")}>
         Backup Secret Phrase

@@ -1,7 +1,6 @@
 import { useWallet } from "@/hooks/useWallet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Back } from "@/components/Back";
 
 import { Check, Copy } from "lucide-react";
 
@@ -38,7 +37,6 @@ export const Receive = () => {
 
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
-      <Back />
       <div className="py-9">
         <QRCodeSVG
           className="p-3 rotate-45 border-2 border-primary rounded-md"
