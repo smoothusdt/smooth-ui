@@ -36,7 +36,8 @@ export const Receive = () => {
   };
 
   return (
-    <div className="w-full flex flex-col justify-center items-center gap-4">
+    <div className="flex flex-col justify-center items-center gap-4">
+      <p>Your USDT TRC-20 address</p>
       <div className="py-9">
         <QRCodeSVG
           className="p-3 rotate-45 border-2 border-primary rounded-md"

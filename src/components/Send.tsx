@@ -23,33 +23,27 @@ export const Send = () => {
   const { connected } = useWallet();
   const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
-  const [amount, setAmount] = useState<number | undefined>();
   const [sending, setSending] = useState(false);
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
   const posthog = usePostHog();
 
+  const [amountRaw, setAmountRaw] = useState<string>("");
+  const amount = parseInt(amountRaw) || 0;
+
   // The user wallet is not set up - cant do anything on this screen
   useEffect(() => {
     if (!connected) navigate("/");
   }, [connected, navigate]);
 
-  const isOverspending =
-    amount !== undefined &&
-    balance !== undefined &&
-    amount + SmoothFee > balance;
+  const isOverspending = balance !== undefined && amount + SmoothFee > balance;
 
   const sendDisabled =
-    sending ||
-    amount === 0 ||
-    amount === undefined ||
-    receiver === "" ||
-    isOverspending ||
-    isOffline;
+    sending || amount === 0 || receiver === "" || isOverspending || isOffline;
 
   const reset = () => {
-    setAmount(undefined);
+    setAmountRaw("");
     setReceiver("");
     setSending(false);
   };
@@ -102,47 +96,53 @@ export const Send = () => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <Label htmlFor="text-input-to">To</Label>
-      {/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */}
-      <Input
-        id="text-input-to"
-        type="text"
-        value={receiver}
-        onChange={(e) => setReceiver(e.target.value)}
-        placeholder="TR7NHq...gjLj6t"
-      />
-      <Label htmlFor="text-input-amount">Amount (USDT)</Label>
-      <Input
-        id="text-input-amount"
-        type="number"
-        inputMode="decimal"
-        value={amount === undefined ? "" : amount}
-        onChange={(e) => setAmount(Number(e.target.value))}
-        min={0}
-        placeholder="10"
-      />
-      <span className="text-sm text-muted-foreground">
-        Fee: {SmoothFee} <span className="text-[0.5rem]">USDT</span>
-      </span>
-      {amount && amount > 0 && (
+    <div className="h-full flex flex-col justify-between">
+      <div className="flex flex-col gap-3">
+        <Label htmlFor="text-input-to">To</Label>
+        {/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */}
+        <Input
+          id="text-input-to"
+          type="text"
+          value={receiver}
+          onChange={(e) => setReceiver(e.target.value)}
+          placeholder="TR7NHq...gjLj6t"
+        />
+        <Label htmlFor="text-input-amount">Amount (USDT)</Label>
+        <Input
+          id="text-input-amount"
+          type="number"
+          inputMode="decimal"
+          value={amountRaw}
+          onChange={(e) => setAmountRaw(e.target.value)}
+          min={0}
+          placeholder="10"
+        />
         <span className="text-sm text-muted-foreground">
-          Total: <strong>{amount + SmoothFee}</strong>{" "}
-          <span className="text-[0.5rem]">USDT</span>
+          Fee: {SmoothFee} <span className="text-[0.5rem]">USDT</span>
         </span>
-      )}
-      {isOverspending && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Whoops</AlertTitle>
-          <AlertDescription>You can't send more than you have</AlertDescription>
-        </Alert>
-      )}
-      <Button disabled={sendDisabled} onClick={handleTransferClicked}>
-        {sending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {sending ? "Sending" : "Send"}
-      </Button>
-      <Toaster />
+        {Boolean(amount) && (
+          <span className="text-sm text-muted-foreground">
+            Total: <strong>{amount + SmoothFee}</strong>{" "}
+            <span className="text-[0.5rem]">USDT</span>
+          </span>
+        )}
+        <Toaster />
+      </div>
+      <div className="flex flex-col gap-4">
+        {isOverspending && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Whoops</AlertTitle>
+            <AlertDescription>
+              You can't send more than you have
+            </AlertDescription>
+          </Alert>
+        )}
+        <Button disabled={sendDisabled} onClick={handleTransferClicked}>
+          {sending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {sending ? "Sending" : "Send"}
+        </Button>
+      </div>
     </div>
   );
 };
