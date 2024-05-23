@@ -25,8 +25,8 @@ function App() {
   const { connected } = useWallet();
 
   return (
-    <main className="container mx-auto bg-green-200">
-      <div className="flex justify-between align-top pt-8 pb-8 bg-violet-200">
+    <main className="container mx-auto w-96">
+      <div className="flex justify-between align-top pt-8 pb-8">
         <div>
           <h1 className="text-3xl font-semibold">Smooth USDT</h1>
           {isOffline && (

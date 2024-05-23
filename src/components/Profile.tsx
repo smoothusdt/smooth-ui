@@ -23,7 +23,7 @@ export function DeleteWalletButton() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive">Delete Your Wallet</Button>
+        <Button variant="destructive">Delete Wallet</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -64,7 +64,7 @@ export const Profile = () => {
   }, [connected, navigate]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 bg-cyan-50">
+    <div className="w-full h-full flex flex-col gap-4">
       <Back />
       <ThemeSwitch />
       <DeleteWalletButton />

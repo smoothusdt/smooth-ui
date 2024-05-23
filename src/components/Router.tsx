@@ -17,7 +17,7 @@ export const Router = () => {
   const [profile] = useRoute("/profile");
 
   return (
-    <div className="w-full h-full bg-yellow-200">
+    <div className="w-full h-full">
       {root && <Root />}
       {setup && <SetupWallet />}
       {home && <Home />}
