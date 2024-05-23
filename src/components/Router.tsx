@@ -5,7 +5,7 @@ import { useRoute } from "wouter";
 import { Root } from "./Root";
 import { ImportWallet, SetupWallet } from "./Setup";
 import { Home } from "./Home";
-import { Profile } from "./Profile";
+import { Settings } from "./Settings";
 import {
   Backup,
   BackupPrompt,
@@ -22,7 +22,7 @@ export const Router = () => {
   const [home] = useRoute("/home");
   const [send] = useRoute("/send");
   const [receive] = useRoute("/receive");
-  const [profile] = useRoute("/profile");
+  const [settings] = useRoute("/settings");
   const [backupPrompt] = useRoute("/backup/prompt");
   const [startBackup] = useRoute("/backup/start");
   const [backup] = useRoute("/backup/backup");
@@ -37,7 +37,7 @@ export const Router = () => {
       {home && <Home />}
       {send && <Send />}
       {receive && <Receive />}
-      {profile && <Profile />}
+      {settings && <Settings />}
       {backupPrompt && <BackupPrompt />}
       {startBackup && <StartBackup />}
       {backup && <Backup />}

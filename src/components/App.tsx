@@ -13,7 +13,7 @@ function ProfileButton() {
   const { wallet } = useWallet();
 
   return (
-    <Button variant="outline" onClick={() => navigate("/profile")}>
+    <Button variant="outline" onClick={() => navigate("/settings")}>
       {wallet?.address.slice(0, 4)}...
       <Settings className="pl-2" />
     </Button>
@@ -23,7 +23,7 @@ function ProfileButton() {
 function App() {
   const { isOffline } = usePwa();
   const { connected } = useWallet();
-  const [profile] = useRoute("/profile");
+  const [profile] = useRoute("/settings");
   const [backup] = useRoute("/backup/*");
 
   return (
