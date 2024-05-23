@@ -38,7 +38,8 @@ export const Send = () => {
     if (!connected) navigate("/");
   }, [connected, navigate]);
 
-  const isOverspending = balance !== undefined && amount + SmoothFee > balance;
+  const isOverspending =
+    balance !== undefined && amountRaw && amount + SmoothFee > balance;
   const receiverInvalid = receiver && !TronWeb.isAddress(receiver);
 
   let alert = "";
