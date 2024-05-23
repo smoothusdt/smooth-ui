@@ -44,7 +44,8 @@ export function StartBackup() {
         You are about to see your secret phrase.
         <br />
         <br />
-        Remember: whoever knows the secret phrase fully controls the wallet.
+        Remember: whoever knows the secret phrase has full control over the
+        wallet.
         <br />
         <br />
         Don't lose your secret phrase and don't let anybody else see it.
@@ -197,7 +198,7 @@ export function BackupPrompt() {
         <span className="text-2xl">Wallet created!</span>
         <br />
         <br />
-        Your wallet is controlled by something called a "secret phrase".
+        Your wallet is controlled by a secret phrase.
         <br />
         <br />
         You will need it to restore the wallet if you lose your phone or delete

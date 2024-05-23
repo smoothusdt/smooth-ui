@@ -24,6 +24,7 @@ function App() {
   const { isOffline } = usePwa();
   const { connected } = useWallet();
   const [profile] = useRoute("/profile");
+  const [backup] = useRoute("/backup/*");
 
   return (
     <main className="container h-full w-full max-w-screen-sm flex flex-col">
@@ -34,7 +35,7 @@ function App() {
           </h1>
           {isOffline && <OfflineBadge />}
         </div>
-        {connected && !profile && <ProfileButton />}
+        {connected && !profile && !backup && <ProfileButton />}
       </div>
       <div className="flex-1 pb-8">
         <Router />

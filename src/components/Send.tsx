@@ -112,7 +112,7 @@ export const Send = () => {
         type="text"
         value={receiver}
         onChange={(e) => setReceiver(e.target.value)}
-        placeholder={wallet?.address}
+        placeholder="TR7NHq...gjLj6t"
       />
       <Label htmlFor="text-input-amount">Amount (USDT)</Label>
       <Input

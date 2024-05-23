@@ -3,7 +3,7 @@ import { Receive } from "@/components/Receive";
 
 import { useRoute } from "wouter";
 import { Root } from "./Root";
-import { SetupWallet } from "./Setup";
+import { ImportWallet, SetupWallet } from "./Setup";
 import { Home } from "./Home";
 import { Profile } from "./Profile";
 import {
@@ -18,6 +18,7 @@ export const Router = () => {
   // minimal navigation setup
   const [root] = useRoute("/");
   const [setup] = useRoute("/setup");
+  const [importWallet] = useRoute("/import");
   const [home] = useRoute("/home");
   const [send] = useRoute("/send");
   const [receive] = useRoute("/receive");
@@ -32,6 +33,7 @@ export const Router = () => {
     <>
       {root && <Root />}
       {setup && <SetupWallet />}
+      {importWallet && <ImportWallet />}
       {home && <Home />}
       {send && <Send />}
       {receive && <Receive />}
