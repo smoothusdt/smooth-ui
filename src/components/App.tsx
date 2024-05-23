@@ -1,21 +1,21 @@
 import { Router } from "@/components/Router";
-import { Badge } from "@/components/ui/badge";
+import { OfflineBadge } from "@/components/OfflineBadge";
+import { Button } from "@/components/ui/button";
+
+import { Settings } from "lucide-react";
+
+import { useLocation, useRoute } from "wouter";
 import { usePwa } from "@dotmind/react-use-pwa";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { User } from "lucide-react";
-import { Button } from "./ui/button";
-import { useLocation } from "wouter";
 import { useWallet } from "@/hooks/useWallet";
 
 function ProfileButton() {
   const [, navigate] = useLocation();
+  const { wallet } = useWallet();
+
   return (
     <Button variant="outline" onClick={() => navigate("/profile")}>
-      <User />
+      {wallet?.address.slice(0, 4)}...
+      <Settings className="pl-2" />
     </Button>
   );
 }
@@ -23,26 +23,22 @@ function ProfileButton() {
 function App() {
   const { isOffline } = usePwa();
   const { connected } = useWallet();
+  const [profile] = useRoute("/profile");
 
   return (
-    <main className="container h-screen w-screen">
-      <div className="flex justify-between align-top pt-8 pb-8">
+    <main className="container h-full w-full max-w-screen-sm flex flex-col">
+      <div className="flex justify-between align-top py-8">
         <div>
-          <h1 className="text-3xl font-semibold">Smooth USDT</h1>
-          {isOffline && (
-            <Popover>
-              <PopoverTrigger>
-                <Badge variant="destructive">offline</Badge>
-              </PopoverTrigger>
-              <PopoverContent>
-                Balance may be inaccurate and sending is not available.
-              </PopoverContent>
-            </Popover>
-          )}
+          <h1 className="text-3xl font-semibold">
+            smooth <span className="text-xs text-muted-foreground"> USDT</span>
+          </h1>
+          {isOffline && <OfflineBadge />}
         </div>
-        {connected && <ProfileButton />}
+        {connected && !profile && <ProfileButton />}
       </div>
-      <Router />
+      <div className="flex-1">
+        <Router />
+      </div>
     </main>
   );
 }

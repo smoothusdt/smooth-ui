@@ -18,7 +18,7 @@ export const Home = () => {
   }, [connected, navigate]);
 
   return (
-    <>
+    <div className="size-full flex flex-col justify-between pb-8">
       <Balance />
       <div className="w-full flex gap-4 justify-between">
         <Button
@@ -34,6 +34,6 @@ export const Home = () => {
           Receive
         </Button>
       </div>
-    </>
+    </div>
   );
 };

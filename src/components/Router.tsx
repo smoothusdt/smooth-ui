@@ -17,13 +17,13 @@ export const Router = () => {
   const [profile] = useRoute("/profile");
 
   return (
-    <div className="w-full h-full">
+    <>
       {root && <Root />}
       {setup && <SetupWallet />}
       {home && <Home />}
       {send && <Send />}
       {receive && <Receive />}
       {profile && <Profile />}
-    </div>
+    </>
   );
 };
