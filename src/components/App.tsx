@@ -25,7 +25,7 @@ function App() {
   const { connected } = useWallet();
 
   return (
-    <main className="container mx-auto w-96">
+    <main className="container h-screen w-screen">
       <div className="flex justify-between align-top pt-8 pb-8">
         <div>
           <h1 className="text-3xl font-semibold">Smooth USDT</h1>
