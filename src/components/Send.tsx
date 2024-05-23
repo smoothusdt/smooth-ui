@@ -18,8 +18,10 @@ import { usePwa } from "@dotmind/react-use-pwa";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
+import { TronWeb } from "tronweb";
 
 export const Send = () => {
+  const posthog = usePostHog();
   const { connected } = useWallet();
   const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
@@ -27,7 +29,6 @@ export const Send = () => {
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
-  const posthog = usePostHog();
 
   const [amountRaw, setAmountRaw] = useState<string>("");
   const amount = parseInt(amountRaw) || 0;
@@ -38,9 +39,22 @@ export const Send = () => {
   }, [connected, navigate]);
 
   const isOverspending = balance !== undefined && amount + SmoothFee > balance;
+  const receiverInvalid = receiver && !TronWeb.isAddress(receiver);
+
+  let alert = "";
+  if (isOverspending) {
+    alert = "You can't send more than you have";
+  } else if (receiverInvalid) {
+    alert = '"To" is not a valid address';
+  }
 
   const sendDisabled =
-    sending || amount === 0 || receiver === "" || isOverspending || isOffline;
+    sending ||
+    amount === 0 ||
+    receiver === "" ||
+    isOverspending ||
+    receiverInvalid ||
+    isOffline;
 
   const reset = () => {
     setAmountRaw("");
@@ -129,13 +143,11 @@ export const Send = () => {
         <Toaster />
       </div>
       <div className="flex flex-col gap-4">
-        {isOverspending && (
+        {alert && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Whoops</AlertTitle>
-            <AlertDescription>
-              You can't send more than you have
-            </AlertDescription>
+            <AlertDescription>{alert}</AlertDescription>
           </Alert>
         )}
         <Button disabled={sendDisabled} onClick={handleTransferClicked}>
