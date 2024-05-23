@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { Back } from "./Back";
+import { useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -176,6 +175,41 @@ export function BackupSuccess() {
         <span>You have backed up your secret phrase.</span>
       </p>
       <Button onClick={() => navigate("/")}>Finish</Button>
+    </div>
+  );
+}
+
+/**
+ * Used at sign up to ask the user whether they want to
+ * backup the mnemonic now.
+ */
+export function BackupPrompt() {
+  const [, navigate] = useLocation();
+
+  return (
+    <div className="h-full flex flex-col justify-between">
+      <p>
+        Hey, a small note.
+        <br />
+        <br />
+        This is web3. Which means that the Smooth USDT team has zero control
+        over your wallet.
+        <br />
+        <br />
+        This is good because we can never block you or your funds. But this also
+        means that if you lose access to your wallet we won't be able to help
+        you.
+        <br />
+        <br />
+        The only thing that will help you restore access if you delete the app
+        or lose the device is a secret phrase. Take a backup of it.
+      </p>
+      <div className="flex flex-col gap-4">
+        <Button onClick={() => navigate("start")}>Backup now</Button>
+        <Button variant="secondary" onClick={() => navigate("/home")}>
+          Backup later
+        </Button>
+      </div>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { Home } from "./Home";
 import { Profile } from "./Profile";
 import {
   Backup,
+  BackupPrompt,
   BackupSuccess,
   ConfirmBackup,
   StartBackup,
@@ -21,6 +22,7 @@ export const Router = () => {
   const [send] = useRoute("/send");
   const [receive] = useRoute("/receive");
   const [profile] = useRoute("/profile");
+  const [backupPrompt] = useRoute("/backup/prompt");
   const [startBackup] = useRoute("/backup/start");
   const [backup] = useRoute("/backup/backup");
   const [confirmBackup] = useRoute("/backup/confirm");
@@ -34,6 +36,7 @@ export const Router = () => {
       {send && <Send />}
       {receive && <Receive />}
       {profile && <Profile />}
+      {backupPrompt && <BackupPrompt />}
       {startBackup && <StartBackup />}
       {backup && <Backup />}
       {confirmBackup && <ConfirmBackup />}

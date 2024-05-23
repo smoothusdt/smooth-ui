@@ -25,7 +25,13 @@ export const SetupWallet = () => {
         walletImported: importing,
       },
     });
-    navigate("home");
+
+    if (importing) {
+      navigate("home");
+    } else {
+      // a new mnemonic has just been generated
+      navigate("/backup/prompt");
+    }
   }, [wallet, importing, navigate, posthog]);
 
   const handleImportClicked = () => {
