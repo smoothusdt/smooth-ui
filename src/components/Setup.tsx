@@ -90,9 +90,13 @@ export const SetupWallet = () => {
   };
 
   return (
-    <div className="grid w-full gap-2">
-      <Button onClick={createWallet}>Create Wallet</Button>
-      <Button onClick={() => navigate("/import")}>Import Wallet</Button>
+    <div className="h-full flex flex-col justify-between">
+      <div /> {/* for flex alignment */}
+      <p className="text-2xl text-center">Welcome!</p>
+      <div className="flex flex-col gap-4">
+        <Button onClick={createWallet}>Create Wallet</Button>
+        <Button onClick={() => navigate("/import")}>Import Wallet</Button>
+      </div>
     </div>
   );
 };

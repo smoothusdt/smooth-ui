@@ -51,10 +51,11 @@ export const ThemeSwitch = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {Themes.map((theme) => {
+        {Themes.map((theme, index) => {
           const active = theme === activeTheme;
           return (
             <DropdownMenuItem
+              key={index}
               onClick={() => setTheme(theme)}
               className={clsx(
                 active && "font-semibold bg-secondary",
