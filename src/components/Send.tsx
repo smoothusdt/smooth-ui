@@ -14,7 +14,7 @@ import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { SmoothFee } from "@/constants";
 import { getTronScanLink } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
-import { usePwa } from "@dotmind/react-use-pwa";
+import { usePwa } from "@/hooks/usePwa";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";

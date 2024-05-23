@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
-import { usePwa } from "@dotmind/react-use-pwa";
+import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
 import { useEffect } from "react";
 

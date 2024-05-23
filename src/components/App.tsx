@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 
 import { useLocation, useRoute } from "wouter";
-import { usePwa } from "@dotmind/react-use-pwa";
+import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
 
 function ProfileButton() {

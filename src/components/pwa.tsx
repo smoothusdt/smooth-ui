@@ -1,5 +1,5 @@
 import { PropsWithChildren, useCallback } from "react";
-import { usePwa } from "@dotmind/react-use-pwa";
+import { usePwa } from "@/hooks/usePwa";
 import { Button } from "./ui/button";
 import toast from "react-hot-toast";
 
