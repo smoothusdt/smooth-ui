@@ -11,13 +11,14 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-
-import { CircleCheck } from "lucide-react";
 
 import { useWallet } from "@/hooks/useWallet";
 
-import { cn } from "@/lib/utils";
+import {
+  Consequence,
+  Consequences,
+  useConsequences,
+} from "@/components/Consequences";
 
 /** Component to host a "delete wallet" button which contains a confirmation experience inside a drawer */
 export const DeleteWalletButton = () => {
@@ -34,19 +35,24 @@ export const DeleteWalletButton = () => {
     }, 350);
   };
 
-  // Maintain the state of acceptance for the consequences
-  // and provide a convenience setter
-  const [accepted, setAccepted] = useState([false, false, false]);
-  const toggle = (idx: number) => {
-    setAccepted((last) => {
-      const copy = [...last];
-      copy.splice(idx, 1, !last[idx]);
-      return copy;
-    });
-  };
+  const consequences = [
+    <span>
+      The <b>only</b> way to restore your wallet is to enter your
+      <b> secret phrase</b>. Make sure it is backed up.
+    </span>,
+    <span>
+      The <b>only</b> way to restore your wallet is to enter your
+      <b> secret phrase</b>. Make sure it is backed up.
+    </span>,
+    <span>
+      <b>Nobody</b> can help you if you lose your secret phrase.
+    </span>,
+  ];
+
+  const { accepted, toggle, legitimate } = useConsequences(consequences);
 
   // Cannot delete until all consequences are accepted
-  const deleteDisabled = !accepted.every((e) => e);
+  const deleteDisabled = !legitimate;
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -63,23 +69,13 @@ export const DeleteWalletButton = () => {
               Tap on all the checkboxes to confirm you understand the
               consequences.
             </p>
-            <Consequence accepted={accepted[0]} onClick={() => toggle(0)}>
-              <span>
-                <b>You</b> are the <b>only</b> person in control of your wallet.
-                The Smooth USDT team has no access.
-              </span>
-            </Consequence>
-            <Consequence accepted={accepted[1]} onClick={() => toggle(1)}>
-              <span>
-                The <b>only</b> way to restore your wallet is to enter your
-                <b> secret phrase</b>. Make sure it is backed up.
-              </span>
-            </Consequence>
-            <Consequence accepted={accepted[2]} onClick={() => toggle(2)}>
-              <span>
-                <b>Nobody</b> can help you if you lose your secret phrase.
-              </span>
-            </Consequence>
+            <Consequences>
+              {consequences.map((consequence, i) => (
+                <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
+                  {consequence}
+                </Consequence>
+              ))}
+            </Consequences>
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="flex flex-col gap-2">
@@ -96,27 +92,5 @@ export const DeleteWalletButton = () => {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
-};
-
-/** Local component for a clickable callout the user must accept to delete their wallet */
-const Consequence: React.FC<
-  React.PropsWithChildren<{ accepted?: boolean; onClick?: () => void }>
-> = (props) => {
-  const { accepted, children, onClick } = props;
-  return (
-    <Alert
-      className={cn(
-        accepted && "bg-muted",
-        " text-small text-left text-muted-foreground",
-      )}
-      onClick={onClick}
-    >
-      <CircleCheck
-        className="h-4 w-4"
-        fill={accepted ? "hsl(var(--primary))" : undefined}
-      />
-      <AlertDescription>{children}</AlertDescription>
-    </Alert>
   );
 };
