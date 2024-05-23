@@ -1,60 +1,63 @@
-import { useRef, useState } from "react";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { shuffle } from "@/util";
-import { Alert } from "./ui/alert";
+import { FC, PropsWithChildren, useRef, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { CopyWallet } from "@/components/CopyWallet";
+import {
+  Consequence,
+  Consequences,
+  useConsequences,
+} from "@/components/Consequences";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+import { CircleCheck, WalletIcon } from "lucide-react";
+
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
-/**
- * Quick and dirty component to display the mnemonic
- */
-const WordList = (props: { list: string[] }) => {
-  return (
-    <div className="pb-8 select-none">
-      <p className="text-2xl pb-8">Your secret phrase</p>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gridTemplateRows: "repeat(4, 1fr)",
-          gap: 8,
-        }}
-      >
-        {props.list.map((word, index) => (
-          <div key={index}>
-            {index + 1}. {word}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import { shuffle } from "@/util";
 
+/** Entry point to the backup flow. Requires the user to accept consequences before proceeding */
 export function StartBackup() {
   const [, navigate] = useLocation();
 
+  const consequences = [
+    <span>You are about to see your secret phrase.</span>,
+    <span>
+      Whoever knows the secret phrase has full control over the wallet and all
+      it's funds.
+    </span>,
+    <span>
+      Don't lose your secret phrase and don't let anybody else see it.
+    </span>,
+  ];
+  const { accepted, toggle, legitimate } = useConsequences(consequences);
+
+  // Cannot reveal until all consequences are accepted
+  const revealDisabled = !legitimate;
+
   return (
     <div className="h-full flex flex-col justify-between">
-      <p>
-        <span className="text-2xl">Backing up</span>
-        <br />
-        <br />
-        You are about to see your secret phrase.
-        <br />
-        <br />
-        Remember: whoever knows the secret phrase has full control over the
-        wallet.
-        <br />
-        <br />
-        Don't lose your secret phrase and don't let anybody else see it.
+      <span className="text-2xl">Backing up</span>
+      <p className="text-muted-foreground text-sm">
+        Tap on all the checkboxes to confirm you understand the consequences.
       </p>
-      <Button onClick={() => navigate("backup")}>Reveal</Button>
+      <Consequences>
+        {consequences.map((consequence, i) => (
+          <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
+            {consequence}
+          </Consequence>
+        ))}
+      </Consequences>
+      <Button disabled={revealDisabled} onClick={() => navigate("backup")}>
+        Reveal
+      </Button>
     </div>
   );
 }
 
+/** Shows the non-copyable secret phrase */
 export function Backup() {
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
@@ -63,36 +66,40 @@ export function Backup() {
     <div className="h-full flex flex-col justify-between">
       <WordList list={wallet!.mnemonic.phrase.split(" ")} />
       <Button className="w-full" onClick={() => navigate("confirm")}>
-        I have backed up
+        Got it
       </Button>
     </div>
   );
 }
 
+/** Local component displaying a text input for a word to be confirm in `<ConfirmBackup />` */
 function WordConfirmation(props: {
   word: string;
   setWord: (arg0: string) => void;
   wordIndex: number;
 }) {
+  const { word, setWord, wordIndex } = props;
+
   return (
-    <div className="flex pt-2 pb-2">
+    <div className="flex pt-2 pb-2 justify-between">
       <Label
-        htmlFor="text-input-amount"
+        htmlFor={`text-input-amount-${wordIndex}`}
         className="flex flex-col justify-center w-32"
       >
-        Word #{props.wordIndex}
+        Word #{wordIndex}
       </Label>
       <Input
         className="w-32"
-        id="text-input-amount"
+        id={`text-input-amount-${wordIndex}`}
         type="text"
-        value={props.word}
-        onChange={(e) => props.setWord(e.target.value)}
+        value={word}
+        onChange={(e) => setWord(e.target.value)}
       />
     </div>
   );
 }
 
+/** Component validating three random words from a secret phrase */
 export function ConfirmBackup() {
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
@@ -131,6 +138,7 @@ export function ConfirmBackup() {
     navigate("success");
   };
 
+  // TODO: Use form validation to validate as we go
   return (
     <div className="h-full flex flex-col justify-between">
       <div>
@@ -169,9 +177,11 @@ export function ConfirmBackup() {
   );
 }
 
+/** Component showing a successful backup */
 export function BackupSuccess() {
   const [, navigate] = useLocation();
 
+  // TODO: hasBackedup -> localStorage
   return (
     <div className="h-full flex flex-col justify-between">
       <p>
@@ -187,26 +197,38 @@ export function BackupSuccess() {
 
 /**
  * Used at sign up to ask the user whether they want to
- * backup the mnemonic now.
+ * backup the mnemonic now or later.
  */
 export function BackupPrompt() {
   const [, navigate] = useLocation();
 
   return (
     <div className="h-full flex flex-col justify-between">
-      <p>
-        <span className="text-2xl">Wallet created!</span>
-        <br />
-        <br />
-        Your wallet is controlled by a secret phrase.
-        <br />
-        <br />
-        You will need it to restore the wallet if you lose your phone or delete
-        this app.
-        <br />
-        <br />
-        Back up the secret phrase and store it in a secure place.
-      </p>
+      <span className="text-2xl">We created a wallet for you</span>
+
+      <Alert className="text-small text-left text-muted-foreground">
+        <WalletIcon className="h-4 w-4" />
+        <AlertDescription className="flex flex-col gap-2">
+          <span>
+            Your brand new wallet.
+            <br />
+            Ready to send and receive USDT.
+          </span>
+
+          <CopyWallet />
+        </AlertDescription>
+      </Alert>
+      <div className="flex flex-col gap-2">
+        <span className="text-lg text-foreground">About your new wallet</span>
+        <AboutLine>Your wallet is controlled by a secret phrase</AboutLine>
+        <AboutLine>
+          You will need it to restore the wallet if you lose your phone or
+          delete this app
+        </AboutLine>
+        <AboutLine>
+          Back up the secret phrase and store it in a secure place
+        </AboutLine>
+      </div>
       <div className="flex flex-col gap-4">
         <Button onClick={() => navigate("start")}>Back up now</Button>
         <Button variant="secondary" onClick={() => navigate("/home")}>
@@ -216,3 +238,43 @@ export function BackupPrompt() {
     </div>
   );
 }
+
+/**
+ * Local component to display info about the new wallet as a nice bulleted list
+ */
+const AboutLine: FC<PropsWithChildren> = (props) => {
+  // TODO: How to align icon with text more robustly
+  return (
+    <div className="flex gap-2 items-start text-muted-foreground">
+      <div className="size-4">
+        <CircleCheck size={14} className="mt-[.2rem]" />
+      </div>
+      <span className="text-sm">{props.children}</span>
+    </div>
+  );
+};
+
+/**
+ * Local component to display the mnemonic
+ */
+const WordList = (props: { list: string[] }) => {
+  return (
+    <div className="pb-8 select-none">
+      <p className="text-2xl pb-8">Your secret phrase</p>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateRows: "repeat(4, 1fr)",
+          gap: 8,
+        }}
+      >
+        {props.list.map((word, index) => (
+          <div key={index}>
+            {index + 1}. {word}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

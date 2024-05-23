@@ -32,9 +32,10 @@ export const Receive = () => {
         setCopied(false);
       }, 1000);
     }
-    // TODO: Set some kind of error if hte copy fails
+    // TODO: Set some kind of error if the copy fails
   };
 
+  // TODO: Use CopyWallet Component?
   return (
     <div className="flex flex-col justify-center items-center gap-4">
       <p>Your USDT TRC-20 address</p>
