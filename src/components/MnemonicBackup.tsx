@@ -38,11 +38,13 @@ export function StartBackup() {
   return (
     <div className="h-full flex flex-col justify-between">
       <p>
+        <span className="text-2xl">Backing up</span>
+        <br />
+        <br />
         You are about to see your secret phrase.
         <br />
         <br />
-        Remember: this is web3. Whoever knows the secret phrase fully controls
-        the wallet.
+        Remember: whoever knows the secret phrase fully controls the wallet.
         <br />
         <br />
         Don't lose your secret phrase and don't let anybody else see it.
@@ -131,7 +133,9 @@ export function ConfirmBackup() {
   return (
     <div className="h-full flex flex-col justify-between">
       <div>
-        <p className="pb-2">Confirm by entering a few words.</p>
+        <p className="pb-2">
+          <span className="text-2xl">Confirm the backup</span>
+        </p>
         <WordConfirmation
           word={wordA}
           setWord={setWordA}
@@ -172,7 +176,8 @@ export function BackupSuccess() {
       <p>
         <span className="text-2xl">Great!</span>
         <br />
-        <span>You have backed up your secret phrase.</span>
+        <br />
+        You have backed up your secret phrase.
       </p>
       <Button onClick={() => navigate("/")}>Finish</Button>
     </div>
@@ -189,25 +194,22 @@ export function BackupPrompt() {
   return (
     <div className="h-full flex flex-col justify-between">
       <p>
-        Hey, a small note.
+        <span className="text-2xl">Wallet created!</span>
         <br />
         <br />
-        This is web3. Which means that the Smooth USDT team has zero control
-        over your wallet.
+        Your wallet is controlled by something called a "secret phrase".
         <br />
         <br />
-        This is good because we can never block you or your funds. But this also
-        means that if you lose access to your wallet we won't be able to help
-        you.
+        You will need it to restore the wallet if you lose your phone or delete
+        this app.
         <br />
         <br />
-        The only thing that will help you restore access if you delete the app
-        or lose the device is a secret phrase. Take a backup of it.
+        Back up the secret phrase and store it in a secure place.
       </p>
       <div className="flex flex-col gap-4">
-        <Button onClick={() => navigate("start")}>Backup now</Button>
+        <Button onClick={() => navigate("start")}>Back up now</Button>
         <Button variant="secondary" onClick={() => navigate("/home")}>
-          Backup later
+          Back up later
         </Button>
       </div>
     </div>
