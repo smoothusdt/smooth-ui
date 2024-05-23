@@ -67,6 +67,9 @@ export const Profile = () => {
     <div className="w-full h-full flex flex-col gap-4">
       <Back />
       <ThemeSwitch />
+      <Button onClick={() => navigate("/backup/start")}>
+        Backup Secret Phrase
+      </Button>
       <DeleteWalletButton />
     </div>
   );

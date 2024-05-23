@@ -137,11 +137,13 @@ export async function checkApprovalLoop(tronWeb: TronWeb, posthog: PostHog) {
   if (approvalGranted) return;
 
   posthog.capture('Starting the check approval loop');
+  console.log('Starting the approval check loop')
   for (; ;) {
     await checkApproval(tronWeb, posthog)
 
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
     if (approvalGranted) {
+      console.log('Approval granted! Finishing the check approval loop')
       posthog.capture('Approval granted! Finishing the check approval loop')
       return; // the approval is given and everything is good
     }

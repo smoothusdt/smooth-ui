@@ -75,27 +75,3 @@ const EnvConnectMessage = () => {
     </span>
   );
 };
-
-/**
- * Quick and dirty component to display the mnemonic
- */
-// const WordList = (props: { list: string[] }) => {
-//   return (
-//     <div
-//       style={{
-//         display: "grid",
-//         gridTemplateColumns: "repeat(3, 1fr)",
-//         gridTemplateRows: "repeat(4, 1fr)",
-//         gap: 8,
-//       }}
-//     >
-//       {props.list.map((word) => (
-//         <div
-//           style={{ background: "rgba(184, 184, 184, 0.1)", borderRadius: 4 }}
-//         >
-//           {word}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };

@@ -6,6 +6,12 @@ import { Root } from "./Root";
 import { SetupWallet } from "./Setup";
 import { Home } from "./Home";
 import { Profile } from "./Profile";
+import {
+  Backup,
+  BackupSuccess,
+  ConfirmBackup,
+  StartBackup,
+} from "./MnemonicBackup";
 
 export const Router = () => {
   // minimal navigation setup
@@ -15,6 +21,10 @@ export const Router = () => {
   const [send] = useRoute("/send");
   const [receive] = useRoute("/receive");
   const [profile] = useRoute("/profile");
+  const [startBackup] = useRoute("/backup/start");
+  const [backup] = useRoute("/backup/backup");
+  const [confirmBackup] = useRoute("/backup/confirm");
+  const [backupSuccess] = useRoute("/backup/success");
 
   return (
     <>
@@ -24,6 +34,10 @@ export const Router = () => {
       {send && <Send />}
       {receive && <Receive />}
       {profile && <Profile />}
+      {startBackup && <StartBackup />}
+      {backup && <Backup />}
+      {confirmBackup && <ConfirmBackup />}
+      {backupSuccess && <BackupSuccess />}
     </>
   );
 };

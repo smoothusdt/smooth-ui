@@ -36,7 +36,7 @@ function App() {
         </div>
         {connected && !profile && <ProfileButton />}
       </div>
-      <div className="flex-1">
+      <div className="flex-1 pb-8">
         <Router />
       </div>
     </main>

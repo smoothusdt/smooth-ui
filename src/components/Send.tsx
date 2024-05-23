@@ -21,7 +21,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
 export const Send = () => {
-  const { connected } = useWallet();
+  const { connected, wallet } = useWallet();
   const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
@@ -112,7 +112,7 @@ export const Send = () => {
         type="text"
         value={receiver}
         onChange={(e) => setReceiver(e.target.value)}
-        placeholder="tron wallet address"
+        placeholder={wallet?.address}
       />
       <Label htmlFor="text-input-amount">Amount (USDT)</Label>
       <Input

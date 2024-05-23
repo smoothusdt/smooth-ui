@@ -19,10 +19,12 @@ const useWalletContext = hookAndProvider[0];
  * with a more secure approach.
  */
 function storeMnemonic(mnemonic: string) {
+  sessionStorage.setItem(MnemonicStorageKey, mnemonic);
   localStorage.setItem(MnemonicStorageKey, mnemonic);
 }
 
 function deleteMnemonic() {
+  sessionStorage.removeItem(MnemonicStorageKey);
   localStorage.removeItem(MnemonicStorageKey);
 }
 
@@ -55,6 +57,14 @@ export const useWallet = () => {
     },
     [setWallet],
   );
+
+  if (!connected) {
+    // Attempt to load the secret phrase from session storage
+    const phrase = sessionStorage.getItem(MnemonicStorageKey);
+    if (phrase) {
+      setMnemonic(phrase);
+    }
+  }
 
   useEffect(() => {
     // Check for a .env key and use that. For debugging only!
