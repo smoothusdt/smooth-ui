@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { useWallet } from "../hooks/useWallet";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
-import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
+
+import { Label } from "@/components/ui/label";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
+import { useWallet } from "@/hooks/useWallet";
 import { usePostHog } from "posthog-js/react";
-import { Alert } from "./ui/alert";
+import { useLocation } from "wouter";
 
 export function ImportWallet() {
   const posthog = usePostHog();
@@ -62,41 +64,3 @@ export function ImportWallet() {
     </div>
   );
 }
-
-export const SetupWallet = () => {
-  const posthog = usePostHog();
-  const [, navigate] = useLocation();
-  const { setMnemonic: setWalletMnemonic, newMnemonic, wallet } = useWallet();
-
-  // Using a useEffect to wait until the `wallet` variable updates
-  // to log the wallet address to posthog.
-  useEffect(() => {
-    if (!wallet) return;
-
-    posthog.capture("Finished wallet setup", {
-      $set: {
-        walletAddress: wallet?.address || "unknown",
-        walletImported: false, // a new one was created
-      },
-    });
-
-    navigate("/backup/prompt");
-  }, [wallet, navigate, posthog]);
-
-  // const [phrase, setPhrase] = useState<string[]>([]);
-  const createWallet = () => {
-    const generatedMnemonic = newMnemonic();
-    setWalletMnemonic(generatedMnemonic);
-  };
-
-  return (
-    <div className="h-full flex flex-col justify-between">
-      <div /> {/* for flex alignment */}
-      <p className="text-2xl text-center">Welcome!</p>
-      <div className="flex flex-col gap-4">
-        <Button onClick={createWallet}>Create Wallet</Button>
-        <Button onClick={() => navigate("/import")}>Import Wallet</Button>
-      </div>
-    </div>
-  );
-};

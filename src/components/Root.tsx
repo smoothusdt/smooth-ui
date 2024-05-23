@@ -3,6 +3,7 @@ import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
+/** Headless component which owns the root route. Navigates to the appropriate route based on internal checks */
 export const Root = () => {
   const [, navigate] = useLocation();
   const { connected, setMnemonic } = useWallet();

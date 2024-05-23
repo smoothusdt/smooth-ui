@@ -7,6 +7,9 @@ import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
 import { useEffect } from "react";
 
+/** Full page component displaying the home page of Smooth.
+ * Includes balance, send, and receive buttons.
+ */
 export const Home = () => {
   const { connected } = useWallet();
   const [, navigate] = useLocation();

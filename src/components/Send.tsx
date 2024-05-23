@@ -20,6 +20,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 import { TronWeb } from "tronweb";
 
+/** Full page components which owns the send flow */
 export const Send = () => {
   const posthog = usePostHog();
   const { connected } = useWallet();

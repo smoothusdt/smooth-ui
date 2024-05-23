@@ -8,19 +8,8 @@ import { useLocation, useRoute } from "wouter";
 import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
 
-function ProfileButton() {
-  const [, navigate] = useLocation();
-  const { wallet } = useWallet();
-
-  return (
-    <Button variant="outline" onClick={() => navigate("/settings")}>
-      {wallet?.address.slice(0, 4)}...
-      <Settings className="pl-2" />
-    </Button>
-  );
-}
-
-function App() {
+/** Entry point of UI. Should be wrapped in all providers. */
+export const App = () => {
   const { isOffline } = usePwa();
   const { connected } = useWallet();
   const [profile] = useRoute("/settings");
@@ -42,6 +31,17 @@ function App() {
       </div>
     </main>
   );
-}
+};
 
-export default App;
+/** Local component to display a wallet / settings button indicating the wallet is added and there are settings for it */
+const ProfileButton = () => {
+  const [, navigate] = useLocation();
+  const { wallet } = useWallet();
+
+  return (
+    <Button variant="outline" onClick={() => navigate("/settings")}>
+      {wallet?.address.slice(0, 4)}...
+      <Settings className="pl-2" />
+    </Button>
+  );
+};

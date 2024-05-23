@@ -1,21 +1,23 @@
 import { Send } from "@/components/Send";
 import { Receive } from "@/components/Receive";
 
-import { useRoute } from "wouter";
-import { Root } from "./Root";
-import { ImportWallet, SetupWallet } from "./Setup";
-import { Home } from "./Home";
-import { Settings } from "./Settings";
+import { Root } from "@/components/Root";
+import { SetupWallet } from "@/components/SetupWallet";
+import { ImportWallet } from "@/components/ImportWallet";
+import { Home } from "@/components/Home";
+import { Settings } from "@/components/Settings";
 import {
   Backup,
   BackupPrompt,
   BackupSuccess,
   ConfirmBackup,
   StartBackup,
-} from "./MnemonicBackup";
+} from "@/components/MnemonicBackup";
 
+import { useRoute } from "wouter";
+
+/** Maps routes to components with no wrapper */
 export const Router = () => {
-  // minimal navigation setup
   const [root] = useRoute("/");
   const [setup] = useRoute("/setup");
   const [importWallet] = useRoute("/import");
