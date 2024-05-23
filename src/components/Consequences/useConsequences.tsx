@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 
 /**
  * Hook for use with the `<Consequences />` components.
@@ -7,10 +7,7 @@ import { ReactNode, useState } from "react";
  * @returns an array of statuses, a convenience toggle, and a flag to know if all conditions are accepted
  */
 export const useConsequences = (content: ReactNode[]) => {
-  // Maintain the state of acceptance for the consequences
-  // and provide a convenience setter
-
-  // Attach a boolean to each element
+  // Map each element to a bool to represent if that element is accepted
   const withAcceptance = content.map((_) => {
     return false;
   });
@@ -24,6 +21,10 @@ export const useConsequences = (content: ReactNode[]) => {
     });
   };
   const legitimate = accepted.every((e) => e);
+  const reset = useCallback(
+    () => setAccepted(accepted.map((_) => false)),
+    [accepted],
+  );
 
-  return { accepted, toggle, legitimate };
+  return { accepted, toggle, legitimate, reset };
 };

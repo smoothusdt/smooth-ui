@@ -17,7 +17,7 @@ export const Consequence: React.FC<
     >
       <CircleCheck
         className="h-4 w-4"
-        fill={accepted ? "hsl(var(--primary))" : undefined}
+        fill={accepted ? "hsl(var(--primary))" : "none"}
       />
       <AlertDescription>{children}</AlertDescription>
     </Alert>

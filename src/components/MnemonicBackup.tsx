@@ -12,7 +12,7 @@ import { useLocation } from "wouter";
  */
 const WordList = (props: { list: string[] }) => {
   return (
-    <div className="pb-8">
+    <div className="pb-8 select-none">
       <p className="text-2xl pb-8">Your secret phrase</p>
       <div
         style={{

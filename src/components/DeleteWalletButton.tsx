@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Drawer,
@@ -49,10 +49,15 @@ export const DeleteWalletButton = () => {
     </span>,
   ];
 
-  const { accepted, toggle, legitimate } = useConsequences(consequences);
+  const { accepted, toggle, legitimate, reset } = useConsequences(consequences);
 
   // Cannot delete until all consequences are accepted
   const deleteDisabled = !legitimate;
+
+  // Reset acceptance when drawer is closed
+  useEffect(() => {
+    !drawerOpen && reset();
+  }, [drawerOpen /* omit reset */]);
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -79,9 +84,6 @@ export const DeleteWalletButton = () => {
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="flex flex-col gap-2">
-          <DrawerClose asChild>
-            <Button variant="secondary">Cancel</Button>
-          </DrawerClose>
           <Button
             disabled={deleteDisabled}
             variant="destructive"
@@ -89,6 +91,9 @@ export const DeleteWalletButton = () => {
           >
             Delete
           </Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
