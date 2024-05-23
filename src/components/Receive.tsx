@@ -5,15 +5,22 @@ import { Back } from "@/components/Back";
 
 import { Check, Copy } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { QRCodeSVG } from "qrcode.react";
 import { useCopyToClipboard } from "react-use";
+import { useLocation } from "wouter";
 
 export const Receive = () => {
+  const [, navigate] = useLocation();
   const [copied, setCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
-  const { wallet } = useWallet();
+  const { wallet, connected } = useWallet();
+
+  // The user wallet is not set up - cant do anything on this screen
+  useEffect(() => {
+    if (!connected) navigate("/");
+  }, [connected, navigate]);
 
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {

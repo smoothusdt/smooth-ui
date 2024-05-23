@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,8 +17,12 @@ import { getTronScanLink } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@dotmind/react-use-pwa";
 import { usePostHog } from "posthog-js/react";
+import { useWallet } from "@/hooks/useWallet";
+import { useLocation } from "wouter";
 
 export const Send = () => {
+  const { connected } = useWallet();
+  const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [sending, setSending] = useState(false);
@@ -26,6 +30,11 @@ export const Send = () => {
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
   const posthog = usePostHog();
+
+  // The user wallet is not set up - cant do anything on this screen
+  useEffect(() => {
+    if (!connected) navigate("/");
+  }, [connected, navigate]);
 
   const isOverspending =
     amount !== undefined &&

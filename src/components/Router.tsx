@@ -5,6 +5,7 @@ import { useRoute } from "wouter";
 import { Root } from "./Root";
 import { SetupWallet } from "./Setup";
 import { Home } from "./Home";
+import { Profile } from "./Profile";
 
 export const Router = () => {
   // minimal navigation setup
@@ -13,14 +14,16 @@ export const Router = () => {
   const [home] = useRoute("/home");
   const [send] = useRoute("/send");
   const [receive] = useRoute("/receive");
+  const [profile] = useRoute("/profile");
 
   return (
-    <div className="w-full h-ful flex flex-col justify-center gap-4">
+    <div className="w-full h-full bg-yellow-200">
       {root && <Root />}
       {setup && <SetupWallet />}
       {home && <Home />}
       {send && <Send />}
       {receive && <Receive />}
+      {profile && <Profile />}
     </div>
   );
 };

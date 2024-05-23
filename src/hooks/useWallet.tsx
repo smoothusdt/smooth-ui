@@ -22,6 +22,10 @@ function storeMnemonic(mnemonic: string) {
   localStorage.setItem(MnemonicStorageKey, mnemonic);
 }
 
+function deleteMnemonic() {
+  localStorage.removeItem(MnemonicStorageKey);
+}
+
 export function retrieveMnemonic(): string | null {
   return localStorage.getItem(MnemonicStorageKey);
 }
@@ -67,11 +71,17 @@ export const useWallet = () => {
     return newWallet.mnemonic!.phrase;
   };
 
+  const deleteWallet = () => {
+    deleteMnemonic();
+    setWallet(null);
+  };
+
   // TODO: How to make it so that wallet is not typed as null when connected = true?
   return {
     wallet,
     connected,
     setMnemonic,
     newMnemonic,
+    deleteWallet,
   };
 };
