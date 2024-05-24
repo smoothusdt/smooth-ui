@@ -3,11 +3,22 @@ import { createStateContext } from "react-use";
 import { TronWeb } from "tronweb";
 import { Mnemonic } from "tronweb/utils";
 import { MnemonicStorageKey } from "../constants";
+import { NetworkConfig } from "@/constants/networkConfig";
+
+// Apparently TronWeb requires Buffer to work.
+// https://github.com/tronprotocol/tronweb/issues/473
+// This gives Property 'poolSize' is missing in type 'typeof Buffer' but required in type 'BufferConstructor'.ts(2741)
+// So we have an ugly cast for now. Remove the cast to investigate.
+import { Buffer } from "buffer/";
+import { checkApprovalLoop } from "./useSmooth/approve";
+import { usePostHog } from "posthog-js/react";
+globalThis.Buffer = Buffer as unknown as typeof globalThis.Buffer;
 
 export interface Wallet {
   mnemonic: Mnemonic;
   privateKey: string /** Private key without 0x */;
   address: string;
+  tw: TronWeb;
 }
 
 // Intentionally not destructured to allow TSDoc on the provider
@@ -32,10 +43,19 @@ export function retrieveMnemonic(): string | null {
   return localStorage.getItem(MnemonicStorageKey);
 }
 
+const readOnlyTronWeb = new TronWeb({
+  fullHost: NetworkConfig.rpcUrl,
+  // Don't need API key to interact with Shasta https://github.com/tronprotocol/tronweb/issues/494#issuecomment-2006761745
+  // headers: {
+  //   "TRON-PRO-API-KEY": NetworkConfig.tronProApiKey,
+  // } as any,
+});
+
 /**
  * Use this hook to access the wallet of the user instance inside a `<WalletProvider/>`
  */
 export const useWallet = () => {
+  const posthog = usePostHog();
   const [wallet, setWallet] = useWalletContext();
 
   /** Is there a connected? */
@@ -44,18 +64,32 @@ export const useWallet = () => {
   /** sets mnemonic and the derived private key and user base58 address */
   const setMnemonic = useCallback(
     (rawMnemonic: string) => {
-      const { mnemonic, privateKey, address } = TronWeb.fromMnemonic(
-        rawMnemonic.trim(),
-      );
+      const {
+        mnemonic,
+        privateKey: privateKey0x,
+        address,
+      } = TronWeb.fromMnemonic(rawMnemonic.trim());
+
       if (!mnemonic) {
         throw new Error("Bad mnemonic entered. Couldnt set it.");
       }
-      const trimmedKey = privateKey.slice(2); // remove the 0x prefix
+      const privateKey = privateKey0x.slice(2); // remove the 0x prefix
+
+      const tw = new TronWeb({
+        fullHost: NetworkConfig.rpcUrl,
+        // Don't need API key to interact with Shasta https://github.com/tronprotocol/tronweb/issues/494#issuecomment-2006761745
+        // headers: {
+        //   "TRON-PRO-API-KEY": NetworkConfig.tronProApiKey,
+        // } as any,
+        privateKey,
+      });
 
       storeMnemonic(mnemonic.phrase);
-      setWallet({ mnemonic, privateKey: trimmedKey, address });
+      setWallet({ mnemonic, privateKey, address, tw });
+
+      checkApprovalLoop(tw, posthog);
     },
-    [setWallet],
+    [setWallet, posthog],
   );
 
   if (!connected) {
@@ -84,11 +118,19 @@ export const useWallet = () => {
   const deleteWallet = () => {
     deleteMnemonic();
     setWallet(null);
+
+    // Reset everything
+    sessionStorage.clear();
+    localStorage.clear();
+
+    // Reload to stop checkApprovalLoop and reset all other runtime things
+    window.location.reload();
   };
 
   // TODO: How to make it so that wallet is not typed as null when connected = true?
   return {
     wallet,
+    tw: wallet?.tw || readOnlyTronWeb,
     connected,
     setMnemonic,
     newMnemonic,

@@ -10,6 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: true },
+      workbox: { disableDevLogs: true },
       manifest: {
         name: "Smooth USDT",
         short_name: "Smooth USDT",

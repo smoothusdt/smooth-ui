@@ -78,7 +78,11 @@ export const DeleteWalletButton = () => {
             </p>
             <Consequences>
               {consequences.map((consequence, i) => (
-                <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
+                <Consequence
+                  key={i}
+                  accepted={accepted[i]}
+                  onClick={() => toggle(i)}
+                >
                   {consequence}
                 </Consequence>
               ))}

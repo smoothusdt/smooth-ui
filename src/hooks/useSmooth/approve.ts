@@ -83,11 +83,12 @@ const ApprovalMutex = new Mutex()
  * @throws if there was an approval initiated earlier and it took too long or something else went wrong. 
  * @param tronWeb has to have the proper private key set.
  */
-export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
+export async function checkApproval(tronWeb: TronWeb, posthog: PostHog): Promise<boolean> {
+  console.log("Checking approval eligibility")
   const releaseMutex = await ApprovalMutex.acquire()
   try {
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
-    if (approvalGranted) return; // the approval is given and everything is good
+    if (approvalGranted) return true; // the approval is given and everything is good
 
     console.log('The approval has not been given yet, performing checks')
     // Maybe the allowance has changed since our last query - refresh it.
@@ -98,7 +99,7 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
     if (allowanceHuman.gt(1e18)) {
       posthog.capture("Detected a previously granted approval")
       localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue)
-      return;
+      return true;
     }
 
     const USDTContract = tronWeb.contract(USDTAbi, USDTAddressBase58);
@@ -111,11 +112,12 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog) {
     if (balanceHuman.lt(SmoothFee)) {
       // the balance is too low to make approval
       console.log('The user balance is too low to make approval. Balance:', balanceHuman.toString())
-      return;
+      return false;
     }
 
     await makeApprovalViaApi(tronWeb, posthog) // approve
     localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue) // yeee boi, approved!
+    return true
   } finally {
     releaseMutex()
   }
@@ -136,10 +138,17 @@ export async function checkApprovalLoop(tronWeb: TronWeb, posthog: PostHog) {
   const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
   if (approvalGranted) return;
 
-  posthog.capture('Starting the check approval loop');
   console.log('Starting the approval check loop')
+  posthog.capture('Starting the check approval loop');
   for (; ;) {
-    await checkApproval(tronWeb, posthog)
+    try {
+      await checkApproval(tronWeb, posthog)
+    } catch (e: unknown) {
+      console.error("Error in check approval loop", e)
+      posthog.capture("error", {
+        error: JSON.stringify(e, Object.getOwnPropertyNames(e)),
+      });
+    }
 
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
     if (approvalGranted) {

@@ -3,22 +3,13 @@ import { useEffect, useState } from "react";
 import { USDTAddressBase58, USDTDecimals } from "../constants";
 import { USDTAbi } from "../constants/usdtAbi";
 import { useWallet } from "./useWallet";
-import { useTronWeb } from "./useTronWeb";
-import { useSmooth } from "./useSmooth/useSmooth";
 
-/** Use within a `<TronWebProvider/>` and `<WalletProvider />` to get the current wallets USDT Balance. */
+/** Use within `<WalletProvider />` to get the current wallets USDT Balance. */
 export const useUSDTBalance = () => {
-  const [checkApproval, _] = useSmooth();
-  const { wallet, connected } = useWallet();
-  const tw = useTronWeb();
+  const { wallet, connected, tw } = useWallet();
 
   // TODO: cache this and void going to the network every time?
   const [balance, setBalance] = useState<number | undefined>();
-
-  useEffect(() => {
-    checkApproval(); // fire and forget
-  }, [balance, checkApproval]);
-
   const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
 
   useEffect(() => {

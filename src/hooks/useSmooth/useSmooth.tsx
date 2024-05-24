@@ -1,21 +1,15 @@
-import { useEffect } from "react";
-import { useTronWeb } from "../useTronWeb";
-import { checkApproval, checkApprovalLoop } from "./approve";
+import { checkApproval } from "./approve";
 import { transferViaRouter } from "./transfer";
 import { usePostHog } from "posthog-js/react";
+import { useWallet } from "../useWallet";
 
-/** Use within a `<TronWebProvider/>` to get access to the SmoothUSDT API. */
+/** Use within a `<WalletProvider/>` to get access to the SmoothUSDT API. */
 export const useSmooth = (): [
-  () => Promise<void>,
+  () => Promise<boolean>,
   (to: string, amt: number) => Promise<{ txID: string }>,
 ] => {
   const posthog = usePostHog();
-  const tw = useTronWeb();
-
-  useEffect(() => {
-    // run only once - upon initial setup
-    checkApprovalLoop(tw, posthog); // fire and forget
-  }, [tw, posthog]);
+  const { tw } = useWallet();
 
   // TODO: maybe better define these with useCallback
   return [

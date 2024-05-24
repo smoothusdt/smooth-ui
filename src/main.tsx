@@ -9,7 +9,6 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { WalletProvider } from "@/context/WalletProvider";
-import { TronWebProvider } from "@/context/TronWebProvider";
 
 // Initialize analytics
 import posthog from "posthog-js";
@@ -30,9 +29,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       >
         <ThemeProvider>
           <WalletProvider>
-            <TronWebProvider>
-              <App />
-            </TronWebProvider>
+            <App />
           </WalletProvider>
         </ThemeProvider>
       </ErrorBoundary>

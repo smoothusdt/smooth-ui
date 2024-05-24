@@ -71,7 +71,13 @@ export const Send = () => {
     const doTransfer = async () => {
       try {
         setSending(true);
-        await checkApproval(); // make sure the router is approved
+
+        // make sure the router is approved. Executes instantly if the approval
+        // is granted and known in local storage.
+        const approvalGranted = await checkApproval();
+        if (!approvalGranted)
+          posthog.capture("Approval was not granted before sending!");
+
         const res = await transfer(receiver, amount!);
         reset();
         return res;
