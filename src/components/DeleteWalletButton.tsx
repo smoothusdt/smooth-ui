@@ -42,10 +42,6 @@ export const DeleteWalletButton = () => {
       <b> secret phrase</b>. Make sure it is backed up.
     </span>,
     <span>
-      The <b>only</b> way to restore your wallet is to enter your
-      <b> secret phrase</b>. Make sure it is backed up.
-    </span>,
-    <span>
       <b>Nobody</b> can help you if you lose your secret phrase.
     </span>,
   ];
