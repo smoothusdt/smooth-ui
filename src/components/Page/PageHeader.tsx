@@ -2,7 +2,6 @@ import { FC, PropsWithChildren } from "react";
 
 import { OfflineBadge } from "@/components/OfflineBadge";
 import { Button } from "@/components/ui/button";
-import { ShastaBadge } from "../ShastaBadge";
 
 import { ChevronLeft, Settings } from "lucide-react";
 
@@ -12,9 +11,16 @@ import { useRoute, useLocation } from "wouter";
 
 import { cn } from "@/lib/utils";
 
-export const PageHeader: FC<PropsWithChildren<{ hasBack?: boolean }>> = (
-  props,
-) => {
+interface PageHeaderProps {
+  // TODO: Could this integrate with useScreen somehow?
+  /** Should the header display a back button? */
+  hasBack?: boolean;
+}
+
+/**
+ * Use the as the first descendent of`<Page/>` to give your page the global header.
+ */
+export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
   const { children } = props;
   const hasBack = props.hasBack ?? false;
 
@@ -22,8 +28,6 @@ export const PageHeader: FC<PropsWithChildren<{ hasBack?: boolean }>> = (
   const { connected } = useWallet();
   const [profile] = useRoute("/settings");
   const [backup] = useRoute("/backup/*");
-
-  const isShasta = import.meta.env.VITE_CHAIN === "shasta";
 
   return (
     <div className="flex justify-between items-center py-8">
@@ -43,7 +47,6 @@ export const PageHeader: FC<PropsWithChildren<{ hasBack?: boolean }>> = (
         </div>
         <div className={cn(hasBack && "pl-[40px]", "flex gap-2")}>
           {isOffline && <OfflineBadge />}
-          {/* {isShasta && <ShastaBadge />} */}
         </div>
       </div>
       {connected && !profile && !backup && <ProfileButton />}
