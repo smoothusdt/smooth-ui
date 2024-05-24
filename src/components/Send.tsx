@@ -19,6 +19,7 @@ import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 import { TronWeb } from "tronweb";
+import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -78,12 +79,25 @@ export const Send = () => {
 
         // make sure the router is approved. Executes instantly if the approval
         // is granted and known in local storage.
-        const approvalGranted = await checkApproval();
+        const [approvalGranted, checkApprovalResult] = await checkApproval();
         if (!approvalGranted) {
           console.error("Approval was not granted before sending!");
-          posthog.capture("Approval was not granted before sending!");
+          posthog.capture("Approval was not granted before sending!", {
+            approvalGranted,
+            checkApprovalResult,
+          });
           setArbitraryProblem(true);
           return;
+        }
+
+        // Make an informational warning if we had to execute the approval just now.
+        // Normally the approval executes in the background.
+        if (checkApprovalResult !== CheckApprovalResult.AlreadyGranted) {
+          console.warn("Approval was granted, but not in background");
+          posthog.capture("Approval was granted, but not in background", {
+            approvalGranted,
+            checkApprovalResult,
+          });
         }
 
         const res = await transfer(receiver, amount!);

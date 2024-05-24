@@ -1,11 +1,11 @@
-import { checkApproval } from "./approve";
+import { CheckApprovalResult, checkApproval } from "./approve";
 import { transferViaRouter } from "./transfer";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "../useWallet";
 
 /** Use within a `<WalletProvider/>` to get access to the SmoothUSDT API. */
 export const useSmooth = (): [
-  () => Promise<boolean>,
+  () => Promise<[boolean, CheckApprovalResult]>,
   (to: string, amt: number) => Promise<{ txID: string }>,
 ] => {
   const posthog = usePostHog();

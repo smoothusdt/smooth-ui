@@ -17,9 +17,11 @@ import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
 import { shuffle } from "@/util";
+import { usePostHog } from "posthog-js/react";
 
 /** Entry point to the backup flow. Requires the user to accept consequences before proceeding */
 export function StartBackup() {
+  const posthog = usePostHog();
   const [, navigate] = useLocation();
 
   const consequences = [
@@ -37,6 +39,11 @@ export function StartBackup() {
   // Cannot reveal until all consequences are accepted
   const revealDisabled = !legitimate;
 
+  const revealClicked = () => {
+    posthog.capture("Accepted backup wallet consequences");
+    navigate("backup");
+  };
+
   return (
     <div className="h-full flex flex-col justify-between">
       <span className="text-2xl">Backing up</span>
@@ -50,7 +57,7 @@ export function StartBackup() {
           </Consequence>
         ))}
       </Consequences>
-      <Button disabled={revealDisabled} onClick={() => navigate("backup")}>
+      <Button disabled={revealDisabled} onClick={revealClicked}>
         Reveal
       </Button>
     </div>
@@ -125,9 +132,9 @@ export function ConfirmBackup() {
   const wordCIndex: number | undefined = wordIndices.current[2];
 
   const confirmWords = () => {
-    const wordAValid = wordA.trim() === mnemonicWords[wordAIndex];
-    const wordBValid = wordB.trim() === mnemonicWords[wordBIndex];
-    const wordCValid = wordC.trim() === mnemonicWords[wordCIndex];
+    const wordAValid = wordA.trim().toLowerCase() === mnemonicWords[wordAIndex];
+    const wordBValid = wordB.trim().toLowerCase() === mnemonicWords[wordBIndex];
+    const wordCValid = wordC.trim().toLowerCase() === mnemonicWords[wordCIndex];
 
     const allWordsValid = wordAValid && wordBValid && wordCValid;
     if (!allWordsValid) {

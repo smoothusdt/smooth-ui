@@ -19,18 +19,22 @@ import {
 
 import { useWallet } from "@/hooks/useWallet";
 import { useTranslation } from "react-i18next";
+import { usePostHog } from "posthog-js/react";
 
 /** Component to host a "delete wallet" button which contains a confirmation experience inside a drawer */
 export const DeleteWalletButton = () => {
+  const posthog = usePostHog();
   const { deleteWallet } = useWallet();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { t } = useTranslation();
 
   const handleDeleteWalletClicked = () => {
+    setDrawerOpen(false);
+    posthog.capture("Accepted delete wallet consequences");
+
     // Quick and dirty way to delete the wallet after closing the drawer
     // TODO: Should we useEffect to deleteWallet when drawer closes?
     // https://github.com/shadcn-ui/ui/issues/2503
-    setDrawerOpen(false);
     setTimeout(() => {
       deleteWallet();
     }, 350);

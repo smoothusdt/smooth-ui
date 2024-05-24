@@ -72,6 +72,12 @@ async function queryAllowanceHumanAmount(tronWeb: TronWeb): Promise<BigNumber> {
   return allowanceHuman
 }
 
+export enum CheckApprovalResult {
+  AlreadyGranted, // The approval has already been granted at some point in the past
+  GrantedNow, // Made the approval just now
+  NotReady, // User balance is too low to make an approval
+}
+
 // Prevents double initiation of approval if checkApproval
 // is called multiple times ~simultaneously.
 const ApprovalMutex = new Mutex()
@@ -80,16 +86,16 @@ const ApprovalMutex = new Mutex()
  * Checks the user USDT balance and approval status.
  * If the user balance is >= than smooth tx fee (1.5 USDT) and the router
  * has not been approved yet - performs the approval.
- * @returns when the router is approved or if the balance is too low to approve. 
- * @throws if there was an approval initiated earlier and it took too long or something else went wrong. 
  * @param tronWeb has to have the proper private key set.
+ * @throws if there was an approval initiated earlier and it took too long or something else went wrong. 
+ * @returns a boolean (whether the router is now approved or not) + CheckApprovalResult for more details.
  */
-export async function checkApproval(tronWeb: TronWeb, posthog: PostHog): Promise<boolean> {
+export async function checkApproval(tronWeb: TronWeb, posthog: PostHog): Promise<[boolean, CheckApprovalResult]> {
   console.log("Checking approval eligibility")
   const releaseMutex = await ApprovalMutex.acquire()
   try {
     const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
-    if (approvalGranted) return true; // the approval is given and everything is good
+    if (approvalGranted) return [true, CheckApprovalResult.AlreadyGranted]; // the approval is given and everything is good
 
     console.log('The approval has not been given yet, performing checks')
     // Maybe the allowance has changed since our last query - refresh it.
@@ -100,7 +106,7 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog): Promise
     if (allowanceHuman.gt(1e18)) {
       posthog.capture("Detected a previously granted approval")
       localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue)
-      return true;
+      return [true, CheckApprovalResult.AlreadyGranted];
     }
 
     const USDTContract = tronWeb.contract(USDTAbi, USDTAddressBase58);
@@ -113,12 +119,12 @@ export async function checkApproval(tronWeb: TronWeb, posthog: PostHog): Promise
     if (balanceHuman.lt(SmoothFee)) {
       // the balance is too low to make approval
       console.log('The user balance is too low to make approval. Balance:', balanceHuman.toString())
-      return false;
+      return [false, CheckApprovalResult.NotReady];
     }
 
     await makeApprovalViaApi(tronWeb, posthog) // approve
     localStorage.setItem(ApprovalStatusStorageKey, ApprovalGrantedValue) // yeee boi, approved!
-    return true
+    return [true, CheckApprovalResult.GrantedNow]
   } finally {
     releaseMutex()
   }
@@ -143,19 +149,17 @@ export async function checkApprovalLoop(tronWeb: TronWeb, posthog: PostHog) {
   posthog.capture('Starting the check approval loop');
   for (; ;) {
     try {
-      await checkApproval(tronWeb, posthog)
+      const [granted, _] = await checkApproval(tronWeb, posthog)
+      if (granted) {
+        console.log('Approval granted! Finishing the check approval loop')
+        posthog.capture('Approval granted! Finishing the check approval loop')
+        return;
+      }
     } catch (e: unknown) {
       console.error("Error in check approval loop", e)
       posthog.capture("error", {
         error: JSON.stringify(e, Object.getOwnPropertyNames(e)),
       });
-    }
-
-    const approvalGranted = localStorage.getItem(ApprovalStatusStorageKey) === ApprovalGrantedValue
-    if (approvalGranted) {
-      console.log('Approval granted! Finishing the check approval loop')
-      posthog.capture('Approval granted! Finishing the check approval loop')
-      return; // the approval is given and everything is good
     }
 
     await new Promise(resolve => setTimeout(resolve, 3000)) // sleep until next block
