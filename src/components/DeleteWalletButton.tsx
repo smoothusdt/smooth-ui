@@ -11,19 +11,20 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-
-import { useWallet } from "@/hooks/useWallet";
-
 import {
   Consequence,
   Consequences,
   useConsequences,
 } from "@/components/Consequences";
 
+import { useWallet } from "@/hooks/useWallet";
+import { useTranslation } from "react-i18next";
+
 /** Component to host a "delete wallet" button which contains a confirmation experience inside a drawer */
 export const DeleteWalletButton = () => {
   const { deleteWallet } = useWallet();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleDeleteWalletClicked = () => {
     // Quick and dirty way to delete the wallet after closing the drawer
@@ -57,12 +58,13 @@ export const DeleteWalletButton = () => {
   // Reset acceptance when drawer is closed
   useEffect(() => {
     !drawerOpen && reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawerOpen /* omit reset */]);
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
       <DrawerTrigger asChild>
-        <Button variant="destructive">Delete Wallet</Button>
+        <Button variant="destructive">{t("deleteWallet")}</Button>
       </DrawerTrigger>
       <DrawerContent className="sm:max-w-[425px]">
         <DrawerHeader>

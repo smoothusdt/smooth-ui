@@ -18,6 +18,9 @@ posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
   api_host: "https://us.i.posthog.com",
 });
 
+// Initialize i18n
+import "./i18n";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <PostHogProvider client={posthog}>
