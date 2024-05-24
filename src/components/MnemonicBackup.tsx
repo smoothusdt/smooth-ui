@@ -222,8 +222,8 @@ export function BackupPrompt() {
         <span className="text-lg text-foreground">About your new wallet</span>
         <AboutLine>Your wallet is controlled by a secret phrase</AboutLine>
         <AboutLine>
-          You will need it to restore the wallet if you lose your phone or
-          delete this app
+          You will need the secret phrase if you delete this app or lose your
+          phone
         </AboutLine>
         <AboutLine>
           Back up the secret phrase and store it in a secure place

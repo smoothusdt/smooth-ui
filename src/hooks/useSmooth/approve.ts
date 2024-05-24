@@ -11,6 +11,7 @@ import { PostHog } from "posthog-js";
  * @returns the response from calling the smoothUSDT API.
  */
 async function makeApprovalViaApi(tw: TronWeb, posthog: PostHog) {
+  console.log("Making approval")
   posthog.capture("Making approval")
   const startTs = Date.now()
 

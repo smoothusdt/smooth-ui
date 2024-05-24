@@ -30,6 +30,7 @@ export const Send = () => {
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
+  const [arbitraryProblem, setArbitraryProblem] = useState(false);
 
   const [amountRaw, setAmountRaw] = useState<string>("");
   const amount = parseInt(amountRaw) || 0;
@@ -48,6 +49,8 @@ export const Send = () => {
     alert = "You can't send more than you have";
   } else if (receiverInvalid) {
     alert = '"To" is not a valid address';
+  } else if (arbitraryProblem) {
+    alert = "Something went wrong. Please try again";
   }
 
   const sendDisabled =
@@ -71,12 +74,17 @@ export const Send = () => {
     const doTransfer = async () => {
       try {
         setSending(true);
+        setArbitraryProblem(false);
 
         // make sure the router is approved. Executes instantly if the approval
         // is granted and known in local storage.
         const approvalGranted = await checkApproval();
-        if (!approvalGranted)
+        if (!approvalGranted) {
+          console.error("Approval was not granted before sending!");
           posthog.capture("Approval was not granted before sending!");
+          setArbitraryProblem(true);
+          return;
+        }
 
         const res = await transfer(receiver, amount!);
         reset();
