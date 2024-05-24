@@ -42,6 +42,10 @@ export const DeleteWalletButton = () => {
 
   const consequences = [
     <span>
+      <b>You</b> are the <b>only</b> person in control of your wallet. The
+      Smooth USDT team has no access.
+    </span>,
+    <span>
       The <b>only</b> way to restore your wallet is to enter your
       <b> secret phrase</b>. Make sure it is backed up.
     </span>,
