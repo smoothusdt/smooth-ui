@@ -11,7 +11,7 @@ export const Consequence: React.FC<
     <Alert
       className={cn(
         accepted && "bg-muted",
-        " text-small text-left text-muted-foreground",
+        " text-small text-left text-muted-foreground transition-colors",
       )}
       onClick={onClick}
     >
