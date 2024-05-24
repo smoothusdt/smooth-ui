@@ -5,7 +5,6 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { useLocation } from "wouter";
 import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
-import { useEffect } from "react";
 
 /** Full page component displaying the home page of Smooth.
  * Includes balance, send, and receive buttons.
@@ -15,10 +14,7 @@ export const Home = () => {
   const [, navigate] = useLocation();
   const { isOffline } = usePwa();
 
-  // The user wallet is not set up - cant do anything on this screen
-  useEffect(() => {
-    if (!connected) navigate("/");
-  }, [connected, navigate]);
+  if (!connected) return;
 
   return (
     <div className="size-full flex flex-col justify-between">

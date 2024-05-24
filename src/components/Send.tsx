@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,6 @@ import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@/hooks/usePwa";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
-import { useLocation } from "wouter";
 import { TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 
@@ -25,21 +24,16 @@ import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 export const Send = () => {
   const posthog = usePostHog();
   const { connected } = useWallet();
-  const [, navigate] = useLocation();
   const [receiver, setReceiver] = useState("");
   const [sending, setSending] = useState(false);
   const balance = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
-  const [arbitraryProblem, setArbitraryProblem] = useState(false);
 
   const [amountRaw, setAmountRaw] = useState<string>("");
   const amount = parseInt(amountRaw) || 0;
 
-  // The user wallet is not set up - cant do anything on this screen
-  useEffect(() => {
-    if (!connected) navigate("/");
-  }, [connected, navigate]);
+  if (!connected) return; // wait until the wallet loads
 
   const isOverspending =
     balance !== undefined && amountRaw && amount + SmoothFee > balance;
@@ -50,8 +44,6 @@ export const Send = () => {
     alert = "You can't send more than you have";
   } else if (receiverInvalid) {
     alert = '"To" is not a valid address';
-  } else if (arbitraryProblem) {
-    alert = "Something went wrong. Please try again";
   }
 
   const sendDisabled =
@@ -75,7 +67,6 @@ export const Send = () => {
     const doTransfer = async () => {
       try {
         setSending(true);
-        setArbitraryProblem(false);
 
         // make sure the router is approved. Executes instantly if the approval
         // is granted and known in local storage.
@@ -86,8 +77,7 @@ export const Send = () => {
             approvalGranted,
             checkApprovalResult,
           });
-          setArbitraryProblem(true);
-          return;
+          throw new Error("Something went wrong. Please try again.");
         }
 
         // Make an informational warning if we had to execute the approval just now.

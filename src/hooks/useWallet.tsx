@@ -63,7 +63,7 @@ export const useWallet = () => {
 
   /** sets mnemonic and the derived private key and user base58 address */
   const setMnemonic = useCallback(
-    (rawMnemonic: string) => {
+    (rawMnemonic: string): Wallet => {
       const {
         mnemonic,
         privateKey: privateKey0x,
@@ -85,20 +85,15 @@ export const useWallet = () => {
       });
 
       storeMnemonic(mnemonic.phrase);
-      setWallet({ mnemonic, privateKey, address, tw });
 
-      checkApprovalLoop(tw, posthog);
+      const wallet = { mnemonic, privateKey, address, tw };
+      setWallet(wallet);
+
+      checkApprovalLoop(tw, posthog); // fire and forget
+      return wallet;
     },
     [setWallet, posthog],
   );
-
-  if (!connected) {
-    // Attempt to load the secret phrase from session storage
-    const phrase = sessionStorage.getItem(MnemonicStorageKey);
-    if (phrase) {
-      setMnemonic(phrase);
-    }
-  }
 
   useEffect(() => {
     // Check for a .env key and use that. For debugging only!
@@ -126,6 +121,22 @@ export const useWallet = () => {
     // Reload to stop checkApprovalLoop and reset all other runtime things
     window.location.reload();
   };
+
+  if (!connected) {
+    // Attempt to load the secret phrase from session storage
+    const mnemonic = sessionStorage.getItem(MnemonicStorageKey);
+    if (mnemonic) {
+      const wallet = setMnemonic(mnemonic);
+      return {
+        wallet,
+        tw: wallet.tw,
+        connected: true,
+        setMnemonic,
+        newMnemonic,
+        deleteWallet,
+      };
+    }
+  }
 
   // TODO: How to make it so that wallet is not typed as null when connected = true?
   return {

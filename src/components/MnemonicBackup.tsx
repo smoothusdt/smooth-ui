@@ -69,9 +69,11 @@ export function Backup() {
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
 
+  if (!wallet) return;
+
   return (
     <div className="h-full flex flex-col justify-between">
-      <WordList list={wallet!.mnemonic.phrase.split(" ")} />
+      <WordList list={wallet.mnemonic.phrase.split(" ")} />
       <Button className="w-full" onClick={() => navigate("confirm")}>
         Got it
       </Button>
@@ -110,14 +112,16 @@ function WordConfirmation(props: {
 export function ConfirmBackup() {
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
-  const mnemonicWords = wallet!.mnemonic.phrase.split(" ");
 
   const [wordA, setWordA] = useState("");
   const [wordB, setWordB] = useState("");
   const [wordC, setWordC] = useState("");
-  const [wordsAreInvalid, setWordsAreInvalid] = useState(false);
 
+  const [wordsAreInvalid, setWordsAreInvalid] = useState(false);
   const wordIndices = useRef<number[]>([]);
+
+  if (!wallet) return;
+  const mnemonicWords = wallet.mnemonic.phrase.split(" ");
 
   if (wordIndices.current.length === 0) {
     // Generate 3 words indices that we prompt the user for
@@ -197,7 +201,7 @@ export function BackupSuccess() {
         <br />
         You have backed up your secret phrase.
       </p>
-      <Button onClick={() => navigate("/")}>Finish</Button>
+      <Button onClick={() => navigate("/home")}>Finish</Button>
     </div>
   );
 }

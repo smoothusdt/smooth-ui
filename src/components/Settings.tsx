@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import { Button } from "@/components/ui/button";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { DeleteWalletButton } from "@/components/DeleteWalletButton";
@@ -15,11 +13,10 @@ export const Settings = () => {
   const { connected } = useWallet();
   const { t } = useTranslation();
 
-  // The user wallet is not set up or the user has deleted their wallet.
-  // Cant do anything on this screen.
-  useEffect(() => {
-    if (!connected) navigate("/");
-  }, [connected, navigate]);
+  if (!connected) {
+    navigate("/"); // wallet was deleted
+    return;
+  }
 
   return (
     <div className="w-full h-full flex flex-col gap-4">

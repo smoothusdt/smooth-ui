@@ -15,9 +15,12 @@ import {
 } from "@/components/MnemonicBackup";
 
 import { useRoute } from "wouter";
+import { useScreen } from "@/hooks/useScreen";
 
 /** Maps routes to components with no wrapper */
 export const Router = () => {
+  useScreen();
+
   const [root] = useRoute("/");
   const [setup] = useRoute("/setup");
   const [importWallet] = useRoute("/import");
