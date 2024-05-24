@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Page, PageContent, PageHeader } from "@/components/Page";
 
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
@@ -36,19 +37,28 @@ export const SetupWallet = () => {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div /> {/* for flex alignment */}
-      <p className="text-2xl text-center">
-        Welcome to smooth
-        <br />
-        <span className="text-sm text-center text-muted-foreground">
-          Choose one of the following to get started.
+    <Page>
+      <PageHeader hasBack>
+        <span>
+          smooth <span className="text-xs text-muted-foreground"> USDT</span>
         </span>
-      </p>
-      <div className="flex flex-col gap-4">
-        <Button onClick={handleCreateWalletClicked}>Create Wallet</Button>
-        <Button onClick={() => navigate("/import")}>Import Wallet</Button>
-      </div>
-    </div>
+      </PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <div /> {/* for flex alignment */}
+          <p className="text-2xl text-center">
+            Welcome to smooth
+            <br />
+            <span className="text-sm text-center text-muted-foreground">
+              Choose one of the following to get started.
+            </span>
+          </p>
+          <div className="flex flex-col gap-4">
+            <Button onClick={handleCreateWalletClicked}>Create Wallet</Button>
+            <Button onClick={() => navigate("/import")}>Import Wallet</Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
   );
 };

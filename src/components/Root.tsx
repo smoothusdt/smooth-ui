@@ -30,5 +30,5 @@ export const Root = () => {
 
   // No need to show anything - we just need useEffect to run and
   // redirect the user to the proper page.
-  return <div />;
+  return <></>;
 };

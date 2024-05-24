@@ -10,6 +10,7 @@ import {
   useConsequences,
 } from "@/components/Consequences";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Page, PageContent, PageHeader } from "@/components/Page";
 
 import { CircleCheck, WalletIcon } from "lucide-react";
 
@@ -45,22 +46,28 @@ export function StartBackup() {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <span className="text-2xl">Backing up</span>
-      <p className="text-muted-foreground text-sm">
-        Tap on all the checkboxes to confirm you understand the consequences.
-      </p>
-      <Consequences>
-        {consequences.map((consequence, i) => (
-          <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
-            {consequence}
-          </Consequence>
-        ))}
-      </Consequences>
-      <Button disabled={revealDisabled} onClick={revealClicked}>
-        Reveal
-      </Button>
-    </div>
+    <Page>
+      <PageHeader hasBack>Backup</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <span className="text-2xl">Backing up</span>
+          <p className="text-muted-foreground text-sm">
+            Tap on all the checkboxes to confirm you understand the
+            consequences.
+          </p>
+          <Consequences>
+            {consequences.map((consequence, i) => (
+              <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
+                {consequence}
+              </Consequence>
+            ))}
+          </Consequences>
+          <Button disabled={revealDisabled} onClick={revealClicked}>
+            Reveal
+          </Button>
+        </div>
+      </PageContent>
+    </Page>
   );
 }
 
@@ -72,39 +79,17 @@ export function Backup() {
   if (!wallet) return;
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <WordList list={wallet.mnemonic.phrase.split(" ")} />
-      <Button className="w-full" onClick={() => navigate("confirm")}>
-        Got it
-      </Button>
-    </div>
-  );
-}
-
-/** Local component displaying a text input for a word to be confirm in `<ConfirmBackup />` */
-function WordConfirmation(props: {
-  word: string;
-  setWord: (arg0: string) => void;
-  wordIndex: number;
-}) {
-  const { word, setWord, wordIndex } = props;
-
-  return (
-    <div className="flex pt-2 pb-2 justify-between">
-      <Label
-        htmlFor={`text-input-amount-${wordIndex}`}
-        className="flex flex-col justify-center w-32"
-      >
-        Word #{wordIndex}
-      </Label>
-      <Input
-        className="w-32"
-        id={`text-input-amount-${wordIndex}`}
-        type="text"
-        value={word}
-        onChange={(e) => setWord(e.target.value)}
-      />
-    </div>
+    <Page>
+      <PageHeader hasBack>Backup</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <WordList list={wallet.mnemonic.phrase.split(" ")} />
+          <Button className="w-full" onClick={() => navigate("confirm")}>
+            Got it
+          </Button>
+        </div>
+      </PageContent>
+    </Page>
   );
 }
 
@@ -151,40 +136,47 @@ export function ConfirmBackup() {
 
   // TODO: Use form validation to validate as we go
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div>
-        <p className="pb-2">
-          <span className="text-2xl">Confirm the backup</span>
-        </p>
-        <WordConfirmation
-          word={wordA}
-          setWord={setWordA}
-          wordIndex={wordAIndex + 1} // +1 for human readability
-        />
-        <WordConfirmation
-          word={wordB}
-          setWord={setWordB}
-          wordIndex={wordBIndex + 1}
-        />
-        <WordConfirmation
-          word={wordC}
-          setWord={setWordC}
-          wordIndex={wordCIndex + 1}
-        />
-      </div>
-      <div className="flex flex-col gap-4">
-        {wordsAreInvalid && (
-          <Alert variant="destructive">Some of the words are incorrect.</Alert>
-        )}
-        <Button
-          className="w-full"
-          disabled={!wordA || !wordB || !wordC}
-          onClick={confirmWords}
-        >
-          Confirm
-        </Button>
-      </div>
-    </div>
+    <Page>
+      <PageHeader hasBack>Backup</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <div>
+            <p className="pb-2">
+              <span className="text-2xl">Confirm the backup</span>
+            </p>
+            <WordConfirmation
+              word={wordA}
+              setWord={setWordA}
+              wordIndex={wordAIndex + 1} // +1 for human readability
+            />
+            <WordConfirmation
+              word={wordB}
+              setWord={setWordB}
+              wordIndex={wordBIndex + 1}
+            />
+            <WordConfirmation
+              word={wordC}
+              setWord={setWordC}
+              wordIndex={wordCIndex + 1}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            {wordsAreInvalid && (
+              <Alert variant="destructive">
+                Some of the words are incorrect.
+              </Alert>
+            )}
+            <Button
+              className="w-full"
+              disabled={!wordA || !wordB || !wordC}
+              onClick={confirmWords}
+            >
+              Confirm
+            </Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
   );
 }
 
@@ -194,15 +186,20 @@ export function BackupSuccess() {
 
   // TODO: hasBackedup -> localStorage
   return (
-    <div className="h-full flex flex-col justify-between">
-      <p>
-        <span className="text-2xl">Great!</span>
-        <br />
-        <br />
-        You have backed up your secret phrase.
-      </p>
-      <Button onClick={() => navigate("/home")}>Finish</Button>
-    </div>
+    <Page>
+      <PageHeader hasBack>Backup</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <p>
+            <span className="text-2xl">Great!</span>
+            <br />
+            <br />
+            You have backed up your secret phrase.
+          </p>
+          <Button onClick={() => navigate("/home")}>Finish</Button>
+        </div>
+      </PageContent>
+    </Page>
   );
 }
 
@@ -214,38 +211,72 @@ export function BackupPrompt() {
   const [, navigate] = useLocation();
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <span className="text-2xl">We created a wallet for you</span>
+    <Page>
+      <PageHeader hasBack>Backup</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <span className="text-2xl">We created a wallet for you</span>
 
-      <Alert className="text-small text-left text-muted-foreground">
-        <WalletIcon className="h-4 w-4" />
-        <AlertDescription className="flex flex-col gap-2">
-          <span>
-            Your brand new wallet.
-            <br />
-            Ready to send and receive USDT.
-          </span>
+          <Alert className="text-small text-left text-muted-foreground">
+            <WalletIcon className="h-4 w-4" />
+            <AlertDescription className="flex flex-col gap-2">
+              <span>
+                Your brand new wallet.
+                <br />
+                Ready to send and receive USDT.
+              </span>
 
-          <CopyWallet />
-        </AlertDescription>
-      </Alert>
-      <div className="flex flex-col gap-2">
-        <span className="text-lg text-foreground">About your new wallet</span>
-        <AboutLine>Your wallet is controlled by a secret phrase</AboutLine>
-        <AboutLine>
-          You will need the secret phrase if you delete this app or lose your
-          phone
-        </AboutLine>
-        <AboutLine>
-          Back up the secret phrase and store it in a secure place
-        </AboutLine>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Button onClick={() => navigate("start")}>Back up now</Button>
-        <Button variant="secondary" onClick={() => navigate("/home")}>
-          Back up later
-        </Button>
-      </div>
+              <CopyWallet />
+            </AlertDescription>
+          </Alert>
+          <div className="flex flex-col gap-2">
+            <span className="text-lg text-foreground">
+              About your new wallet
+            </span>
+            <AboutLine>Your wallet is controlled by a secret phrase</AboutLine>
+            <AboutLine>
+              You will need the secret phrase if you delete this app or lose
+              your phone
+            </AboutLine>
+            <AboutLine>
+              Back up the secret phrase and store it in a secure place
+            </AboutLine>
+          </div>
+          <div className="flex flex-col gap-4">
+            <Button onClick={() => navigate("start")}>Back up now</Button>
+            <Button variant="secondary" onClick={() => navigate("/home")}>
+              Back up later
+            </Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
+  );
+}
+
+/** Local component displaying a text input for a word to be confirm in `<ConfirmBackup />` */
+function WordConfirmation(props: {
+  word: string;
+  setWord: (arg0: string) => void;
+  wordIndex: number;
+}) {
+  const { word, setWord, wordIndex } = props;
+
+  return (
+    <div className="flex pt-2 pb-2 justify-between">
+      <Label
+        htmlFor={`text-input-amount-${wordIndex}`}
+        className="flex flex-col justify-center w-32"
+      >
+        Word #{wordIndex}
+      </Label>
+      <Input
+        className="w-32"
+        id={`text-input-amount-${wordIndex}`}
+        type="text"
+        value={word}
+        onChange={(e) => setWord(e.target.value)}
+      />
     </div>
   );
 }

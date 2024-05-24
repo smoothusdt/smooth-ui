@@ -1,6 +1,7 @@
 import { useWallet } from "@/hooks/useWallet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Page, PageContent, PageHeader } from "@/components/Page";
 
 import { Check, Copy } from "lucide-react";
 
@@ -32,25 +33,30 @@ export const Receive = () => {
 
   // TODO: Use CopyWallet Component?
   return (
-    <div className="flex flex-col justify-center items-center gap-4">
-      <p>Your USDT TRC-20 address</p>
-      <div className="py-9">
-        <QRCodeSVG
-          className="p-3 rotate-45 border-2 border-primary rounded-md"
-          value={wallet?.address ?? ""}
-        />
-      </div>
-      <div className="flex w-full max-w-sm items-center space-x-2">
-        <Input
-          className="truncate"
-          type="text"
-          readOnly
-          value={wallet?.address}
-        />
-        <Button onClick={handleCopyClicked}>
-          {copied ? <Check /> : <Copy />}
-        </Button>
-      </div>
-    </div>
+    <Page>
+      <PageHeader hasBack>Receive</PageHeader>
+      <PageContent>
+        <div className="flex flex-col justify-center items-center gap-4">
+          <p>Your USDT TRC-20 address</p>
+          <div className="py-9">
+            <QRCodeSVG
+              className="p-3 rotate-45 border-2 border-primary rounded-md"
+              value={wallet?.address ?? ""}
+            />
+          </div>
+          <div className="flex w-full max-w-sm items-center space-x-2">
+            <Input
+              className="truncate"
+              type="text"
+              readOnly
+              value={wallet?.address}
+            />
+            <Button onClick={handleCopyClicked}>
+              {copied ? <Check /> : <Copy />}
+            </Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
   );
 };

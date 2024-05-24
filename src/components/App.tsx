@@ -1,47 +1,53 @@
-import { Router } from "@/components/Router";
-import { OfflineBadge } from "@/components/OfflineBadge";
-import { Button } from "@/components/ui/button";
+import { Send } from "@/components/Send";
+import { Receive } from "@/components/Receive";
 
-import { Settings } from "lucide-react";
+import { Root } from "@/components/Root";
+import { SetupWallet } from "@/components/SetupWallet";
+import { ImportWallet } from "@/components/ImportWallet";
+import { Home } from "@/components/Home";
+import { Settings } from "@/components/Settings";
+import {
+  Backup,
+  BackupPrompt,
+  BackupSuccess,
+  ConfirmBackup,
+  StartBackup,
+} from "@/components/MnemonicBackup";
 
-import { useLocation, useRoute } from "wouter";
-import { usePwa } from "@/hooks/usePwa";
-import { useWallet } from "@/hooks/useWallet";
+import { useRoute } from "wouter";
+import { useScreen } from "@/hooks/useScreen";
 
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
-  const { isOffline } = usePwa();
-  const { connected } = useWallet();
-  const [profile] = useRoute("/settings");
-  const [backup] = useRoute("/backup/*");
+  useScreen();
+
+  const [root] = useRoute("/");
+  const [setup] = useRoute("/setup");
+  const [importWallet] = useRoute("/import");
+  const [home] = useRoute("/home");
+  const [send] = useRoute("/send");
+  const [receive] = useRoute("/receive");
+  const [settings] = useRoute("/settings");
+  const [backupPrompt] = useRoute("/backup/prompt");
+  const [startBackup] = useRoute("/backup/start");
+  const [backup] = useRoute("/backup/backup");
+  const [confirmBackup] = useRoute("/backup/confirm");
+  const [backupSuccess] = useRoute("/backup/success");
 
   return (
-    <main className="container h-full w-full max-w-screen-sm flex flex-col">
-      <div className="flex justify-between align-top py-8">
-        <div>
-          <h1 className="text-3xl font-semibold">
-            smooth <span className="text-xs text-muted-foreground"> USDT</span>
-          </h1>
-          {isOffline && <OfflineBadge />}
-        </div>
-        {connected && !profile && !backup && <ProfileButton />}
-      </div>
-      <div className="flex-1 pb-8">
-        <Router />
-      </div>
+    <main className="container h-full w-full max-w-screen-sm">
+      {root && <Root />}
+      {setup && <SetupWallet />}
+      {importWallet && <ImportWallet />}
+      {home && <Home />}
+      {send && <Send />}
+      {receive && <Receive />}
+      {settings && <Settings />}
+      {backupPrompt && <BackupPrompt />}
+      {startBackup && <StartBackup />}
+      {backup && <Backup />}
+      {confirmBackup && <ConfirmBackup />}
+      {backupSuccess && <BackupSuccess />}
     </main>
-  );
-};
-
-/** Local component to display a wallet / settings button indicating the wallet is added and there are settings for it */
-const ProfileButton = () => {
-  const [, navigate] = useLocation();
-  const { wallet } = useWallet();
-
-  return (
-    <Button variant="outline" onClick={() => navigate("/settings")}>
-      {wallet?.address.slice(0, 4)}...
-      <Settings className="pl-2" />
-    </Button>
   );
 };

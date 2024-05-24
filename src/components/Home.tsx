@@ -1,5 +1,7 @@
 import { Balance } from "@/components/Balance";
 import { Button } from "@/components/ui/button";
+import { Page, PageContent, PageHeader } from "@/components/Page";
+
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
@@ -17,22 +19,34 @@ export const Home = () => {
   if (!connected) return;
 
   return (
-    <div className="size-full flex flex-col justify-between">
-      <Balance />
-      <div className="w-full flex gap-4 justify-between">
-        <Button
-          className="w-96 h-14 gap-2"
-          disabled={isOffline}
-          onClick={() => navigate("send")}
-        >
-          <ArrowUp />
-          Send
-        </Button>
-        <Button className="w-96 h-14 gap-2" onClick={() => navigate("receive")}>
-          <ArrowDown />
-          Receive
-        </Button>
-      </div>
-    </div>
+    <Page>
+      <PageHeader>
+        <span>
+          smooth <span className="text-xs text-muted-foreground"> USDT</span>
+        </span>
+      </PageHeader>
+      <PageContent>
+        <div className="size-full flex flex-col justify-between">
+          <Balance />
+          <div className="w-full flex gap-4 justify-between">
+            <Button
+              className="w-96 h-14 gap-2"
+              disabled={isOffline}
+              onClick={() => navigate("send")}
+            >
+              <ArrowUp />
+              Send
+            </Button>
+            <Button
+              className="w-96 h-14 gap-2"
+              onClick={() => navigate("receive")}
+            >
+              <ArrowDown />
+              Receive
+            </Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
   );
 };

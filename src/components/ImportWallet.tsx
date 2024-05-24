@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Page, PageContent, PageHeader } from "@/components/Page";
 
 import { useWallet } from "@/hooks/useWallet";
 import { usePostHog } from "posthog-js/react";
@@ -42,25 +43,32 @@ export function ImportWallet() {
   };
 
   return (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex flex-col gap-4">
-        <Label htmlFor="mnemonic">Import Secret Phrase</Label>
-        <Textarea
-          id="mnemonic"
-          value={enteredMnemonic}
-          onChange={(e) => setEnteredMnemonic(e.target.value)}
-          placeholder="this is my secret phrase"
-          style={{ resize: "none" }}
-        />
-      </div>
-      <div className="flex flex-col gap-4">
-        {isProblem && (
-          <Alert variant="destructive">The secret phrase is not valid.</Alert>
-        )}
-        <Button disabled={!enteredMnemonic} onClick={importClicked}>
-          Import
-        </Button>
-      </div>
-    </div>
+    <Page>
+      <PageHeader hasBack> Import Wallet</PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-between">
+          <div className="flex flex-col gap-4">
+            <Label htmlFor="mnemonic">Import Secret Phrase</Label>
+            <Textarea
+              id="mnemonic"
+              value={enteredMnemonic}
+              onChange={(e) => setEnteredMnemonic(e.target.value)}
+              placeholder="this is my secret phrase"
+              style={{ resize: "none" }}
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            {isProblem && (
+              <Alert variant="destructive">
+                The secret phrase is not valid.
+              </Alert>
+            )}
+            <Button disabled={!enteredMnemonic} onClick={importClicked}>
+              Import
+            </Button>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
   );
 }
