@@ -111,9 +111,8 @@ export const usePwa = (): IusePwa => {
 
   const isStandalone = useMemo(
     () =>
-      !isServer() &&
-      (navigator.standalone ||
-        window.matchMedia("(display-mode: standalone)").matches),
+      !isServer() && // navigator.standalone ||
+      window.matchMedia("(display-mode: standalone)").matches,
     [],
   );
 
