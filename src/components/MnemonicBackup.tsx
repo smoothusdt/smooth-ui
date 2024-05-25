@@ -349,6 +349,7 @@ const AboutLine: FC<PropsWithChildren> = (props) => {
 
 /**
  * Local component to display the mnemonic
+ * TODO: This expects a 12 word mnemonic. Any more will break it.
  */
 const WordList = (props: { list: string[] }) => {
   return (
