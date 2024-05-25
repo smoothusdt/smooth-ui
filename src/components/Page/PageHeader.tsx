@@ -32,7 +32,7 @@ export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
   return (
     <div className="flex justify-between items-center py-8">
       <div>
-        <div className="flex items-center align-middle animate-in slide-in-from-left-3">
+        <div className="flex items-center align-middle">
           {hasBack && (
             <Button
               size="sm"
