@@ -48,7 +48,7 @@ export function StartBackup() {
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
@@ -102,7 +102,7 @@ export function Backup() {
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader backPath="/backup/start">Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
@@ -184,7 +184,7 @@ export function ConfirmBackup() {
   // TODO: Use form validation to validate as we go
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader backPath="/backup/backup">Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
@@ -232,7 +232,7 @@ export function BackupSuccess() {
   // TODO: hasBackedup -> localStorage
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader backPath="/backup/confirm">Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div /> {/* To center div below */}
@@ -261,7 +261,7 @@ export function BackupPrompt() {
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-8">

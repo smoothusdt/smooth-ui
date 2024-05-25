@@ -12,8 +12,8 @@ import { useRoute, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
-  /** Should the header display a back button? */
-  hasBack?: boolean;
+  /** Should the header display a back button and where it shall lead? */
+  backPath?: string;
 }
 
 /**
@@ -21,10 +21,12 @@ interface PageHeaderProps {
  */
 export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
   const { children } = props;
-  const hasBack = props.hasBack ?? false;
+  const backPath = props.backPath;
+  const hasBack = backPath !== undefined;
 
   const { isOffline } = usePwa();
   const { connected } = useWallet();
+  const [, navigate] = useLocation();
   const [profile] = useRoute("/settings");
   const [backup] = useRoute("/backup/*");
 
@@ -36,7 +38,7 @@ export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
             <Button
               size="sm"
               variant="ghost"
-              onClick={() => window.history.back()}
+              onClick={() => navigate(backPath, { replace: true })}
               className="pl-0 pr-1"
             >
               <ChevronLeft size={28} />

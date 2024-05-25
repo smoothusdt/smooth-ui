@@ -8,7 +8,7 @@ import { FC, PropsWithChildren } from "react";
  * @example
  * ```
  * <Page>
- *    <PageHeader hasBack>My Page</PageHeader>
+ *    <PageHeader backPath="/home">My Page</PageHeader>
  *    <PageContent><div>My Page Content</div></PageContent>
  * </Page>
  * ```

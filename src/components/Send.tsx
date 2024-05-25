@@ -132,7 +132,7 @@ export const Send = () => {
 
   return (
     <Page>
-      <PageHeader hasBack>Send</PageHeader>
+      <PageHeader backPath="/home">Send</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-3">
