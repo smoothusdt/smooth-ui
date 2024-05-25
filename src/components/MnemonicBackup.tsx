@@ -12,13 +12,14 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Page, PageContent, PageHeader } from "@/components/Page";
 
-import { CircleCheck, WalletIcon } from "lucide-react";
+import { Check, CircleCheck, Copy, WalletIcon } from "lucide-react";
 
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
 import { shuffle } from "@/util";
 import { usePostHog } from "posthog-js/react";
+import { useCopyToClipboard } from "react-use";
 
 /** Entry point to the backup flow. Requires the user to accept consequences before proceeding */
 export function StartBackup() {
@@ -80,7 +81,24 @@ export function Backup() {
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
 
+  const [copied, setCopied] = useState(false);
+  const [state, copyToClipboard] = useCopyToClipboard();
+
   if (!wallet) return;
+
+  // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
+  const handleCopyClicked = () => {
+    copyToClipboard(wallet.mnemonic.phrase);
+
+    if (!state.error) {
+      // UI confirms the copy, then resets. This is a common pattern.
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 1000);
+    }
+    // TODO: Set some kind of error if the copy fails
+  };
 
   return (
     <Page>
@@ -94,6 +112,21 @@ export function Backup() {
               manager. Remember to clear your clipboard after.
             </p>
             <WordList list={wallet.mnemonic.phrase.split(" ")} />
+            <Button
+              variant="link"
+              className="text-foreground w-fit self-center no-underline active:no-underline focus:no-underline"
+              onClick={handleCopyClicked}
+            >
+              {copied ? (
+                <>
+                  <Check size={16} className="mr-2" /> Copied!
+                </>
+              ) : (
+                <>
+                  <Copy size={16} className="mr-2" /> Copy seed phrase
+                </>
+              )}
+            </Button>
           </div>
           <Button className="w-full" onClick={() => navigate("confirm")}>
             Got it
@@ -204,7 +237,7 @@ export function BackupSuccess() {
             <CircleCheck size={64} />
             <span className="text-lg font-semibold">Nice Work</span>
             <p className="text-muted-foreground text-sm">
-              You've backup up your secret phrase.
+              You've backed up your secret phrase.
             </p>
           </div>
           <Button onClick={() => navigate("/home")}>
@@ -319,7 +352,7 @@ const AboutLine: FC<PropsWithChildren> = (props) => {
  */
 const WordList = (props: { list: string[] }) => {
   return (
-    <div className="pb-8 select-none">
+    <div className="select-none">
       <div className="grid grid-cols-2 grid-rows-6 gap-3">
         {props.list.map((word, index) => (
           <div
