@@ -123,7 +123,7 @@ export function Backup() {
                 </>
               ) : (
                 <>
-                  <Copy size={16} className="mr-2" /> Copy seed phrase
+                  <Copy size={16} className="mr-2" /> Copy secret phrase
                 </>
               )}
             </Button>
