@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <PostHogProvider client={posthog}>
       <ErrorBoundary
         FallbackComponent={ErrorFallback}
-        onReset={() => window.location.reload()}
+        onReset={() => (window.location.href = "/")}
       >
         <ThemeProvider>
           <WalletProvider>
