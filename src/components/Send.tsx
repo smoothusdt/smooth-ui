@@ -7,7 +7,7 @@ import { Link } from "@/components/Link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Page, PageContent, PageHeader } from "@/components/Page";
 
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, ScanLineIcon, X } from "lucide-react";
 
 import toast, { Toaster } from "react-hot-toast";
 
@@ -20,6 +20,7 @@ import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
+import { Camera } from "./Camera";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -33,6 +34,12 @@ export const Send = () => {
 
   const [amountRaw, setAmountRaw] = useState<string>("");
   const amount = parseInt(amountRaw) || 0;
+
+  // Scanning state
+  const [isScanning, setIsScanning] = useState(false);
+  const handleScanClicked = () => {
+    setIsScanning(!isScanning);
+  };
 
   if (!connected) return; // wait until the wallet loads
 
@@ -137,14 +144,18 @@ export const Send = () => {
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-3">
             <Label htmlFor="text-input-to">To</Label>
-            {/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */}
-            <Input
-              id="text-input-to"
-              type="text"
-              value={receiver}
-              onChange={(e) => setReceiver(e.target.value)}
-              placeholder="TR7NHq...gjLj6t"
-            />
+            <div className="flex w-full items-center space-x-2">
+              <Input
+                id="text-input-to"
+                type="text"
+                value={receiver}
+                onChange={(e) => setReceiver(e.target.value)}
+                placeholder="TR7NHq...gjLj6t"
+              />
+              <Button variant="outline" onClick={handleScanClicked}>
+                {isScanning ? <X size={16} /> : <ScanLineIcon size={16} />}
+              </Button>
+            </div>
             <Label htmlFor="text-input-amount">Amount (USDT)</Label>
             <Input
               id="text-input-amount"
@@ -155,6 +166,7 @@ export const Send = () => {
               min={0}
               placeholder="10"
             />
+
             <span className="text-sm text-muted-foreground">
               Fee: {SmoothFee} <span className="text-[0.5rem]">USDT</span>
             </span>
@@ -165,6 +177,7 @@ export const Send = () => {
               </span>
             )}
             <Toaster />
+            {isScanning && <Camera />}
           </div>
           <div className="flex flex-col gap-4">
             {alert && (
