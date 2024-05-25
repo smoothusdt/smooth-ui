@@ -68,3 +68,10 @@ export function shuffle(array: number[]) {
       array[randomIndex], array[currentIndex]];
   }
 }
+
+export function shortenAddress(address: string) {
+  const firstPart = address.slice(0, 4)
+  const lastPart = address.slice(address.length - 4)
+
+  return `${firstPart}...${lastPart}`
+}

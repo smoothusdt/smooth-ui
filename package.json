@@ -21,6 +21,7 @@
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.2.6",
     "i18next": "^23.11.5",
     "lucide-react": "^0.378.0",
     "posthog-js": "^1.132.1",
