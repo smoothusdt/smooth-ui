@@ -114,7 +114,7 @@ export function Backup() {
             <WordList list={wallet.mnemonic.phrase.split(" ")} />
             <Button
               variant="link"
-              className="text-foreground w-fit self-center no-underline active:no-underline focus:no-underline"
+              className="w-fit self-center no-underline active:no-underline focus:no-underline text-muted-foreground font-normal"
               onClick={handleCopyClicked}
             >
               {copied ? (
@@ -129,7 +129,7 @@ export function Backup() {
             </Button>
           </div>
           <Button className="w-full" onClick={() => navigate("confirm")}>
-            Got it
+            I backed it up
           </Button>
         </div>
       </PageContent>
@@ -234,7 +234,7 @@ export function BackupSuccess() {
         <div className="h-full flex flex-col justify-between">
           <div /> {/* To center div below */}
           <div className="flex flex-col gap-4 text-center items-center">
-            <CircleCheck size={64} />
+            <CircleCheck size={64} className="text-primary" />
             <span className="text-lg font-semibold">Nice Work</span>
             <p className="text-muted-foreground text-sm">
               You've backed up your secret phrase.
@@ -358,9 +358,9 @@ const WordList = (props: { list: string[] }) => {
         {props.list.map((word, index) => (
           <div
             key={index}
-            className="relative border border-solid border-muted-foreground rounded-full p-2 text-center text-sm flex items-center justify-center"
+            className="relative border border-solid border-muted-foreground rounded-full p-2 text-sm flex items-center justify-center font-medium dark:bg-secondary"
           >
-            <div className="absolute left-2 text-xs text-muted-foreground bg-muted rounded-full size-5 leading-5">
+            <div className="absolute left-2 text-xs text-center text-muted-foreground bg-muted rounded-full size-5 leading-5">
               {index + 1}
             </div>
             {word}
