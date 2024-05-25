@@ -1,8 +1,6 @@
-import { FC, PropsWithChildren, useRef, useState } from "react";
+import { FC, PropsWithChildren, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { CopyWallet } from "@/components/CopyWallet";
 import {
   Consequence,
@@ -17,7 +15,6 @@ import { Check, CircleCheck, Copy, WalletIcon } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 
-import { shuffle } from "@/util";
 import { usePostHog } from "posthog-js/react";
 import { useCopyToClipboard } from "react-use";
 
@@ -225,33 +222,6 @@ export function BackupPrompt() {
         </div>
       </PageContent>
     </Page>
-  );
-}
-
-/** Local component displaying a text input for a word to be confirm in `<ConfirmBackup />` */
-function WordConfirmation(props: {
-  word: string;
-  setWord: (arg0: string) => void;
-  wordIndex: number;
-}) {
-  const { word, setWord, wordIndex } = props;
-
-  return (
-    <div className="flex pt-2 pb-2 justify-between">
-      <Label
-        htmlFor={`text-input-amount-${wordIndex}`}
-        className="flex flex-col justify-center w-32"
-      >
-        Word #{wordIndex}
-      </Label>
-      <Input
-        className="w-32"
-        id={`text-input-amount-${wordIndex}`}
-        type="text"
-        value={word}
-        onChange={(e) => setWord(e.target.value)}
-      />
-    </div>
   );
 }
 
