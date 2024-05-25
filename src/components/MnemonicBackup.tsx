@@ -50,18 +50,22 @@ export function StartBackup() {
       <PageHeader hasBack>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
-          <span className="text-2xl">Backing up</span>
-          <p className="text-muted-foreground text-sm">
-            Tap on all the checkboxes to confirm you understand the
-            consequences.
-          </p>
-          <Consequences>
-            {consequences.map((consequence, i) => (
-              <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
-                {consequence}
-              </Consequence>
-            ))}
-          </Consequences>
+          <div className="flex flex-col gap-4">
+            <span className="text-lg font-semibold">
+              Backing up your secret phrase
+            </span>
+            <p className="text-muted-foreground text-sm">
+              Tap on all the checkboxes to confirm you understand the
+              consequences.
+            </p>
+            <Consequences>
+              {consequences.map((consequence, i) => (
+                <Consequence accepted={accepted[i]} onClick={() => toggle(i)}>
+                  {consequence}
+                </Consequence>
+              ))}
+            </Consequences>
+          </div>
           <Button disabled={revealDisabled} onClick={revealClicked}>
             Reveal
           </Button>
@@ -83,7 +87,14 @@ export function Backup() {
       <PageHeader hasBack>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
-          <WordList list={wallet.mnemonic.phrase.split(" ")} />
+          <div className="flex flex-col gap-4">
+            <span className="text-lg font-semibold">Your Secret Phrase</span>
+            <p className="text-muted-foreground text-sm">
+              Write it down or paste it somewhere secure like a password
+              manager. Remember to clear your clipboard after.
+            </p>
+            <WordList list={wallet.mnemonic.phrase.split(" ")} />
+          </div>
           <Button className="w-full" onClick={() => navigate("confirm")}>
             Got it
           </Button>
@@ -140,10 +151,8 @@ export function ConfirmBackup() {
       <PageHeader hasBack>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
-          <div>
-            <p className="pb-2">
-              <span className="text-2xl">Confirm the backup</span>
-            </p>
+          <div className="flex flex-col gap-4">
+            <span className="text-lg font-semibold">Confirm the backup</span>
             <WordConfirmation
               word={wordA}
               setWord={setWordA}
@@ -190,13 +199,17 @@ export function BackupSuccess() {
       <PageHeader hasBack>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
-          <p>
-            <span className="text-2xl">Great!</span>
-            <br />
-            <br />
-            You have backed up your secret phrase.
-          </p>
-          <Button onClick={() => navigate("/home")}>Finish</Button>
+          <div /> {/* To center div below */}
+          <div className="flex flex-col gap-4 text-center items-center">
+            <CircleCheck size={64} />
+            <span className="text-lg font-semibold">Nice Work</span>
+            <p className="text-muted-foreground text-sm">
+              You've backup up your secret phrase.
+            </p>
+          </div>
+          <Button onClick={() => navigate("/home")}>
+            Start making transfers
+          </Button>
         </div>
       </PageContent>
     </Page>
@@ -215,32 +228,37 @@ export function BackupPrompt() {
       <PageHeader hasBack>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
-          <span className="text-2xl">We created a wallet for you</span>
-
-          <Alert className="text-small text-left text-muted-foreground">
-            <WalletIcon className="h-4 w-4" />
-            <AlertDescription className="flex flex-col gap-2">
-              <span>
-                Your brand new wallet.
-                <br />
-                Ready to send and receive USDT.
-              </span>
-
-              <CopyWallet />
-            </AlertDescription>
-          </Alert>
-          <div className="flex flex-col gap-2">
-            <span className="text-lg text-foreground">
-              About your new wallet
+          <div className="flex flex-col gap-8">
+            <span className="text-lg font-semibold">
+              We created a wallet for you
             </span>
-            <AboutLine>Your wallet is controlled by a secret phrase</AboutLine>
-            <AboutLine>
-              You will need the secret phrase if you delete this app or lose
-              your phone
-            </AboutLine>
-            <AboutLine>
-              Back up the secret phrase and store it in a secure place
-            </AboutLine>
+            <Alert className="text-small text-left text-muted-foreground">
+              <WalletIcon className="h-4 w-4" />
+              <AlertDescription className="flex flex-col gap-2">
+                <span>
+                  Your brand new wallet.
+                  <br />
+                  Ready to send and receive USDT.
+                </span>
+
+                <CopyWallet />
+              </AlertDescription>
+            </Alert>
+            <div className="flex flex-col gap-2">
+              <span className="text-lg text-foreground font-semibold">
+                About your new wallet
+              </span>
+              <AboutLine>
+                Your wallet is controlled by a secret phrase
+              </AboutLine>
+              <AboutLine>
+                You will need the secret phrase if you delete this app or lose
+                your phone
+              </AboutLine>
+              <AboutLine>
+                Back up the secret phrase and store it in a secure place
+              </AboutLine>
+            </div>
           </div>
           <div className="flex flex-col gap-4">
             <Button onClick={() => navigate("start")}>Back up now</Button>
@@ -302,18 +320,16 @@ const AboutLine: FC<PropsWithChildren> = (props) => {
 const WordList = (props: { list: string[] }) => {
   return (
     <div className="pb-8 select-none">
-      <p className="text-2xl pb-8">Your secret phrase</p>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gridTemplateRows: "repeat(4, 1fr)",
-          gap: 8,
-        }}
-      >
+      <div className="grid grid-cols-2 grid-rows-6 gap-3">
         {props.list.map((word, index) => (
-          <div key={index}>
-            {index + 1}. {word}
+          <div
+            key={index}
+            className="relative border border-solid border-muted-foreground rounded-full p-2 text-center text-sm flex items-center justify-center"
+          >
+            <div className="absolute left-2 text-xs text-muted-foreground bg-muted rounded-full size-5 leading-5">
+              {index + 1}
+            </div>
+            {word}
           </div>
         ))}
       </div>
