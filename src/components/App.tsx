@@ -10,17 +10,13 @@ import {
   Backup,
   BackupPrompt,
   BackupSuccess,
-  ConfirmBackup,
   StartBackup,
 } from "@/components/MnemonicBackup";
 
 import { useRoute } from "wouter";
-import { useScreen } from "@/hooks/useScreen";
 
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
-  useScreen();
-
   const [root] = useRoute("/");
   const [setup] = useRoute("/setup");
   const [importWallet] = useRoute("/import");
@@ -31,7 +27,6 @@ export const App = () => {
   const [backupPrompt] = useRoute("/backup/prompt");
   const [startBackup] = useRoute("/backup/start");
   const [backup] = useRoute("/backup/backup");
-  const [confirmBackup] = useRoute("/backup/confirm");
   const [backupSuccess] = useRoute("/backup/success");
 
   return (
@@ -46,7 +41,6 @@ export const App = () => {
       {backupPrompt && <BackupPrompt />}
       {startBackup && <StartBackup />}
       {backup && <Backup />}
-      {confirmBackup && <ConfirmBackup />}
       {backupSuccess && <BackupSuccess />}
     </main>
   );

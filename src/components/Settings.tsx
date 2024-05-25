@@ -16,13 +16,13 @@ export const Settings = () => {
   const { t } = useTranslation();
 
   if (!connected) {
-    navigate("/"); // wallet was deleted
+    navigate("/", { replace: true }); // wallet was deleted
     return;
   }
 
   return (
     <Page>
-      <PageHeader hasBack>Settings</PageHeader>
+      <PageHeader backPath="/home">Settings</PageHeader>
       <PageContent>
         <div className="w-full h-full flex flex-col gap-4">
           <div className="flex justify-between items-center">
@@ -35,7 +35,10 @@ export const Settings = () => {
           </div>
           <h2 className="text-lg font-semibold">Wallet</h2>
           <CopyWallet />
-          <Button variant="secondary" onClick={() => navigate("/backup/start")}>
+          <Button
+            variant="secondary"
+            onClick={() => navigate("/backup/start", { replace: true })}
+          >
             {t("backupSecretPhrase")}
           </Button>
           <DeleteWalletButton />

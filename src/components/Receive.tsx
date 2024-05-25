@@ -34,7 +34,7 @@ export const Receive = () => {
   // TODO: Use CopyWallet Component?
   return (
     <Page>
-      <PageHeader hasBack>Receive</PageHeader>
+      <PageHeader backPath="/home">Receive</PageHeader>
       <PageContent>
         <div className="flex flex-col justify-center items-center gap-4">
           <p>Your USDT TRC-20 address</p>

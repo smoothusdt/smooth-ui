@@ -43,12 +43,12 @@ export function StartBackup() {
 
   const revealClicked = () => {
     posthog.capture("Accepted backup wallet consequences");
-    navigate("backup");
+    navigate("backup", { replace: true });
   };
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
@@ -102,7 +102,7 @@ export function Backup() {
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader backPath="/backup/start">Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
@@ -123,99 +123,17 @@ export function Backup() {
                 </>
               ) : (
                 <>
-                  <Copy size={16} className="mr-2" /> Copy seed phrase
+                  <Copy size={16} className="mr-2" /> Copy secret phrase
                 </>
               )}
             </Button>
           </div>
-          <Button className="w-full" onClick={() => navigate("confirm")}>
+          <Button
+            className="w-full"
+            onClick={() => navigate("success", { replace: true })}
+          >
             I backed it up
           </Button>
-        </div>
-      </PageContent>
-    </Page>
-  );
-}
-
-/** Component validating three random words from a secret phrase */
-export function ConfirmBackup() {
-  const [, navigate] = useLocation();
-  const { wallet } = useWallet();
-
-  const [wordA, setWordA] = useState("");
-  const [wordB, setWordB] = useState("");
-  const [wordC, setWordC] = useState("");
-
-  const [wordsAreInvalid, setWordsAreInvalid] = useState(false);
-  const wordIndices = useRef<number[]>([]);
-
-  if (!wallet) return;
-  const mnemonicWords = wallet.mnemonic.phrase.split(" ");
-
-  if (wordIndices.current.length === 0) {
-    // Generate 3 words indices that we prompt the user for
-    const allIndices = Array.from(Array(12).keys()); // [0, 1, 2 ... 9, 10, 11]
-    shuffle(allIndices);
-    wordIndices.current = [allIndices[0], allIndices[1], allIndices[2]];
-    wordIndices.current.sort((a, b) => a - b);
-  }
-
-  const wordAIndex: number | undefined = wordIndices.current[0];
-  const wordBIndex: number | undefined = wordIndices.current[1];
-  const wordCIndex: number | undefined = wordIndices.current[2];
-
-  const confirmWords = () => {
-    const wordAValid = wordA.trim().toLowerCase() === mnemonicWords[wordAIndex];
-    const wordBValid = wordB.trim().toLowerCase() === mnemonicWords[wordBIndex];
-    const wordCValid = wordC.trim().toLowerCase() === mnemonicWords[wordCIndex];
-
-    const allWordsValid = wordAValid && wordBValid && wordCValid;
-    if (!allWordsValid) {
-      setWordsAreInvalid(true);
-      return;
-    }
-
-    navigate("success");
-  };
-
-  // TODO: Use form validation to validate as we go
-  return (
-    <Page>
-      <PageHeader hasBack>Backup</PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-between">
-          <div className="flex flex-col gap-4">
-            <span className="text-lg font-semibold">Confirm the backup</span>
-            <WordConfirmation
-              word={wordA}
-              setWord={setWordA}
-              wordIndex={wordAIndex + 1} // +1 for human readability
-            />
-            <WordConfirmation
-              word={wordB}
-              setWord={setWordB}
-              wordIndex={wordBIndex + 1}
-            />
-            <WordConfirmation
-              word={wordC}
-              setWord={setWordC}
-              wordIndex={wordCIndex + 1}
-            />
-          </div>
-          <div className="flex flex-col gap-4">
-            {wordsAreInvalid && (
-              <Alert variant="destructive">
-                Some of the words are incorrect.
-              </Alert>
-            )}
-            <Button
-              className="w-full"
-              disabled={!wordA || !wordB || !wordC}
-              onClick={confirmWords}
-            >
-              Confirm
-            </Button>
-          </div>
         </div>
       </PageContent>
     </Page>
@@ -229,7 +147,7 @@ export function BackupSuccess() {
   // TODO: hasBackedup -> localStorage
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader backPath="/backup/confirm">Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div /> {/* To center div below */}
@@ -240,7 +158,7 @@ export function BackupSuccess() {
               You've backed up your secret phrase.
             </p>
           </div>
-          <Button onClick={() => navigate("/home")}>
+          <Button onClick={() => navigate("/home", { replace: true })}>
             Start making transfers
           </Button>
         </div>
@@ -258,7 +176,7 @@ export function BackupPrompt() {
 
   return (
     <Page>
-      <PageHeader hasBack>Backup</PageHeader>
+      <PageHeader>Backup</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-8">
@@ -294,8 +212,13 @@ export function BackupPrompt() {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <Button onClick={() => navigate("start")}>Back up now</Button>
-            <Button variant="secondary" onClick={() => navigate("/home")}>
+            <Button onClick={() => navigate("start", { replace: true })}>
+              Back up now
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/home", { replace: true })}
+            >
               Back up later
             </Button>
           </div>

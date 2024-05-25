@@ -29,7 +29,7 @@ export function ImportWallet() {
       },
     });
 
-    navigate("/home");
+    navigate("/home", { replace: true });
   }, [wallet, navigate, posthog]);
 
   const importClicked = () => {
@@ -44,7 +44,7 @@ export function ImportWallet() {
 
   return (
     <Page>
-      <PageHeader hasBack> Import Wallet</PageHeader>
+      <PageHeader backPath="/setup"> Import Wallet</PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div className="flex flex-col gap-4">
