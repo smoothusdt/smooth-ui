@@ -10,7 +10,6 @@ import {
   Backup,
   BackupPrompt,
   BackupSuccess,
-  ConfirmBackup,
   StartBackup,
 } from "@/components/MnemonicBackup";
 
@@ -28,7 +27,6 @@ export const Router = () => {
   const [backupPrompt] = useRoute("/backup/prompt");
   const [startBackup] = useRoute("/backup/start");
   const [backup] = useRoute("/backup/backup");
-  const [confirmBackup] = useRoute("/backup/confirm");
   const [backupSuccess] = useRoute("/backup/success");
 
   return (
@@ -43,7 +41,6 @@ export const Router = () => {
       {backupPrompt && <BackupPrompt />}
       {startBackup && <StartBackup />}
       {backup && <Backup />}
-      {confirmBackup && <ConfirmBackup />}
       {backupSuccess && <BackupSuccess />}
     </>
   );
