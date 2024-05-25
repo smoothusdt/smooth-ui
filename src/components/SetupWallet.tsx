@@ -11,7 +11,12 @@ import { usePostHog } from "posthog-js/react";
 export const SetupWallet = () => {
   const posthog = usePostHog();
   const [, navigate] = useLocation();
-  const { setMnemonic: setWalletMnemonic, newMnemonic, wallet } = useWallet();
+  const {
+    setMnemonic: setWalletMnemonic,
+    newMnemonic,
+    wallet,
+    connected,
+  } = useWallet();
 
   // Using a useEffect to wait until the `wallet` variable updates
   // to log the wallet address to posthog.
@@ -38,7 +43,7 @@ export const SetupWallet = () => {
 
   return (
     <Page>
-      <PageHeader hasBack>
+      <PageHeader hasBack={connected}>
         <span>
           smooth <span className="text-xs text-muted-foreground"> USDT</span>
         </span>
