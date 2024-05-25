@@ -29,7 +29,7 @@ export function ImportWallet() {
       },
     });
 
-    navigate("/home");
+    navigate("/home", { replace: true });
   }, [wallet, navigate, posthog]);
 
   const importClicked = () => {

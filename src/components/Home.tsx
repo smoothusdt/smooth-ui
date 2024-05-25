@@ -32,14 +32,14 @@ export const Home = () => {
             <Button
               className="w-96 h-14 gap-2"
               disabled={isOffline}
-              onClick={() => navigate("send")}
+              onClick={() => navigate("send", { replace: true })}
             >
               <ArrowUp />
               Send
             </Button>
             <Button
               className="w-96 h-14 gap-2"
-              onClick={() => navigate("receive")}
+              onClick={() => navigate("receive", { replace: true })}
             >
               <ArrowDown />
               Receive

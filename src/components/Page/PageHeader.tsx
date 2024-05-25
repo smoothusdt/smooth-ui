@@ -12,7 +12,6 @@ import { useRoute, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
-  // TODO: Could this integrate with useScreen somehow?
   /** Should the header display a back button? */
   hasBack?: boolean;
 }
@@ -60,7 +59,10 @@ const ProfileButton = () => {
   const { wallet } = useWallet();
 
   return (
-    <Button variant="outline" onClick={() => navigate("/settings")}>
+    <Button
+      variant="outline"
+      onClick={() => navigate("/settings", { replace: true })}
+    >
       {wallet?.address.slice(0, 4)}...
       <Settings className="pl-2" />
     </Button>

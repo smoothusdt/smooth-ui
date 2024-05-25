@@ -31,7 +31,7 @@ export const SetupWallet = () => {
     });
 
     // Navigate to the backup flow when a wallet is created
-    navigate("/backup/prompt");
+    navigate("/backup/prompt", { replace: true });
   }, [wallet, navigate, posthog]);
 
   // When create is clicked, generate mnemonic and set it
@@ -60,7 +60,9 @@ export const SetupWallet = () => {
           </p>
           <div className="flex flex-col gap-4">
             <Button onClick={handleCreateWalletClicked}>Create Wallet</Button>
-            <Button onClick={() => navigate("/import")}>Import Wallet</Button>
+            <Button onClick={() => navigate("/import", { replace: true })}>
+              Import Wallet
+            </Button>
           </div>
         </div>
       </PageContent>

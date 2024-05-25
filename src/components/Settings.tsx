@@ -16,7 +16,7 @@ export const Settings = () => {
   const { t } = useTranslation();
 
   if (!connected) {
-    navigate("/"); // wallet was deleted
+    navigate("/", { replace: true }); // wallet was deleted
     return;
   }
 
@@ -35,7 +35,10 @@ export const Settings = () => {
           </div>
           <h2 className="text-lg font-semibold">Wallet</h2>
           <CopyWallet />
-          <Button variant="secondary" onClick={() => navigate("/backup/start")}>
+          <Button
+            variant="secondary"
+            onClick={() => navigate("/backup/start", { replace: true })}
+          >
             {t("backupSecretPhrase")}
           </Button>
           <DeleteWalletButton />

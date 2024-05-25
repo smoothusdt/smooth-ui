@@ -15,12 +15,9 @@ import {
 } from "@/components/MnemonicBackup";
 
 import { useRoute } from "wouter";
-import { useScreen } from "@/hooks/useScreen";
 
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
-  useScreen();
-
   const [root] = useRoute("/");
   const [setup] = useRoute("/setup");
   const [importWallet] = useRoute("/import");

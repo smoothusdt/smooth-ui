@@ -13,7 +13,7 @@ export const Root = () => {
   useEffect(() => {
     // Check if the app state is already set up
     if (connected) {
-      navigate("home");
+      navigate("home", { replace: true });
       return;
     }
 
@@ -25,7 +25,7 @@ export const Root = () => {
       return;
     }
 
-    navigate("setup");
+    navigate("setup", { replace: true });
   }, [connected, navigate, setMnemonic, posthog]);
 
   // No need to show anything - we just need useEffect to run and
