@@ -177,7 +177,14 @@ export const Send = () => {
               </span>
             )}
             <Toaster />
-            {isScanning && <Camera />}
+            {isScanning && (
+              <Camera
+                onScan={(code) => {
+                  setReceiver(code[0].rawValue);
+                  setIsScanning(false);
+                }}
+              />
+            )}
           </div>
           <div className="flex flex-col gap-4">
             {alert && (

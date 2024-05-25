@@ -1,15 +1,5 @@
-import Webcam from "react-webcam";
+import { IScannerProps, Scanner } from "@yudiel/react-qr-scanner";
 
-export const Camera = () => {
-  const videoConstraints: MediaTrackConstraints = {
-    facingMode: { exact: "environment" },
-    aspectRatio: 0.8,
-  };
-
-  return (
-    <Webcam
-      className="rounded-lg w-full my-3"
-      videoConstraints={videoConstraints}
-    />
-  );
+export const Camera = (props: { onScan: IScannerProps["onScan"] }) => {
+  return <Scanner allowMultiple={false} onScan={props.onScan} />;
 };
