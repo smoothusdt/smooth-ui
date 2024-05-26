@@ -16,7 +16,7 @@ export const Home = () => {
   const [, navigate] = useLocation();
   const { isOffline } = usePwa();
 
-  if (!connected) return;
+  if (!connected) return <div />;
 
   return (
     <Page>

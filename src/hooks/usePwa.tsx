@@ -110,8 +110,15 @@ export const usePwa = (): IusePwa => {
 
   useEffect(() => {
     (async () => {
-      const installedApps = await (navigator as any).getInstalledRelatedApps();
-      setWasInstalledEarlier(installedApps.length > 0);
+      try {
+        const installedApps = await (
+          navigator as any
+        ).getInstalledRelatedApps();
+        setWasInstalledEarlier(installedApps.length > 0);
+      } catch (error: any) {
+        // Sad if happens, but is not the end of the world
+        console.error("Couldnt get standalone apps list", error);
+      }
     })();
   }, []);
 

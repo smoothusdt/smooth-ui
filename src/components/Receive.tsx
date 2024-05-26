@@ -15,7 +15,7 @@ export const Receive = () => {
   const [state, copyToClipboard] = useCopyToClipboard();
   const { wallet, connected } = useWallet();
 
-  if (!connected) return; // wait until the wallet loads
+  if (!connected) return <div />; // wait until the wallet loads
 
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {

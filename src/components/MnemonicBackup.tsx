@@ -81,7 +81,7 @@ export function Backup() {
   const [copied, setCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
 
-  if (!wallet) return;
+  if (!wallet) return <div />;
 
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {

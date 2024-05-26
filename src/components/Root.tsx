@@ -34,7 +34,7 @@ export const Root = () => {
     }
 
     navigate("setup", { replace: true });
-  }, [connected, navigate, setMnemonic, posthog]);
+  }, [connected, navigate, setMnemonic, posthog, isStandalone]);
 
   // No need to show anything - we just need useEffect to run and
   // redirect the user to the proper page.

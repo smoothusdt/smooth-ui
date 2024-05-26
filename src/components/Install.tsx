@@ -20,7 +20,8 @@ function InstallPrompt(props: { onInstallClicked: () => void }) {
             Welcome to smooth
             <br />
             <span className="text-sm text-center text-muted-foreground">
-              Install the app to start sending USDT easily.
+              Install the app and start sending USDT with ease (in TRC-20
+              network).
             </span>
           </p>
           <div className="flex flex-col gap-4">

@@ -17,7 +17,7 @@ export const Settings = () => {
 
   if (!connected) {
     navigate("/", { replace: true }); // wallet was deleted
-    return;
+    return <div />;
   }
 
   return (

@@ -43,7 +43,7 @@ export const Send = () => {
   const [loaderScope, loaderAnimate] = useAnimate();
   const [inputScreenScope, inputScreenAnimate] = useAnimate();
 
-  if (!connected) return; // wait until the wallet loads
+  if (!connected) return <div />; // wait until the wallet loads
 
   const isOverspending =
     balance !== undefined && amountRaw && amount.plus(SmoothFee).gt(balance);
