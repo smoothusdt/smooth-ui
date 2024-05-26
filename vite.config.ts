@@ -24,12 +24,9 @@ export default defineConfig({
         related_applications: [
           {
             "platform": "webapp",
-            "url": "https://localhost:5173/manifest.webmanifest",
+            "url": "https://app.smoothusdt.com/manifest.webmanifest",
           },
-          {
-            "platform": "webapp",
-            "url": "https://6a49-95-56-29-120.ngrok-free.app/manifest.webmanifest",
-          },
+
         ],
         icons: [
           {
