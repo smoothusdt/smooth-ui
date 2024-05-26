@@ -16,6 +16,7 @@ export default defineConfig({
         short_name: "Smooth USDT",
         description: "Simple, cheap USDT TRC-20 payments",
         id: "smooth-usdt",
+        scope: "/",
         start_url: "/",
         background_color: "#ffffff",
         theme_color: "#339192",

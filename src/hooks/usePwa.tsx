@@ -28,6 +28,7 @@ interface IusePwa {
   isStandalone: boolean;
   isOffline: boolean;
   canInstall: boolean;
+  wasInstalledEarlier: boolean;
 }
 
 /**
@@ -38,6 +39,8 @@ interface IusePwa {
 export const usePwa = (): IusePwa => {
   const [canInstall, setCanInstall] = useState<boolean>(false);
   const [wasInstalledNow, setWasInstalledNow] = useState<boolean>(false);
+  const [wasInstalledEarlier, setWasInstalledEarlier] =
+    useState<boolean>(false);
   const [isOffline, setOffline] = useState<boolean>(false);
   const deferredPrompt =
     useRef() as React.MutableRefObject<BeforeInstallPromptEvent | null>;
@@ -105,6 +108,13 @@ export const usePwa = (): IusePwa => {
     };
   }, [handleOfflineEvent]);
 
+  useEffect(() => {
+    (async () => {
+      const installedApps = await (navigator as any).getInstalledRelatedApps();
+      setWasInstalledEarlier(installedApps.length > 0);
+    })();
+  }, []);
+
   const installPrompt = useCallback(
     async (callback: (choice: UserChoice) => void) => {
       if (!deferredPrompt.current || isServer()) {
@@ -124,7 +134,6 @@ export const usePwa = (): IusePwa => {
       !isServer() && window.matchMedia("(display-mode: standalone)").matches,
     [],
   );
-  console.log({ isStandalone });
 
   return {
     installPrompt,
@@ -132,5 +141,6 @@ export const usePwa = (): IusePwa => {
     isStandalone,
     isOffline,
     canInstall,
+    wasInstalledEarlier,
   };
 };

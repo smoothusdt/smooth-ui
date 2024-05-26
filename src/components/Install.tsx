@@ -2,7 +2,7 @@ import { UserChoice, usePwa } from "@/hooks/usePwa";
 import { Page, PageContent, PageHeader } from "./Page";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { CircleCheck, Loader2 } from "lucide-react";
+import { ArrowBigRightDash, CircleCheck, Globe, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 
 function InstallPrompt(props: { onInstallClicked: () => void }) {
@@ -53,7 +53,7 @@ function Installing() {
   );
 }
 
-function Installed() {
+function InstalledNow() {
   return (
     <Page>
       <PageHeader>
@@ -76,6 +76,30 @@ function Installed() {
   );
 }
 
+function InstalledEarlier() {
+  return (
+    <Page>
+      <PageHeader>
+        <span>
+          smooth <span className="text-xs text-muted-foreground"> USDT</span>
+        </span>
+      </PageHeader>
+      <PageContent>
+        <div className="h-full flex flex-col justify-center">
+          <div className="flex flex-col gap-4 text-center items-center">
+            <ArrowBigRightDash size={64} className="text-primary" />
+            <span className="text-lg font-semibold">App installed</span>
+            <p className="text-muted-foreground text-sm">
+              The Smooth USDT app has already been installed. Find it and open
+              on your phone.
+            </p>
+          </div>
+        </div>
+      </PageContent>
+    </Page>
+  );
+}
+
 export function CantInstall() {
   return (
     <Page>
@@ -86,14 +110,14 @@ export function CantInstall() {
       </PageHeader>
       <PageContent>
         <div className="h-full flex flex-col justify-center">
-          <p className="text-2xl text-center">
-            Welcome to smooth
-            <br />
-            <span className="text-sm text-center text-muted-foreground">
+          <div className="flex flex-col gap-4 text-center items-center">
+            <Globe size={64} className="text-primary" />
+            <span className="text-lg font-semibold">Welcome to smooth</span>
+            <p className="text-muted-foreground text-sm">
               Open this url in your native browser (Chrome on Android, Safari on
               iOS) to install the app.
-            </span>
-          </p>
+            </p>
+          </div>
         </div>
       </PageContent>
     </Page>
@@ -107,7 +131,13 @@ export function CantInstall() {
  */
 export function Install() {
   const [, navigate] = useLocation();
-  const { canInstall, installPrompt, wasInstalledNow, isStandalone } = usePwa();
+  const {
+    canInstall,
+    installPrompt,
+    wasInstalledNow,
+    wasInstalledEarlier,
+    isStandalone,
+  } = usePwa();
   const [installing, setInstalling] = useState(false);
 
   useEffect(() => {
@@ -132,10 +162,9 @@ export function Install() {
     installPrompt(onUserChoiceMade);
   };
 
-  if (wasInstalledNow) return <Installed />;
-
+  if (wasInstalledNow) return <InstalledNow />;
+  if (wasInstalledEarlier) return <InstalledEarlier />;
   if (installing) return <Installing />;
-
   if (canInstall) return <InstallPrompt onInstallClicked={onInstallClicked} />;
 
   return <CantInstall />;
