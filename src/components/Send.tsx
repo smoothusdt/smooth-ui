@@ -6,14 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Link } from "@/components/Link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Page, PageContent, PageHeader } from "@/components/Page";
+import { ScanButton } from "@/components/ScanButton";
+import { SwipeableButton } from "@/components/SwipeableButton";
 
-import {
-  AlertCircle,
-  CircleCheck,
-  Loader2,
-  ScanLineIcon,
-  X,
-} from "lucide-react";
+import { AlertCircle, CircleCheck, Loader2 } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
@@ -25,8 +21,6 @@ import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
-import { Camera } from "./Camera";
-import { SwipeableButton } from "./SwipeableButton";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -43,12 +37,6 @@ export const Send = () => {
   const [amountRaw, setAmountRaw] = useState<string>("");
   let amount = new BigNumber(amountRaw);
   if (amount.isNaN()) amount = new BigNumber(0);
-
-  // Scanning state
-  const [isScanning, setIsScanning] = useState(false);
-  const handleScanClicked = () => {
-    setIsScanning(!isScanning);
-  };
 
   // Animation
   const [sendButtonScope, sendButtonAnimate] = useAnimate();
@@ -242,13 +230,11 @@ export const Send = () => {
                   opacity: sending ? 0.6 : 1,
                 }}
               />
-              <Button
-                variant="outline"
-                onClick={handleScanClicked}
-                disabled={sending}
-              >
-                {isScanning ? <X size={16} /> : <ScanLineIcon size={16} />}
-              </Button>
+              <ScanButton
+                onScan={(code) => {
+                  setReceiver(code);
+                }}
+              />
             </div>
             <Label
               htmlFor="text-input-amount"
@@ -291,14 +277,6 @@ export const Send = () => {
                 Total: <strong>{amount.plus(SmoothFee).toString()}</strong>{" "}
                 <span className="text-[0.5rem]">USDT</span>
               </span>
-            )}
-            {isScanning && (
-              <Camera
-                onScan={(code) => {
-                  setReceiver(code[0].rawValue);
-                  setIsScanning(false);
-                }}
-              />
             )}
           </div>
           <div className="relative flex flex-col items-center gap-4">
