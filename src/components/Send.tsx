@@ -26,7 +26,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 import { Camera } from "./Camera";
-import { SwipeButton } from "./SwipeButton";
+import { SwipeableButton } from "./SwipeableButton";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -54,7 +54,6 @@ export const Send = () => {
   const [sendButtonScope, sendButtonAnimate] = useAnimate();
   const [loaderScope, loaderAnimate] = useAnimate();
   const [inputScreenScope, inputScreenAnimate] = useAnimate();
-  const [swipeStatus, setSwipeStatus] = useState("");
 
   if (!connected) return; // wait until the wallet loads
 
@@ -310,16 +309,11 @@ export const Send = () => {
                 <AlertDescription>{alert}</AlertDescription>
               </Alert>
             )}
-            {/* <Button
-              className="w-full"
+            <SwipeableButton
               ref={sendButtonScope}
+              onSuccess={handleTransferClicked}
               disabled={sendDisabled}
-              onClick={handleTransferClicked}
-            >
-              Send
-            </Button> */}
-            <p>{swipeStatus}</p>
-            <SwipeButton setStatus={setSwipeStatus} />
+            />
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
               style={{

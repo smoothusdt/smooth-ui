@@ -34,6 +34,7 @@
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^14.1.2",
     "react-swipeable": "^7.0.1",
+    "react-swipeable-button": "^1.0.9",
     "react-use": "^17.5.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
