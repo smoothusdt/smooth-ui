@@ -14,12 +14,7 @@ import {
   ScanLineIcon,
   X,
 } from "lucide-react";
-import {
-  motion,
-  useAnimate,
-  useMotionValue,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, useAnimate } from "framer-motion";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { SmoothFee } from "@/constants";
@@ -31,6 +26,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 import { Camera } from "./Camera";
+import { SwipeButton } from "./SwipeButton";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -313,14 +309,15 @@ export const Send = () => {
                 <AlertDescription>{alert}</AlertDescription>
               </Alert>
             )}
-            <Button
+            {/* <Button
               className="w-full"
               ref={sendButtonScope}
               disabled={sendDisabled}
               onClick={handleTransferClicked}
             >
               Send
-            </Button>
+            </Button> */}
+            <SwipeButton />
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
               style={{
