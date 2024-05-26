@@ -14,12 +14,7 @@ import {
   ScanLineIcon,
   X,
 } from "lucide-react";
-import {
-  motion,
-  useAnimate,
-  useMotionValue,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, useAnimate } from "framer-motion";
 
 import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { SmoothFee } from "@/constants";
