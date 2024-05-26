@@ -152,7 +152,7 @@ class SwipeableButtonComponent extends Component<
             )}
           </span>
         </div>
-        <div className="w-full bg-secondary rounded-full p-4 text-center text-secondary-foreground">
+        <div className="w-full h-14 text-sm font-medium bg-secondary rounded-full text-secondary-foreground flex flex-col justify-center items-center">
           Swipe to send
         </div>
       </div>
