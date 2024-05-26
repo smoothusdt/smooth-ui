@@ -21,6 +21,16 @@ export default defineConfig({
         theme_color: "#339192",
         display: "standalone",
         orientation: "portrait",
+        related_applications: [
+          {
+            "platform": "webapp",
+            "url": "https://localhost:5173/manifest.webmanifest",
+          },
+          {
+            "platform": "webapp",
+            "url": "https://6a49-95-56-29-120.ngrok-free.app/manifest.webmanifest",
+          },
+        ],
         icons: [
           {
             src: "pwa-64x64.png",

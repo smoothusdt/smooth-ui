@@ -54,9 +54,14 @@ export const SetupWallet = () => {
             </span>
           </p>
           <div className="flex flex-col gap-4">
-            <Button onClick={handleCreateWalletClicked}>Create Wallet</Button>
-            <Button onClick={() => navigate("/import", { replace: true })}>
-              Import Wallet
+            <Button size="lg" onClick={handleCreateWalletClicked}>
+              Create Wallet
+            </Button>
+            <Button
+              size="lg"
+              onClick={() => navigate("/import", { replace: true })}
+            >
+              Import Secret Phrase
             </Button>
           </div>
         </div>

@@ -14,10 +14,13 @@ import {
 } from "@/components/MnemonicBackup";
 
 import { useRoute } from "wouter";
+import { usePwa } from "@/hooks/usePwa";
+import { Install } from "./Install";
 
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [root] = useRoute("/");
+  const [install] = useRoute("/install");
   const [setup] = useRoute("/setup");
   const [importWallet] = useRoute("/import");
   const [home] = useRoute("/home");
@@ -32,6 +35,7 @@ export const App = () => {
   return (
     <main className="container h-full w-full max-w-screen-sm">
       {root && <Root />}
+      {install && <Install />}
       {setup && <SetupWallet />}
       {importWallet && <ImportWallet />}
       {home && <Home />}

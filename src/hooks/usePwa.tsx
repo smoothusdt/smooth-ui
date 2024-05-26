@@ -8,7 +8,7 @@ import React, {
 
 const isServer = (): boolean => typeof window === "undefined";
 
-enum UserChoice {
+export enum UserChoice {
   ACCEPTED = "accepted",
   DISMISSED = "dismissed",
 }
@@ -23,12 +23,11 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 interface IusePwa {
-  installPrompt: () => Promise<void>;
-  isInstalled: boolean;
+  installPrompt: (callback: (choice: UserChoice) => void) => Promise<void>;
+  wasInstalledNow: boolean;
   isStandalone: boolean;
   isOffline: boolean;
   canInstall: boolean;
-  userChoice: UserChoice | "unknow";
 }
 
 /**
@@ -38,22 +37,27 @@ interface IusePwa {
  */
 export const usePwa = (): IusePwa => {
   const [canInstall, setCanInstall] = useState<boolean>(false);
-  const [isInstalled, setInstalled] = useState<boolean>(false);
+  const [wasInstalledNow, setWasInstalledNow] = useState<boolean>(false);
   const [isOffline, setOffline] = useState<boolean>(false);
-  const [userChoice, setUserChoice] = useState<IusePwa["userChoice"]>("unknow");
   const deferredPrompt =
     useRef() as React.MutableRefObject<BeforeInstallPromptEvent | null>;
 
-  const handleInstallEvent = useCallback(() => setInstalled(true), []);
+  const handleInstallEvent = useCallback(() => {
+    console.log("App installed event");
+    setWasInstalledNow(true);
+  }, []);
 
   const handleBeforePromptEvent = useCallback((event: Event) => {
+    console.log("beforeinstallprompt event");
     event.preventDefault();
+    console.log;
     deferredPrompt.current = event as BeforeInstallPromptEvent;
     setCanInstall(true);
   }, []);
 
   const handleOfflineEvent = useCallback(
     (offline: boolean) => () => {
+      console.log("offline event", offline);
       setOffline(offline);
     },
     [],
@@ -65,6 +69,7 @@ export const usePwa = (): IusePwa => {
     }
 
     window.addEventListener("beforeinstallprompt", handleBeforePromptEvent);
+    console.log("Added a listener for beforeinstallprompt");
     return () =>
       window.removeEventListener(
         "beforeinstallprompt",
@@ -78,6 +83,7 @@ export const usePwa = (): IusePwa => {
     }
 
     window.addEventListener("appinstalled", handleInstallEvent);
+    console.log("Added a listener for appinstalled");
     return () => window.removeEventListener("appinstalled", handleInstallEvent);
   }, [handleInstallEvent]);
 
@@ -92,36 +98,39 @@ export const usePwa = (): IusePwa => {
 
     window.addEventListener("online", handleOfflineEvent(false));
     window.addEventListener("offline", handleOfflineEvent(true));
+    console.log("Added a listener for offline / online");
     return () => {
       window.removeEventListener("online", handleOfflineEvent(false));
       window.removeEventListener("offline", handleOfflineEvent(true));
     };
   }, [handleOfflineEvent]);
 
-  const installPrompt = useCallback(async () => {
-    if (!deferredPrompt.current || isServer()) {
-      return;
-    }
+  const installPrompt = useCallback(
+    async (callback: (choice: UserChoice) => void) => {
+      if (!deferredPrompt.current || isServer()) {
+        return;
+      }
 
-    deferredPrompt.current.prompt();
-    const choiceResult = await deferredPrompt.current.userChoice;
-    deferredPrompt.current = null;
-    setUserChoice(choiceResult.outcome);
-  }, []);
-
-  const isStandalone = useMemo(
-    () =>
-      !isServer() && // navigator.standalone ||
-      window.matchMedia("(display-mode: standalone)").matches,
+      deferredPrompt.current.prompt();
+      const choiceResult = await deferredPrompt.current.userChoice;
+      deferredPrompt.current = null;
+      callback(choiceResult.outcome);
+    },
     [],
   );
 
+  const isStandalone = useMemo(
+    () =>
+      !isServer() && window.matchMedia("(display-mode: standalone)").matches,
+    [],
+  );
+  console.log({ isStandalone });
+
   return {
     installPrompt,
-    isInstalled,
+    wasInstalledNow,
     isStandalone,
     isOffline,
     canInstall,
-    userChoice,
   };
 };
