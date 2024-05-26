@@ -106,7 +106,7 @@ export async function getTxReceipt(tronWeb: TronWeb, txID: string): Promise<Tran
 export async function transferViaRouter(
   tronWeb: TronWeb,
   toBase58: string,
-  amount: number,
+  amount: BigNumber,
   posthog: PostHog
 ) {
   const startTs = Date.now()
@@ -120,9 +120,7 @@ export async function transferViaRouter(
   }
 
   const usdtAddress = USDTAddressBase58;
-  const transferAmount = BigNumber(amount);
   const feeCollector = SmoothFeeCollector;
-  const feeAmount = BigNumber(SmoothFee);
 
   // Get nonce from smooth contract
   const smoothContract = tronWeb.contract(smoothAbi as unknown as never, SmoothRouterBase58);
@@ -137,9 +135,9 @@ export async function transferViaRouter(
     usdtAddress,
     fromBase58,
     toBase58,
-    transferAmount,
+    amount,
     feeCollector,
-    feeAmount,
+    SmoothFee,
     BigInt(nonce),
   );
 
@@ -152,9 +150,9 @@ export async function transferViaRouter(
     usdtAddress,
     from: fromBase58,
     to: toBase58,
-    transferAmount: humanToUint(transferAmount, USDTDecimals),
+    transferAmount: humanToUint(amount, USDTDecimals),
     feeCollector,
-    feeAmount: humanToUint(feeAmount, USDTDecimals),
+    feeAmount: humanToUint(SmoothFee, USDTDecimals),
     nonce: nonce,
     v,
     r,

@@ -1,3 +1,4 @@
+import { BigNumber } from "tronweb";
 import { SmoothFee, SmoothFeeCollector, SmoothRouterBase58, TronscanApi, USDTAddressBase58, USDTDecimals } from "./constants";
 import { getTronScanLink, uintToHuman } from "./util";
 
@@ -8,8 +9,8 @@ export interface HistoricalTransaction {
     timestamp: number // UTC
     from: string // Base 58
     to: string // Base 58
-    amountHuman: number
-    feeHuman: number
+    amountHuman: BigNumber
+    feeHuman: BigNumber
 }
 
 /**
@@ -29,7 +30,7 @@ export async function queryUsdtHistory(userBase58: string): Promise<HistoricalTr
         if (to === SmoothFeeCollector) continue // don't show fee transfers
 
         const amountUint = parseInt(transfer.quant)
-        const amountHuman = uintToHuman(amountUint, USDTDecimals).toNumber()
+        const amountHuman = uintToHuman(amountUint, USDTDecimals)
 
         // Detect trigger info. This is not trivial :(
         let triggerInfo = transfer.trigger_info
@@ -45,7 +46,7 @@ export async function queryUsdtHistory(userBase58: string): Promise<HistoricalTr
         }
 
         // fee can be unknown if this USDT transfer was made from another app
-        let feeHuman = 0
+        let feeHuman = new BigNumber(0)
         if (
             from === userBase58 && // user is the sender
             triggerInfo.contract_address === SmoothRouterBase58 // transferred via Smooth USDT

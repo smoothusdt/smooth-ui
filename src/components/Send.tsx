@@ -28,7 +28,7 @@ import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePwa } from "@/hooks/usePwa";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
-import { TronWeb } from "tronweb";
+import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 import { Camera } from "./Camera";
 
@@ -45,7 +45,8 @@ export const Send = () => {
   const [checkApproval, transfer] = useSmooth();
 
   const [amountRaw, setAmountRaw] = useState<string>("");
-  const amount = parseFloat(amountRaw) || 0;
+  let amount = new BigNumber(amountRaw);
+  if (amount.isNaN()) amount = new BigNumber(0);
 
   // Scanning state
   const [isScanning, setIsScanning] = useState(false);
@@ -61,7 +62,7 @@ export const Send = () => {
   if (!connected) return; // wait until the wallet loads
 
   const isOverspending =
-    balance !== undefined && amountRaw && amount + SmoothFee > balance;
+    balance !== undefined && amountRaw && amount.plus(SmoothFee).gt(balance);
   const receiverInvalid = receiver && !TronWeb.isAddress(receiver);
 
   let alert = "";
@@ -73,7 +74,7 @@ export const Send = () => {
 
   const sendDisabled =
     sending ||
-    amount === 0 ||
+    amount.eq(0) ||
     receiver === "" ||
     isOverspending ||
     receiverInvalid ||
@@ -281,7 +282,8 @@ export const Send = () => {
                 opacity: sending ? 0.6 : 1,
               }}
             >
-              Fee: {SmoothFee} <span className="text-[0.5rem]">USDT</span>
+              Fee: {SmoothFee.toString()}{" "}
+              <span className="text-[0.5rem]">USDT</span>
             </span>
             {Boolean(amount) && (
               <span
@@ -290,7 +292,7 @@ export const Send = () => {
                   opacity: sending ? 0.6 : 1,
                 }}
               >
-                Total: <strong>{amount + SmoothFee}</strong>{" "}
+                Total: <strong>{amount.plus(SmoothFee).toString()}</strong>{" "}
                 <span className="text-[0.5rem]">USDT</span>
               </span>
             )}

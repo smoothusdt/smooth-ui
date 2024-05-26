@@ -1,3 +1,4 @@
+import { BigNumber } from "tronweb";
 import { NetworkConfig } from "./networkConfig";
 
 // misc constants
@@ -21,7 +22,7 @@ export const SmoothRouterBase58 = NetworkConfig.routerBase58;
 /** Base URL of the smooth USDT API. Note: no trailing slash. */
 export const SmoothApiURL = NetworkConfig.smoothApiURL;
 /** How much USDT does smooth charge for a transaction */
-export const SmoothFee = 1.5;
+export const SmoothFee = new BigNumber(1.5);
 
 // Related to window.localStorage
 export const SmoothStoragePrefix = "@SmoothUSDT"
