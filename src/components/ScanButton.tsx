@@ -12,6 +12,15 @@ import { Scanner } from "@yudiel/react-qr-scanner";
 import { ScanLineIcon } from "lucide-react";
 import { useState } from "react";
 
+/**
+ * Renders a scan button which opens a drawer containing a QR Code scanner.
+ * When a QR Code is read, `onScan` is called with the code.
+ *
+ * TODO: Error state for permission denied or general error
+ * TODO: Height of component should not jump when camera starts
+ * TODO: Better viewfinder and remove torch icon
+ * TODO: Make sure permission flow feels good
+ */
 export const ScanButton = (props: {
   onScan: (code: string) => void;
   disabled?: boolean;
