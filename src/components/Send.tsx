@@ -26,6 +26,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 import { Camera } from "./Camera";
+import { SwipeableButton } from "./SwipeableButton";
 
 /** Full page components which owns the send flow */
 export const Send = () => {
@@ -308,14 +309,11 @@ export const Send = () => {
                 <AlertDescription>{alert}</AlertDescription>
               </Alert>
             )}
-            <Button
-              className="w-full"
+            <SwipeableButton
               ref={sendButtonScope}
+              onSuccess={handleTransferClicked}
               disabled={sendDisabled}
-              onClick={handleTransferClicked}
-            >
-              Send
-            </Button>
+            />
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
               style={{
