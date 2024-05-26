@@ -9,7 +9,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { Scanner } from "@yudiel/react-qr-scanner";
-import { ScanLineIcon, X } from "lucide-react";
+import { ScanLineIcon } from "lucide-react";
 import { useState } from "react";
 
 export const ScanButton = (props: {
