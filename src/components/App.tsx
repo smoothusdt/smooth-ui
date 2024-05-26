@@ -14,7 +14,6 @@ import {
 } from "@/components/MnemonicBackup";
 
 import { useRoute } from "wouter";
-import { usePwa } from "@/hooks/usePwa";
 import { Install } from "./Install";
 
 /** Entry point of UI. Should be wrapped in all providers. */
