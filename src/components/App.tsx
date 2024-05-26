@@ -13,7 +13,7 @@ import {
   StartBackup,
 } from "@/components/MnemonicBackup";
 
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import { Install } from "./Install";
 import { useWallet } from "@/hooks/useWallet";
 import { usePwa } from "@/hooks/usePwa";
