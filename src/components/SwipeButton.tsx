@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-export function SwipeButton() {
+export function SwipeButton(props: { setStatus(arg0: string): void }) {
   const minSwiperWidth = 60;
   const swiperWidth = useMotionValue(minSwiperWidth);
   const swiperBackgroundRef = useRef<JSX.Element>();
@@ -80,17 +80,20 @@ export function SwipeButton() {
   const onTouchEnd = useCallback(
     (event: TouchEvent) => {
       console.log("Touch end", event);
+      props.setStatus("");
       document.removeEventListener("touchmove", onTouchMove);
       document.removeEventListener("touchend", onTouchEnd);
       swiperAnimate(swiperScope.current, {
         width: minSwiperWidth,
       });
     },
-    [onTouchMove, swiperScope, swiperAnimate],
+    [onTouchMove, swiperScope, swiperAnimate, props],
   );
 
   const onTouchStart = (event: any) => {
     console.log("Touch start", event);
+    props.setStatus("Touch start");
+    lastEventTs.current = Date.now();
     startX.current = event.touches[0].screenX;
 
     document.addEventListener("touchmove", onTouchMove);

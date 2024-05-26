@@ -54,6 +54,7 @@ export const Send = () => {
   const [sendButtonScope, sendButtonAnimate] = useAnimate();
   const [loaderScope, loaderAnimate] = useAnimate();
   const [inputScreenScope, inputScreenAnimate] = useAnimate();
+  const [swipeStatus, setSwipeStatus] = useState("");
 
   if (!connected) return; // wait until the wallet loads
 
@@ -317,7 +318,8 @@ export const Send = () => {
             >
               Send
             </Button> */}
-            <SwipeButton />
+            <p>{swipeStatus}</p>
+            <SwipeButton setStatus={setSwipeStatus} />
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
               style={{
