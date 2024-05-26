@@ -6,6 +6,7 @@ import {
 } from "tronweb/utils";
 import { BigNumber } from "tronweb";
 import { ExplorerUrl } from "./constants";
+import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
 
 export function humanToUint(amountHuman: BigNumber, decimals: number): number {
   return amountHuman
@@ -74,4 +75,14 @@ export function shortenAddress(address: string) {
   const lastPart = address.slice(address.length - 4)
 
   return `${firstPart}...${lastPart}`
+}
+
+export function assertTransactionSuccess(txReceipt: TransactionInfo) {
+  // If txReceipt.receipt.result is not defined - it is a TRX transfer.
+  // We always consider it successful.
+  if (!txReceipt.receipt || !txReceipt.receipt.result || txReceipt.receipt.result === 'SUCCESS') {
+    return // success
+  }
+
+  throw new Error(`Transaction ${txReceipt.id} did not execute well`)
 }

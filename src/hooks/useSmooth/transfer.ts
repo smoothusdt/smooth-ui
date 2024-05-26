@@ -8,7 +8,7 @@ import {
   SmoothFee,
   SmoothApiURL,
 } from "../../constants";
-import { humanToUint } from "../../util";
+import { assertTransactionSuccess, humanToUint } from "../../util";
 import {
   Hex,
   encodePacked,
@@ -175,7 +175,8 @@ export async function transferViaRouter(
   const txID = data.txID as string;
 
   // Await transaction execution
-  await getTxReceipt(tronWeb, txID)
+  const receipt = await getTxReceipt(tronWeb, txID)
+  assertTransactionSuccess(receipt)
 
   const endTs = Date.now()
   posthog.capture("Transfer completed", {
