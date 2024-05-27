@@ -1,3 +1,4 @@
+import { AppInstalledKey, AppInstalledValue } from "@/constants";
 import React, {
   useCallback,
   useEffect,
@@ -24,8 +25,9 @@ interface BeforeInstallPromptEvent extends Event {
 
 interface IusePwa {
   installPrompt: (callback: (choice: UserChoice) => void) => Promise<void>;
-  wasInstalledNow: boolean;
-  wasInstalledEarlier: boolean;
+  onInstall: () => void;
+  installedAsApk: boolean;
+  installedAsShortcut: boolean;
   isStandalone: boolean;
   isOffline: boolean;
   canInstall: boolean;
@@ -62,6 +64,15 @@ function getMobileOperatingSystem() {
   return "unknown";
 }
 
+export function reinstallApp() {
+  localStorage.removeItem(AppInstalledKey);
+  window.location.reload();
+}
+
+function isInstalledChecker() {
+  return localStorage.getItem(AppInstalledKey) === AppInstalledValue;
+}
+
 /**
  * Hook to provide an interface the PWA related information given by the browser.
  *
@@ -69,16 +80,16 @@ function getMobileOperatingSystem() {
  */
 export const usePwa = (): IusePwa => {
   const [canInstall, setCanInstall] = useState<boolean>(false);
-  const [wasInstalledNow, setWasInstalledNow] = useState<boolean>(false);
-  const [wasInstalledEarlier, setWasInstalledEarlier] =
-    useState<boolean>(false);
+  const [installedAsApk, setInstalledAsApk] = useState<boolean>(false);
+  const [isInstalled, setIsInstalled] = useState(isInstalledChecker());
   const [isOffline, setOffline] = useState<boolean>(false);
   const deferredPrompt =
     useRef() as React.MutableRefObject<BeforeInstallPromptEvent | null>;
 
-  const handleInstallEvent = useCallback(() => {
+  const onInstall = useCallback(() => {
     console.log("App installed event");
-    setWasInstalledNow(true);
+    localStorage.setItem(AppInstalledKey, AppInstalledValue);
+    setIsInstalled(true);
   }, []);
 
   const handleBeforePromptEvent = useCallback((event: Event) => {
@@ -116,10 +127,10 @@ export const usePwa = (): IusePwa => {
       return;
     }
 
-    window.addEventListener("appinstalled", handleInstallEvent);
+    window.addEventListener("appinstalled", onInstall);
     console.log("Added a listener for appinstalled");
-    return () => window.removeEventListener("appinstalled", handleInstallEvent);
-  }, [handleInstallEvent]);
+    return () => window.removeEventListener("appinstalled", onInstall);
+  }, [onInstall]);
 
   useEffect(() => {
     if (isServer()) {
@@ -145,10 +156,11 @@ export const usePwa = (): IusePwa => {
         const installedApps = await (
           navigator as any
         ).getInstalledRelatedApps();
-        setWasInstalledEarlier(installedApps.length > 0);
+        setInstalledAsApk(installedApps.length > 0);
       } catch (error: any) {
-        // Sad if happens, but is not the end of the world
-        console.error("Couldnt get standalone apps list", error);
+        // Sad if happens, but is not the end of the world.
+        // Happens on everything non-android essentially.
+        console.log("Couldnt get standalone apps list", error);
       }
     })();
   }, []);
@@ -182,13 +194,16 @@ export const usePwa = (): IusePwa => {
 
   // Yandex Browser opens the shortcut as a tab in browser,
   // not as a standalone app, which is bad.
-
   const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
+
+  // No useMemo bcs we recompute this after app installation
+  const installedAsShortcut = isInstalled && !installedAsApk;
 
   return {
     installPrompt,
-    wasInstalledNow,
-    wasInstalledEarlier,
+    onInstall,
+    installedAsApk,
+    installedAsShortcut,
     isStandalone,
     isOffline,
     canInstall,

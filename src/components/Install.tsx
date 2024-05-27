@@ -1,8 +1,8 @@
-import { UserChoice, usePwa } from "@/hooks/usePwa";
+import { UserChoice, reinstallApp, usePwa } from "@/hooks/usePwa";
 import { Page, PageContent, PageHeader } from "./Page";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { ArrowBigRightDash, CircleCheck, Globe, Loader2 } from "lucide-react";
+import { CircleCheck, Globe, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import {
   Drawer,
@@ -15,6 +15,7 @@ import {
 } from "./ui/drawer";
 import { IosShareIcon } from "./svgs";
 import { CopyText } from "./CopyText";
+import { Link } from "./Link";
 
 function IosInstructions(props: {
   showDrawer: boolean;
@@ -92,34 +93,26 @@ function Installing() {
   );
 }
 
-function InstalledNow() {
+function AlreadyInstalled(props: { allowReinstall?: boolean }) {
   return (
     <PageContent>
-      <div className="h-full flex flex-col justify-center">
+      <div className="h-full flex flex-col justify-between">
+        <div /> {/* for flex alignment */}
         <div className="flex flex-col gap-4 text-center items-center">
           <CircleCheck size={64} className="text-primary" />
-          <span className="text-lg font-semibold">Nice Work</span>
-          <p className="text-muted-foreground text-sm">
-            Open Smooth USDT app and start making transfers.
-          </p>
-        </div>
-      </div>
-    </PageContent>
-  );
-}
-
-function InstalledEarlier() {
-  return (
-    <PageContent>
-      <div className="h-full flex flex-col justify-center">
-        <div className="flex flex-col gap-4 text-center items-center">
-          <ArrowBigRightDash size={64} className="text-primary" />
           <span className="text-lg font-semibold">App installed</span>
           <p className="text-muted-foreground text-sm">
-            The Smooth USDT app has already been installed. Find it and open on
-            your phone.
+            Open Smooth USDT app and start making easy transfers!
           </p>
         </div>
+        {props.allowReinstall ? (
+          <p className="text-muted-foreground text-sm text-center">
+            Click <Link onClick={reinstallApp}>here</Link> if you want to
+            re-install the app.
+          </p>
+        ) : (
+          <div />
+        )}
       </div>
     </PageContent>
   );
@@ -175,9 +168,10 @@ export function Install() {
   const [, navigate] = useLocation();
   const {
     canInstall,
+    onInstall,
     installPrompt,
-    wasInstalledNow,
-    wasInstalledEarlier,
+    installedAsApk,
+    installedAsShortcut,
     isStandalone,
     isMobile,
     mobileOS,
@@ -185,7 +179,6 @@ export function Install() {
   } = usePwa();
   const [installing, setInstalling] = useState(false);
   const [showIosInstructions, setShowIosInstructions] = useState(false);
-  const [iosAppInstalled, setIosAppInstalled] = useState(false);
 
   useEffect(() => {
     if (isStandalone) {
@@ -209,14 +202,14 @@ export function Install() {
     installPrompt(onUserChoiceMade);
   };
 
-  // Not always displayed, but rendering here for simplicity
+  // Not always displayed, but computing here for simplicity
   const iosInstructionsDrawer = (
     <IosInstructions
       showDrawer={showIosInstructions}
       setShowDrawer={setShowIosInstructions}
       onClickDone={() => {
         setShowIosInstructions(false);
-        setIosAppInstalled(true);
+        onInstall();
       }}
     />
   );
@@ -225,20 +218,16 @@ export function Install() {
   if (!isMobile) content = <CantInstallDesktop />;
   // All checks below assume this is a mobile device
   else if (isBadBrowser) content = <BadMobileBrowser />;
-  else if (wasInstalledEarlier) content = <InstalledEarlier />;
-  else if (mobileOS === "iOS") {
-    // TODO: detect browser. Curerntly assuming that the user uses Safari.
-    if (iosAppInstalled) content = <InstalledNow />;
-    else {
-      content = (
-        <InstallPrompt onInstallClicked={() => setShowIosInstructions(true)} />
-      );
-    }
-  }
+  else if (installedAsApk) content = <AlreadyInstalled />;
+  else if (installedAsShortcut) content = <AlreadyInstalled allowReinstall />;
+  else if (mobileOS === "iOS")
+    // TODO: detect browser. Curerntly assuming Safari.
+    content = (
+      <InstallPrompt onInstallClicked={() => setShowIosInstructions(true)} />
+    );
   // Could be cringe like Windows Phone, but for now assuming it's android if not iOS
   else if (canInstall) {
-    if (wasInstalledNow) content = <InstalledNow />;
-    else if (installing) content = <Installing />;
+    if (installing) content = <Installing />;
     else content = <InstallPrompt onInstallClicked={onInstallClicked} />;
   } else content = <BadMobileBrowser />;
 

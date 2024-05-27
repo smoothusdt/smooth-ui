@@ -29,3 +29,5 @@ export const SmoothStoragePrefix = "@SmoothUSDT"
 export const MnemonicStorageKey = `${SmoothStoragePrefix}/userMnemonic`;
 export const ApprovalStatusStorageKey = `${SmoothStoragePrefix}/approvalStatus`
 export const ApprovalGrantedValue = 'granted'
+export const AppInstalledKey = `${SmoothStoragePrefix}/appInstalled`
+export const AppInstalledValue = 'installed'
