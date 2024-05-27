@@ -177,7 +177,7 @@ export function Install() {
     isMobile,
     mobileOS,
     isBadBrowser,
-    isSafari,
+    isMobileSafari,
   } = usePwa();
   const [installing, setInstalling] = useState(false);
   const [showSafariInstructions, setShowSafariInstructions] = useState(false);
@@ -222,14 +222,14 @@ export function Install() {
   else if (installedAsApk || wasInstalledNow) content = <AppInstalled />;
   else if (installedAsShortcut) content = <AppInstalled allowReinstall />;
   else if (mobileOS === "iOS") {
-    if (isSafari)
+    if (isMobileSafari)
       content = (
         <InstallPrompt
           onInstallClicked={() => setShowSafariInstructions(true)}
         />
       );
-    // TODO: add instructions for Chrome on iOS. In new versions of iOS ppl can
-    // install shortcuts in Chrome too.
+    // TODO: add installation instructions for Chrome on iOS.
+    // In new iOS versions ppl can Add to Home Screen in Chrome too.
     else content = <BadMobileBrowser targetBrowser="Safari" />;
   }
   // Assuming it's android since it's not iOS (could be cringe like Windows Phone tho)

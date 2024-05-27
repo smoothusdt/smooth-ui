@@ -35,7 +35,7 @@ interface IusePwa {
   isMobile: boolean;
   mobileOS: "iOS" | "Android" | "Windows Phone" | "unknown"; // use only if isMobile is true
   isBadBrowser: boolean;
-  isSafari: boolean;
+  isMobileSafari: boolean;
 }
 
 /**
@@ -198,8 +198,11 @@ export const usePwa = (): IusePwa => {
   // not as a standalone app, which is bad.
   const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
 
-  const isSafari = useMemo(
-    () => /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
+  const isMobileSafari = useMemo(
+    () =>
+      /version\/([\w.,]+) .*mobile(?:\/\w+ | ?)safari/i.test(
+        navigator.userAgent,
+      ),
     [],
   );
 
@@ -218,6 +221,6 @@ export const usePwa = (): IusePwa => {
     isMobile,
     mobileOS,
     isBadBrowser,
-    isSafari,
+    isMobileSafari,
   };
 };
