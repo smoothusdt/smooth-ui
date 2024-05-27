@@ -13,11 +13,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "./ui/drawer";
-import { IosShareIcon } from "./svgs";
+import { SafariShareIcon } from "./svgs";
 import { CopyText } from "./CopyText";
 import { Link } from "./Link";
 
-function IosInstructions(props: {
+function SafariInstructions(props: {
   showDrawer: boolean;
   setShowDrawer?: (arg0: boolean) => void;
   onClickDone?: () => void;
@@ -26,15 +26,15 @@ function IosInstructions(props: {
     <Drawer nested open={props.showDrawer} onOpenChange={props.setShowDrawer}>
       <DrawerContent className="sm:max-w-[425px]">
         <DrawerHeader>
-          <DrawerTitle className="pb-4">Install on iOS</DrawerTitle>
+          <DrawerTitle className="pb-4">Install via Safari</DrawerTitle>
           <DrawerDescription className="flex flex-col gap-4 px-8">
             <ol className="list-decimal text-muted-foreground text-sm text-left flex flex-col gap-4">
               <li>
                 Tap the{" "}
                 <span className="inline-block">
-                  <IosShareIcon />
+                  <SafariShareIcon />
                 </span>{" "}
-                share icon in your browser
+                share icon in Safari
               </li>
               <li>Scroll down</li>
               <li>
@@ -126,8 +126,8 @@ function CantInstallDesktop() {
           <Globe size={64} className="text-primary" />
           <span className="text-lg font-semibold">Welcome to smooth</span>
           <p className="text-muted-foreground text-sm">
-            Open this page on your phone (in Chrome or Safari) to install the
-            app.
+            Open this page on your phone (in Chrome on Android, in Safari on
+            iOS) to install the app.
           </p>
           <CopyText
             buttonLabel="Copy link"
@@ -139,7 +139,7 @@ function CantInstallDesktop() {
   );
 }
 
-function BadMobileBrowser() {
+function BadMobileBrowser(props: { targetBrowser: string }) {
   return (
     <PageContent>
       <div className="h-full flex flex-col justify-center">
@@ -147,7 +147,7 @@ function BadMobileBrowser() {
           <Globe size={64} className="text-primary" />
           <span className="text-lg font-semibold">Welcome to smooth</span>
           <p className="text-muted-foreground text-sm">
-            Open this page in Chrome browser to install the app.
+            Open this page in {props.targetBrowser} to install the app.
           </p>
           <CopyText
             buttonLabel="Copy link"
@@ -177,9 +177,10 @@ export function Install() {
     isMobile,
     mobileOS,
     isBadBrowser,
+    isSafari,
   } = usePwa();
   const [installing, setInstalling] = useState(false);
-  const [showIosInstructions, setShowIosInstructions] = useState(false);
+  const [showSafariInstructions, setShowSafariInstructions] = useState(false);
 
   useEffect(() => {
     if (isStandalone) {
@@ -204,12 +205,12 @@ export function Install() {
   };
 
   // Not always displayed, but computing here for simplicity
-  const iosInstructionsDrawer = (
-    <IosInstructions
-      showDrawer={showIosInstructions}
-      setShowDrawer={setShowIosInstructions}
+  const safariInstructionsDrawer = (
+    <SafariInstructions
+      showDrawer={showSafariInstructions}
+      setShowDrawer={setShowSafariInstructions}
       onClickDone={() => {
-        setShowIosInstructions(false);
+        setShowSafariInstructions(false);
         onInstall();
       }}
     />
@@ -218,19 +219,26 @@ export function Install() {
   let content: JSX.Element;
   if (!isMobile) content = <CantInstallDesktop />;
   // All checks below assume this is a mobile device
-  else if (isBadBrowser) content = <BadMobileBrowser />;
   else if (installedAsApk || wasInstalledNow) content = <AppInstalled />;
   else if (installedAsShortcut) content = <AppInstalled allowReinstall />;
-  else if (mobileOS === "iOS")
-    // TODO: detect browser. Curerntly assuming Safari.
-    content = (
-      <InstallPrompt onInstallClicked={() => setShowIosInstructions(true)} />
-    );
-  // Could be cringe like Windows Phone, but for now assuming it's android if not iOS
+  else if (mobileOS === "iOS") {
+    if (isSafari)
+      content = (
+        <InstallPrompt
+          onInstallClicked={() => setShowSafariInstructions(true)}
+        />
+      );
+    // TODO: add instructions for Chrome on iOS. In new versions of iOS ppl can
+    // install shortcuts in Chrome too.
+    else content = <BadMobileBrowser targetBrowser="Safari" />;
+  }
+  // Assuming it's android since it's not iOS (could be cringe like Windows Phone tho)
+  else if (isBadBrowser)
+    content = <BadMobileBrowser targetBrowser="Google Chrome" />;
   else if (canInstall) {
     if (installing) content = <Installing />;
     else content = <InstallPrompt onInstallClicked={onInstallClicked} />;
-  } else content = <BadMobileBrowser />;
+  } else content = <BadMobileBrowser targetBrowser="Google Chrome" />;
 
   return (
     <Page>
@@ -242,7 +250,7 @@ export function Install() {
       {content}
       {/* Passing the drawer always so that when the user closes it,
       it closes smoothly and doesn't get removed from the DOM immediately */}
-      {iosInstructionsDrawer}
+      {safariInstructionsDrawer}
     </Page>
   );
 }
