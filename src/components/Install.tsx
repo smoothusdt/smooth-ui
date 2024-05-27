@@ -93,7 +93,7 @@ function Installing() {
   );
 }
 
-function AlreadyInstalled(props: { allowReinstall?: boolean }) {
+function AppInstalled(props: { allowReinstall?: boolean }) {
   return (
     <PageContent>
       <div className="h-full flex flex-col justify-between">
@@ -170,6 +170,7 @@ export function Install() {
     canInstall,
     onInstall,
     installPrompt,
+    wasInstalledNow,
     installedAsApk,
     installedAsShortcut,
     isStandalone,
@@ -218,8 +219,8 @@ export function Install() {
   if (!isMobile) content = <CantInstallDesktop />;
   // All checks below assume this is a mobile device
   else if (isBadBrowser) content = <BadMobileBrowser />;
-  else if (installedAsApk) content = <AlreadyInstalled />;
-  else if (installedAsShortcut) content = <AlreadyInstalled allowReinstall />;
+  else if (installedAsApk || wasInstalledNow) content = <AppInstalled />;
+  else if (installedAsShortcut) content = <AppInstalled allowReinstall />;
   else if (mobileOS === "iOS")
     // TODO: detect browser. Curerntly assuming Safari.
     content = (

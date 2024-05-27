@@ -26,6 +26,7 @@ interface BeforeInstallPromptEvent extends Event {
 interface IusePwa {
   installPrompt: (callback: (choice: UserChoice) => void) => Promise<void>;
   onInstall: () => void;
+  wasInstalledNow: boolean;
   installedAsApk: boolean;
   installedAsShortcut: boolean;
   isStandalone: boolean;
@@ -69,7 +70,7 @@ export function reinstallApp() {
   window.location.reload();
 }
 
-function isInstalledChecker() {
+function isInstalled() {
   return localStorage.getItem(AppInstalledKey) === AppInstalledValue;
 }
 
@@ -81,15 +82,15 @@ function isInstalledChecker() {
 export const usePwa = (): IusePwa => {
   const [canInstall, setCanInstall] = useState<boolean>(false);
   const [installedAsApk, setInstalledAsApk] = useState<boolean>(false);
-  const [isInstalled, setIsInstalled] = useState(isInstalledChecker());
+  const [wasInstalledNow, setWasInstalledNow] = useState(false);
   const [isOffline, setOffline] = useState<boolean>(false);
   const deferredPrompt =
     useRef() as React.MutableRefObject<BeforeInstallPromptEvent | null>;
 
   const onInstall = useCallback(() => {
     console.log("App installed event");
+    setWasInstalledNow(true);
     localStorage.setItem(AppInstalledKey, AppInstalledValue);
-    setIsInstalled(true);
   }, []);
 
   const handleBeforePromptEvent = useCallback((event: Event) => {
@@ -197,11 +198,12 @@ export const usePwa = (): IusePwa => {
   const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
 
   // No useMemo bcs we recompute this after app installation
-  const installedAsShortcut = isInstalled && !installedAsApk;
+  const installedAsShortcut = isInstalled() && !installedAsApk;
 
   return {
     installPrompt,
     onInstall,
+    wasInstalledNow,
     installedAsApk,
     installedAsShortcut,
     isStandalone,
