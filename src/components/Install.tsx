@@ -114,8 +114,8 @@ export function CantInstall() {
             <Globe size={64} className="text-primary" />
             <span className="text-lg font-semibold">Welcome to smooth</span>
             <p className="text-muted-foreground text-sm">
-              Open this url in your native browser (Chrome on Android, Safari on
-              iOS) to install the app.
+              Open this url on your phone in a native browser (Chrome on
+              Android, Safari on iOS) to install the app.
             </p>
           </div>
         </div>
