@@ -25,10 +25,41 @@ interface BeforeInstallPromptEvent extends Event {
 interface IusePwa {
   installPrompt: (callback: (choice: UserChoice) => void) => Promise<void>;
   wasInstalledNow: boolean;
+  wasInstalledEarlier: boolean;
   isStandalone: boolean;
   isOffline: boolean;
   canInstall: boolean;
-  wasInstalledEarlier: boolean;
+  isMobile: boolean;
+  mobileOS: "iOS" | "Android" | "Windows Phone" | "unknown"; // use only if isMobile is true
+  isBadBrowser: boolean;
+}
+
+/**
+ * Determine the mobile operating system.
+ * This function returns one of 'iOS', 'Android', 'Windows Phone', or 'unknown'.
+ *
+ * Taken from https://stackoverflow.com/a/21742107/14865673
+ * @returns {String}
+ */
+function getMobileOperatingSystem() {
+  const userAgent =
+    navigator.userAgent || navigator.vendor || (window as any).opera;
+
+  // Windows Phone must come first because its UA also contains "Android"
+  if (/windows phone/i.test(userAgent)) {
+    return "Windows Phone";
+  }
+
+  if (/android/i.test(userAgent)) {
+    return "Android";
+  }
+
+  // iOS detection from: http://stackoverflow.com/a/9039885/177710
+  if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+    return "iOS";
+  }
+
+  return "unknown";
 }
 
 /**
@@ -142,12 +173,27 @@ export const usePwa = (): IusePwa => {
     [],
   );
 
+  const isMobile = useMemo(
+    () => window.screen.height / window.screen.width > 1,
+    [],
+  );
+
+  const mobileOS = useMemo(getMobileOperatingSystem, []);
+
+  // Yandex Browser opens the shortcut as a tab in browser,
+  // not as a standalone app, which is bad.
+
+  const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
+
   return {
     installPrompt,
     wasInstalledNow,
+    wasInstalledEarlier,
     isStandalone,
     isOffline,
     canInstall,
-    wasInstalledEarlier,
+    isMobile,
+    mobileOS,
+    isBadBrowser,
   };
 };

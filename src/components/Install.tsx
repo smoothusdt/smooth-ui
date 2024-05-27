@@ -4,123 +4,165 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { ArrowBigRightDash, CircleCheck, Globe, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "./ui/drawer";
+import { IosShareIcon } from "./svgs";
+import { CopyText } from "./CopyText";
+
+function IosInstructions(props: {
+  showDrawer: boolean;
+  setShowDrawer?: (arg0: boolean) => void;
+  onClickDone?: () => void;
+}) {
+  return (
+    <Drawer nested open={props.showDrawer} onOpenChange={props.setShowDrawer}>
+      <DrawerContent className="sm:max-w-[425px]">
+        <DrawerHeader>
+          <DrawerTitle className="pb-4">Install on iOS</DrawerTitle>
+          <DrawerDescription className="flex flex-col gap-4 px-8">
+            <ol className="list-decimal text-muted-foreground text-sm text-left flex flex-col gap-4">
+              <li>
+                Tap the{" "}
+                <span className="inline-block">
+                  <IosShareIcon />
+                </span>{" "}
+                share icon in your browser
+              </li>
+              <li>Scroll down</li>
+              <li>
+                Tap{" "}
+                <span className="border border-solid border-muted-foreground rounded-full p-2">
+                  Add to Home Screen
+                </span>
+              </li>
+            </ol>
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter className="flex flex-col gap-2">
+          <Button onClick={props.onClickDone}>Done</Button>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
 
 function InstallPrompt(props: { onInstallClicked: () => void }) {
   return (
-    <Page>
-      <PageHeader>
-        <span>
-          smooth <span className="text-xs text-muted-foreground"> USDT</span>
-        </span>
-      </PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-between">
-          <div /> {/* for flex alignment */}
+    <PageContent>
+      <div className="h-full flex flex-col justify-between">
+        <div /> {/* for flex alignment */}
+        <div className="flex flex-col gap-4 text-center items-center">
+          <Globe size={64} className="text-primary" />
           <p className="text-2xl text-center">
             Welcome to smooth
             <br />
             <span className="text-sm text-center text-muted-foreground">
-              Install the app and send USDT with ease (in TRC-20 network).
+              Install the app and send USDT with ease.
+              <br />
+              (in TRC-20 network)
             </span>
           </p>
-          <div className="flex flex-col gap-4">
-            {/* <Button onClick={handleCreateWalletClicked}>Create Wallet</Button> */}
-            <Button size="lg" onClick={props.onInstallClicked}>
-              Install App
-            </Button>
-          </div>
         </div>
-      </PageContent>
-    </Page>
+        <Button size="lg" onClick={props.onInstallClicked}>
+          Install App
+        </Button>
+      </div>
+    </PageContent>
   );
 }
 
 function Installing() {
   return (
-    <Page>
-      <PageHeader>
-        <span>
-          smooth <span className="text-xs text-muted-foreground"> USDT</span>
-        </span>
-      </PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-center items-center">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <p className="text-sm">Installing...</p>
-        </div>
-      </PageContent>
-    </Page>
+    <PageContent>
+      <div className="h-full flex flex-col justify-center items-center">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <p className="text-sm">Installing...</p>
+      </div>
+    </PageContent>
   );
 }
 
 function InstalledNow() {
   return (
-    <Page>
-      <PageHeader>
-        <span>
-          smooth <span className="text-xs text-muted-foreground"> USDT</span>
-        </span>
-      </PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-center">
-          <div className="flex flex-col gap-4 text-center items-center">
-            <CircleCheck size={64} className="text-primary" />
-            <span className="text-lg font-semibold">Nice Work</span>
-            <p className="text-muted-foreground text-sm">
-              Open Smooth USDT app and start making smooth transfers.
-            </p>
-          </div>
+    <PageContent>
+      <div className="h-full flex flex-col justify-center">
+        <div className="flex flex-col gap-4 text-center items-center">
+          <CircleCheck size={64} className="text-primary" />
+          <span className="text-lg font-semibold">Nice Work</span>
+          <p className="text-muted-foreground text-sm">
+            Open Smooth USDT app and start making transfers.
+          </p>
         </div>
-      </PageContent>
-    </Page>
+      </div>
+    </PageContent>
   );
 }
 
 function InstalledEarlier() {
   return (
-    <Page>
-      <PageHeader>
-        <span>
-          smooth <span className="text-xs text-muted-foreground"> USDT</span>
-        </span>
-      </PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-center">
-          <div className="flex flex-col gap-4 text-center items-center">
-            <ArrowBigRightDash size={64} className="text-primary" />
-            <span className="text-lg font-semibold">App installed</span>
-            <p className="text-muted-foreground text-sm">
-              The Smooth USDT app has already been installed. Find it and open
-              on your phone.
-            </p>
-          </div>
+    <PageContent>
+      <div className="h-full flex flex-col justify-center">
+        <div className="flex flex-col gap-4 text-center items-center">
+          <ArrowBigRightDash size={64} className="text-primary" />
+          <span className="text-lg font-semibold">App installed</span>
+          <p className="text-muted-foreground text-sm">
+            The Smooth USDT app has already been installed. Find it and open on
+            your phone.
+          </p>
         </div>
-      </PageContent>
-    </Page>
+      </div>
+    </PageContent>
   );
 }
 
-export function CantInstall() {
+function CantInstallDesktop() {
   return (
-    <Page>
-      <PageHeader>
-        <span>
-          smooth <span className="text-xs text-muted-foreground"> USDT</span>
-        </span>
-      </PageHeader>
-      <PageContent>
-        <div className="h-full flex flex-col justify-center">
-          <div className="flex flex-col gap-4 text-center items-center">
-            <Globe size={64} className="text-primary" />
-            <span className="text-lg font-semibold">Welcome to smooth</span>
-            <p className="text-muted-foreground text-sm">
-              Open this url on your phone in a native browser (Chrome on
-              Android, Safari on iOS) to install the app.
-            </p>
-          </div>
+    <PageContent>
+      <div className="h-full flex flex-col justify-center">
+        <div className="flex flex-col gap-4 text-center items-center">
+          <Globe size={64} className="text-primary" />
+          <span className="text-lg font-semibold">Welcome to smooth</span>
+          <p className="text-muted-foreground text-sm">
+            Open this page on your phone (in Chrome or Safari) to install the
+            app.
+          </p>
+          <CopyText
+            buttonLabel="Copy link"
+            valueToCopy={window.location.href}
+          />
         </div>
-      </PageContent>
-    </Page>
+      </div>
+    </PageContent>
+  );
+}
+
+function BadMobileBrowser() {
+  return (
+    <PageContent>
+      <div className="h-full flex flex-col justify-center">
+        <div className="flex flex-col gap-4 text-center items-center">
+          <Globe size={64} className="text-primary" />
+          <span className="text-lg font-semibold">Welcome to smooth</span>
+          <p className="text-muted-foreground text-sm">
+            Open this page in Chrome browser to install the app.
+          </p>
+          <CopyText
+            buttonLabel="Copy link"
+            valueToCopy={window.location.href}
+          />
+        </div>
+      </div>
+    </PageContent>
   );
 }
 
@@ -137,8 +179,13 @@ export function Install() {
     wasInstalledNow,
     wasInstalledEarlier,
     isStandalone,
+    isMobile,
+    mobileOS,
+    isBadBrowser,
   } = usePwa();
   const [installing, setInstalling] = useState(false);
+  const [showIosInstructions, setShowIosInstructions] = useState(false);
+  const [iosAppInstalled, setIosAppInstalled] = useState(false);
 
   useEffect(() => {
     if (isStandalone) {
@@ -162,10 +209,50 @@ export function Install() {
     installPrompt(onUserChoiceMade);
   };
 
-  if (wasInstalledNow) return <InstalledNow />;
-  if (wasInstalledEarlier) return <InstalledEarlier />;
-  if (installing) return <Installing />;
-  if (canInstall) return <InstallPrompt onInstallClicked={onInstallClicked} />;
+  // Not always displayed, but rendering here for simplicity
+  const iosInstructionsDrawer = (
+    <IosInstructions
+      showDrawer={showIosInstructions}
+      setShowDrawer={setShowIosInstructions}
+      onClickDone={() => {
+        setShowIosInstructions(false);
+        setIosAppInstalled(true);
+      }}
+    />
+  );
 
-  return <CantInstall />;
+  let content: JSX.Element;
+  if (!isMobile) content = <CantInstallDesktop />;
+  // All checks below assume this is a mobile device
+  else if (isBadBrowser) content = <BadMobileBrowser />;
+  else if (wasInstalledEarlier) content = <InstalledEarlier />;
+  else if (mobileOS === "iOS") {
+    // TODO: detect browser. Curerntly assuming that the user uses Safari.
+    if (iosAppInstalled) content = <InstalledNow />;
+    else {
+      content = (
+        <InstallPrompt onInstallClicked={() => setShowIosInstructions(true)} />
+      );
+    }
+  }
+  // Could be cringe like Windows Phone, but for now assuming it's android if not iOS
+  else if (canInstall) {
+    if (wasInstalledNow) content = <InstalledNow />;
+    else if (installing) content = <Installing />;
+    else content = <InstallPrompt onInstallClicked={onInstallClicked} />;
+  } else content = <BadMobileBrowser />;
+
+  return (
+    <Page>
+      <PageHeader>
+        <span>
+          smooth <span className="text-xs text-muted-foreground"> USDT</span>
+        </span>
+      </PageHeader>
+      {content}
+      {/* Passing the drawer always so that when the user closes it,
+      it closes smoothly and doesn't get removed from the DOM immediately */}
+      {iosInstructionsDrawer}
+    </Page>
+  );
 }
