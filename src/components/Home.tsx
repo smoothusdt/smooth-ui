@@ -1,6 +1,7 @@
 import { Balance } from "@/components/Balance";
 import { Button } from "@/components/ui/button";
 import { Page, PageContent, PageHeader } from "@/components/Page";
+import { TransactionHistory } from "@/components/TransactionHistory";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
 
@@ -28,6 +29,7 @@ export const Home = () => {
       <PageContent>
         <div className="size-full flex flex-col justify-between">
           <Balance />
+          <TransactionHistory limit={3} showSeeAll />
           <div className="w-full flex gap-4 justify-between">
             <Button
               className="w-96 h-14 gap-2"

@@ -12,6 +12,7 @@ import {
   BackupSuccess,
   StartBackup,
 } from "@/components/MnemonicBackup";
+import { Transactions } from "@/components/Transactions";
 
 import { useLocation } from "wouter";
 import { Install } from "./Install";
@@ -57,6 +58,11 @@ const RoutesConfig: Record<string, RouteConfig> = {
   },
   "/receive": {
     component: Receive,
+    needsStandalone: true,
+    needsConnection: true,
+  },
+  "/transactions": {
+    component: Transactions,
     needsStandalone: true,
     needsConnection: true,
   },
