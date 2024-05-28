@@ -6,7 +6,6 @@ import path from "path";
 // properties from pwa manifest
 interface BuildConfig {
   related_applications: any[]
-  port: number
 }
 
 const MainnetConfig: BuildConfig = {
@@ -16,7 +15,6 @@ const MainnetConfig: BuildConfig = {
       "url": "https://app.smoothusdt.com/manifest.webmanifest",
     },
   ],
-  port: 5001
 }
 
 const ShastaConfig: BuildConfig = {
@@ -27,7 +25,6 @@ const ShastaConfig: BuildConfig = {
     },
 
   ],
-  port: 5173
 }
 
 // https://vitejs.dev/config/
@@ -42,12 +39,8 @@ export default defineConfig(({ mode }) => {
   if (chain === "mainnet") config = MainnetConfig
   else if (chain === "shasta") config = ShastaConfig
   else throw new Error(`chain must be either 'mainnet' or 'shasta'. Not ${chain}.`)
-  console.log(`Building a config for ${chain} chain.`)
 
   return {
-    server: { // port to use for dev mode
-      port: config.port
-    },
     plugins: [
       react(),
       VitePWA({
