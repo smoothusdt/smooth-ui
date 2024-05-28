@@ -44,13 +44,16 @@ async function makeApprovalViaApi(tw: TronWeb, posthog: PostHog) {
   });
   const afterApiCall = Date.now()
 
+  const result = await response.json()
+  if (!result.success || !result.txID) {
+    throw new Error(`Couldnt execute approval. Message from server: ${result.error}`)
+  }
+
   const endTs = Date.now()
   posthog.capture("Approval completed", {
     totalInterval: endTs - startTs,
     apiCallInterval: afterApiCall - beforeApiCall,
   })
-
-  return response;
 }
 
 /**
