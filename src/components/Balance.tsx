@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePostHog } from "posthog-js/react";
+import { ChainName } from "@/constants";
 
 export const Balance: React.FC = () => {
   const posthog = usePostHog();
@@ -21,7 +22,9 @@ export const Balance: React.FC = () => {
       ) : (
         <h1 className="text-3xl font-semibold">
           {balance}
-          <span className="text-xs text-muted-foreground"> USDT</span>
+          <span className="text-xs text-muted-foreground">
+            {ChainName === "shasta" ? "SHASTA" : "USDT"}
+          </span>
         </h1>
       )}
     </div>
