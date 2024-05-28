@@ -15,7 +15,7 @@ export const USDTDecimals = 6;
 export const TRXDecimals = 6;
 
 // smooth onchain constants
-export const SmoothFeeCollector = "TQyMmeSrADWyxZsV6YvVu6XDV8hdq72ykb";
+export const SmoothFeeCollector = "TPvSv9BofZrXP4NtkuSmY6X4qFt41yEF6x";
 export const SmoothRouterBase58 = NetworkConfig.routerBase58;
 
 // Smooth API
