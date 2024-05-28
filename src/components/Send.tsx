@@ -67,7 +67,7 @@ export const Send = () => {
   // The button is disabled until the data in the fields is valid, so we
   // can omit validation here.
   const handleTransferClicked = async () => {
-    // Set up a fn that will execute the transfer so that we can toast this
+    posthog.capture("Send button swiped");
 
     const doTransfer = async () => {
       // make sure the router is approved. Executes instantly if the approval

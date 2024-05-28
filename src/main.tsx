@@ -13,9 +13,12 @@ import { WalletProvider } from "@/context/WalletProvider";
 // Initialize analytics
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
-posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
-  api_host: "https://us.i.posthog.com",
-});
+
+if (window.location.hostname !== "localhost") {
+  posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
+    api_host: "https://us.i.posthog.com",
+  });
+}
 
 // Initialize i18n
 import "./i18n";
