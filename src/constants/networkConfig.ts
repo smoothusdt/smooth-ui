@@ -15,10 +15,10 @@ const MainnetConfig: NetworkConfigInterface = {
   chainName: "mainnet",
   rpcUrl: "https://api.trongrid.io",
   usdtAddressBase58: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-  routerBase58: "", // TODO: deploy the updated version
+  routerBase58: "TYrnoaW74cWTfxL4mMvcgbAsXUM47vqfCu",
   tronscanApi: "https://apilist.tronscanapi.com/api",
   explorerUrl: 'https://tronscan.org/#',
-  smoothApiURL: ''// TODO: deploy separate apis for shasta and mainnet
+  smoothApiURL: 'https://not-too-useless.onrender.com'
 };
 
 const ShastaConfig: NetworkConfigInterface = {
