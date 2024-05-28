@@ -30,7 +30,7 @@ const ShastaConfig: NetworkConfigInterface = {
   tronProApiKey: import.meta.env.VITE_TRON_PRO_API_KEY,
   tronscanApi: "https://shastapi.tronscan.org/api",
   explorerUrl: 'https://shasta.tronscan.org/#',
-  smoothApiURL: 'https://api.smoothusdt.com'
+  smoothApiURL: 'https://smooth-shasta.onrender.com'
 };
 
 export let NetworkConfig: NetworkConfigInterface;
