@@ -224,7 +224,7 @@ export const Send = () => {
                 type="text"
                 value={receiver}
                 onChange={(e) => setReceiver(e.target.value)}
-                placeholder="TR7NHq...gjLj6t"
+                placeholder="TR7NHq..."
                 disabled={sending}
                 style={{
                   opacity: sending ? 0.6 : 1,
