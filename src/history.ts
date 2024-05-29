@@ -36,9 +36,10 @@ export async function queryUsdtHistory(
   for (const transfer of tokenTransfersRaw) {
     if (transfer.contractRet !== "SUCCESS") continue; // ignore unsuccessful transfers
 
+    console.log(transfer);
     const from = transfer.from_address;
     const to = transfer.to_address;
-    if (to === SmoothFeeCollector) continue; // don't show fee transfers
+    if (to === SmoothFeeCollector) continue; // don't show fee transfers TODO: This seems not to be working
 
     const amountUint = parseInt(transfer.quant);
     const amountHuman = uintToHuman(amountUint, USDTDecimals);

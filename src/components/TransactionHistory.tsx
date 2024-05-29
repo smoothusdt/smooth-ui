@@ -11,6 +11,7 @@ import { navigate } from "wouter/use-browser-location";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import ru from "javascript-time-ago/locale/ru";
+import { useWallet } from "@/hooks/useWallet";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru); // TODO how to make sure this works when russian is selected
@@ -62,12 +63,16 @@ export const TransactionHistory = (props: TransactionsProps) => {
 /** Local component for rendering a single transaction */
 const Transaction = (props: { transaction: HistoricalTransaction }) => {
   const { transaction } = props;
-  const sent = transaction.to !== undefined; // Was this a send?
-  const address = sent ? transaction.to : transaction.from;
+  const { wallet } = useWallet();
+
+  const isReceive = transaction.to === wallet?.address; // Was this a transaction where the wallet received usdt?
+  const address = isReceive ? transaction.from : transaction.to;
   const short = address.slice(0, 2);
-  const sign = sent ? "-" : "+";
-  const amount = sign + transaction.amountHuman;
+  const sign = isReceive ? "+" : "-";
+  const amount = sign + "$" + transaction.amountHuman;
   const date = transaction.timestamp;
+
+  const abbreviatedAddress = address.slice(0, 8) + "..." + address.slice(-4);
 
   return (
     <div className="flex justify-between items-center w-full border-b border-b-muted pb-3 last:border-b-0">
@@ -75,12 +80,10 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
         <Avatar className="size-10">
           <AvatarFallback>{short}</AvatarFallback>
         </Avatar>
-        <span className="text-sm font-semibold">{address.slice(0, 8)}...</span>
+        <span className="text-sm font-semibold">{abbreviatedAddress}</span>
       </div>
       <div className="flex flex-col items-end">
-        <span className="text-sm">
-          {amount} <span className="text-xs">USDT</span>
-        </span>
+        <span className="text-sm">{amount}</span>
         <ReactTimeAgo
           timeStyle="twitter-now"
           className="text-muted-foreground text-sm"
