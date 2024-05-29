@@ -196,7 +196,8 @@ export const usePwa = (): IusePwa => {
 
   // Yandex Browser opens the shortcut as a tab in browser,
   // not as a standalone app, which is bad.
-  const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
+  // const isBadBrowser = useMemo(() => Object.hasOwn(window, "yandex"), []);
+  const isBadBrowser = false;
 
   const isMobileSafari = useMemo(
     () =>
