@@ -40,6 +40,7 @@ export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
               variant="ghost"
               onClick={() => navigate(backPath, { replace: true })}
               className="pl-0 pr-1"
+              data-ph-capture-attribute-button-action="navigate-back"
             >
               <ChevronLeft size={28} />
             </Button>

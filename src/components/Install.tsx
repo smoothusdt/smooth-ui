@@ -16,6 +16,7 @@ import {
 import { SafariShareIcon } from "./svgs";
 import { CopyText } from "./CopyText";
 import { Link } from "./Link";
+import { usePostHog } from "posthog-js/react";
 
 function SafariInstructions(props: {
   showDrawer: boolean;
@@ -165,7 +166,9 @@ function BadMobileBrowser(props: { targetBrowser: string }) {
  * @returns
  */
 export function Install() {
+  const posthog = usePostHog();
   const [, navigate] = useLocation();
+  const pwaData = usePwa();
   const {
     canInstall,
     onInstall,
@@ -178,9 +181,23 @@ export function Install() {
     mobileOS,
     isBadBrowser,
     isMobileSafari,
-  } = usePwa();
+  } = pwaData;
   const [installing, setInstalling] = useState(false);
   const [showSafariInstructions, setShowSafariInstructions] = useState(false);
+
+  useEffect(() => {
+    posthog.capture("Installation config", {
+      canInstall,
+      installedAsApk,
+      installedAsShortcut,
+      isStandalone,
+      isMobile,
+      mobileOS,
+      isBadBrowser,
+      isMobileSafari,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posthog]); // we want to capture only one posthog event - upon the initial load
 
   useEffect(() => {
     if (isStandalone) {

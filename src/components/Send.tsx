@@ -67,7 +67,7 @@ export const Send = () => {
   // The button is disabled until the data in the fields is valid, so we
   // can omit validation here.
   const handleTransferClicked = async () => {
-    // Set up a fn that will execute the transfer so that we can toast this
+    posthog.capture("Send button swiped");
 
     const doTransfer = async () => {
       // make sure the router is approved. Executes instantly if the approval
@@ -224,7 +224,7 @@ export const Send = () => {
                 type="text"
                 value={receiver}
                 onChange={(e) => setReceiver(e.target.value)}
-                placeholder="TR7NHq...gjLj6t"
+                placeholder="TR7NHq..."
                 disabled={sending}
                 style={{
                   opacity: sending ? 0.6 : 1,

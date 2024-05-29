@@ -51,7 +51,10 @@ export const Receive = () => {
               readOnly
               value={wallet?.address}
             />
-            <Button onClick={handleCopyClicked}>
+            <Button
+              data-ph-capture-attribute-button-action="copy-address"
+              onClick={handleCopyClicked}
+            >
               {copied ? <Check /> : <Copy />}
             </Button>
           </div>
