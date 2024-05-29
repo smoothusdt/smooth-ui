@@ -2,6 +2,9 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Page, PageContent, PageHeader } from "@/components/Page";
+import { TermsOfUse } from "@/components/TermsOfUse";
+
+import { ArrowDownCircle, PlusCircle } from "lucide-react";
 
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
@@ -46,24 +49,56 @@ export const SetupWallet = () => {
       <PageContent>
         <div className="h-full flex flex-col justify-between">
           <div /> {/* for flex alignment */}
-          <p className="text-2xl text-center">
-            Welcome to smooth
-            <br />
-            <span className="text-sm text-center text-muted-foreground">
-              Choose one of the following to get started.
-            </span>
-          </p>
-          <div className="flex flex-col gap-4">
-            <Button size="lg" onClick={handleCreateWalletClicked}>
-              Create Wallet
-            </Button>
-            <Button
-              size="lg"
-              onClick={() => navigate("/import", { replace: true })}
-            >
-              Import Secret Phrase
-            </Button>
+          <div className="flex flex-col gap-4 items-center">
+            <img
+              src="/logo.svg"
+              alt="SmoothUSDT Icon"
+              className="size-16 self-center"
+            />
+            <p className="text-2xl text-center">
+              Welcome to SmoothUSDT
+              <br />
+              <span className="text-sm text-center text-muted-foreground">
+                Choose one of the following to get started
+              </span>
+            </p>
+            <div className="flex flex-col gap-4 w-fit">
+              <Button
+                variant="outline"
+                onClick={handleCreateWalletClicked}
+                className="h-fit p-4 bg-muted justify-start text-wrap"
+              >
+                <PlusCircle className="mr-4 size-6 flex-shrink-0" />
+                <div className="flex flex-col items-start text-start">
+                  <span className="text-md">Create a new wallet</span>
+                  <span className="text-xs text-muted-foreground font-light">
+                    A new TRC-20 address to send and receive USDT
+                  </span>
+                </div>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate("/import", { replace: true })}
+                className="h-fit p-4 bg-muted justify-start text-wrap"
+              >
+                <ArrowDownCircle className="mr-4 size-6 flex-shrink-0" />
+                <div className="flex flex-col items-start text-start">
+                  <span className="text-md">Add an existing wallet</span>
+                  <span className="text-xs text-muted-foreground font-light">
+                    Connect or restore a wallet from a secret phrase
+                  </span>
+                </div>
+              </Button>
+            </div>
           </div>
+          <span className="text-xs text-muted-foreground font-light text-center">
+            By creating or importing a wallet, you agree to the SmoothUSDT{" "}
+            <TermsOfUse>
+              <Button variant="link" className="text-xs font-light p-0">
+                Terms of Use
+              </Button>
+            </TermsOfUse>
+          </span>
         </div>
       </PageContent>
     </Page>

@@ -5,44 +5,55 @@ import path from "path";
 
 // properties from pwa manifest
 interface BuildConfig {
-  related_applications: any[]
+  related_applications: any[];
 }
 
 const MainnetConfig: BuildConfig = {
   related_applications: [
     {
-      "platform": "webapp",
-      "url": "https://app.smoothusdt.com/manifest.webmanifest",
+      platform: "webapp",
+      url: "https://app.smoothusdt.com/manifest.webmanifest",
     },
   ],
-}
+};
 
 const ShastaConfig: BuildConfig = {
   related_applications: [
     {
-      "platform": "webapp",
-      "url": "https://shasta-app.smoothusdt.com/manifest.webmanifest",
+      platform: "webapp",
+      url: "https://shasta-app.smoothusdt.com/manifest.webmanifest",
     },
-
   ],
-}
+};
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd())
-  const chain = env.VITE_CHAIN
+  const env = loadEnv(mode, process.cwd());
+  const chain = env.VITE_CHAIN;
   if (!chain) {
-    throw new Error("chain environment variable is not set")
+    throw new Error("chain environment variable is not set");
   }
 
-  let config: BuildConfig
-  if (chain === "mainnet") config = MainnetConfig
-  else if (chain === "shasta") config = ShastaConfig
-  else throw new Error(`chain must be either 'mainnet' or 'shasta'. Not ${chain}.`)
+  let config: BuildConfig;
+  if (chain === "mainnet") config = MainnetConfig;
+  else if (chain === "shasta") config = ShastaConfig;
+  else
+    throw new Error(
+      `chain must be either 'mainnet' or 'shasta'. Not ${chain}.`,
+    );
 
   return {
     plugins: [
       react(),
+      {
+        name: "markdown-loader",
+        transform(code, id) {
+          if (id.slice(-3) === ".md") {
+            // For .md files, get the raw content
+            return `export default ${JSON.stringify(code)};`;
+          }
+        },
+      },
       VitePWA({
         registerType: "autoUpdate",
         devOptions: { enabled: true },
@@ -90,5 +101,5 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-  }
+  };
 });
