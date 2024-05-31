@@ -1,9 +1,19 @@
 import { FallbackProps } from "react-error-boundary";
 import { Button } from "@/components/ui/button";
 import { CircleAlert } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
+import { useEffect } from "react";
 
 export const ErrorFallback = (props: FallbackProps) => {
+  const posthog = usePostHog();
   const { error, resetErrorBoundary } = props;
+
+  useEffect(() => {
+    posthog.capture("error", {
+      error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+    });
+  }, [error, posthog]);
+
   return (
     <div
       role="alert"
