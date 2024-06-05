@@ -42,6 +42,8 @@ export const Receive = () => {
             <QRCodeSVG
               className="p-3 rotate-45 border-2 border-primary rounded-md"
               value={wallet?.address ?? ""}
+              bgColor="#000000"
+              fgColor="#ffffff"
             />
           </div>
           <div className="flex w-full max-w-sm items-center space-x-2">
