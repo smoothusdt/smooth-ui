@@ -25,10 +25,8 @@ export interface HistoricalTransaction {
  */
 export async function queryUsdtHistory(
   userBase58: string,
-  limit: number = 20,
 ): Promise<HistoricalTransaction[]> {
-  // TODO: Figure out x2 hack
-  const url = `${TronscanApi}/filter/trc20/transfers?limit=${limit * 2}&start=0&sort=-timestamp&count=true&filterTokenValue=0&contract_address=${USDTAddressBase58}&relatedAddress=${userBase58}`;
+  const url = `${TronscanApi}/filter/trc20/transfers?limit=200&start=0&sort=-timestamp&count=true&filterTokenValue=0&contract_address=${USDTAddressBase58}&relatedAddress=${userBase58}`;
   const result = await (await fetch(url)).json();
   const tokenTransfersRaw = result.token_transfers;
   const history: HistoricalTransaction[] = [];

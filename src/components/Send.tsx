@@ -30,7 +30,7 @@ export const Send = () => {
   const [sending, setSending] = useState(false);
   const [successfullySent, setSuccessfullySent] = useState(false);
   const [txID, setTxID] = useState("");
-  const balance = useUSDTBalance();
+  const [balance] = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
 

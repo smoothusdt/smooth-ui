@@ -2,13 +2,12 @@ import { useEffect } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePostHog } from "posthog-js/react";
 import { ChainName } from "@/constants";
 
-export const Balance: React.FC = () => {
+export function Balance(props: { balance: number | undefined }) {
   const posthog = usePostHog();
-  const balance = useUSDTBalance();
+  const balance = props.balance;
 
   useEffect(() => {
     if (balance === undefined) return;
@@ -29,4 +28,4 @@ export const Balance: React.FC = () => {
       )}
     </div>
   );
-};
+}

@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ReactTimeAgo from "react-time-ago";
 
-import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 import { HistoricalTransaction } from "@/history";
 import { navigate } from "wouter/use-browser-location";
 
@@ -17,8 +16,7 @@ TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru); // TODO how to make sure this works when russian is selected
 
 type TransactionsProps = {
-  /** How many transactions should the component fetch and show? */
-  limit?: number;
+  transactions: HistoricalTransaction[] | undefined;
   /** Should a "See All" button be rendered in the header? */
   showSeeAll?: boolean;
   /** What should the label text of the header be? */
@@ -27,10 +25,9 @@ type TransactionsProps = {
 
 /** A component for displaying a list of transactions */
 export const TransactionHistory = (props: TransactionsProps) => {
-  const limit = props.limit ?? 5;
+  const transactions = props.transactions;
   const label = props.label ?? "Recent Transactions";
   const { showSeeAll } = props;
-  const transactions = useTransactionHistory(limit);
   const loading = !transactions;
 
   return (
@@ -48,9 +45,7 @@ export const TransactionHistory = (props: TransactionsProps) => {
         )}
       </div>
       {loading
-        ? new Array(limit)
-            .fill(undefined)
-            .map((_, i) => <SkeletonItem key={i} />)
+        ? new Array(3).fill(undefined).map((_, i) => <SkeletonItem key={i} />)
         : transactions.map((transaction) => (
             <Transaction key={transaction.txID} transaction={transaction} />
           ))}

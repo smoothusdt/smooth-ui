@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useWallet } from "@/hooks/useWallet";
 import { usePostHog } from "posthog-js/react";
@@ -6,7 +6,10 @@ import { usePostHog } from "posthog-js/react";
 import { HistoricalTransaction, queryUsdtHistory } from "@/history";
 
 /** Use within `<WalletProvider />` to get the current wallets transaction history. */
-export const useTransactionHistory = (limit?: number) => {
+export const useTransactionHistory = (): [
+  HistoricalTransaction[] | undefined,
+  () => Promise<void>,
+] => {
   const { wallet, connected } = useWallet();
 
   // TODO: cache this and void going to the network every time?
@@ -15,23 +18,26 @@ export const useTransactionHistory = (limit?: number) => {
   );
   const ph = usePostHog();
 
-  useEffect(() => {
-    async function getHistory() {
-      if (!connected || !wallet) {
-        return;
-      }
-
-      try {
-        // TODO: Sometimes this is failing, not sure why
-        const history = await queryUsdtHistory(wallet.address, limit);
-        setHistory(history);
-      } catch (e) {
-        console.error(e);
-        ph.capture("Error getting history", { error: e });
-      }
+  const refreshHistory = useCallback(async () => {
+    if (!connected || !wallet) {
+      return;
     }
-    getHistory();
-  }, [connected, limit, ph, wallet]);
 
-  return history;
+    try {
+      // TODO: Sometimes this is failing, not sure why
+      const newHistory = await queryUsdtHistory(wallet.address);
+      console.log("Transactions in history:", newHistory.length);
+      setHistory(newHistory);
+    } catch (e) {
+      console.error(e);
+      ph.capture("Error getting history", { error: e });
+    }
+  }, [connected, ph, wallet]);
+
+  useEffect(() => {
+    refreshHistory();
+  }, [refreshHistory]);
+
+  console.log("History in the hook", history?.length);
+  return [history, refreshHistory];
 };
