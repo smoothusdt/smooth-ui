@@ -7,8 +7,6 @@ import React, {
   useState,
 } from "react";
 
-const isServer = (): boolean => typeof window === "undefined";
-
 export enum UserChoice {
   ACCEPTED = "accepted",
   DISMISSED = "dismissed",
@@ -79,6 +77,7 @@ function isInstalled() {
  * Hook to provide an interface the PWA related information given by the browser.
  *
  * Based on: [react-use-pwa](https://github.com/dotmind/react-use-pwa/tree/main) but with some fixes.
+ * Not meant for server-side use.
  */
 export const usePwa = (): IusePwa => {
   const [canInstall, setCanInstall] = useState<boolean>(false);
@@ -114,10 +113,6 @@ export const usePwa = (): IusePwa => {
   );
 
   useEffect(() => {
-    if (isServer()) {
-      return;
-    }
-
     window.addEventListener("beforeinstallprompt", handleBeforePromptEvent);
     console.log("Added a listener for beforeinstallprompt");
     return () =>
@@ -128,20 +123,12 @@ export const usePwa = (): IusePwa => {
   }, [handleBeforePromptEvent]);
 
   useEffect(() => {
-    if (isServer()) {
-      return;
-    }
-
     window.addEventListener("appinstalled", onInstall);
     console.log("Added a listener for appinstalled");
     return () => window.removeEventListener("appinstalled", onInstall);
   }, [onInstall]);
 
   useEffect(() => {
-    if (isServer()) {
-      return;
-    }
-
     if (navigator) {
       setOffline(!navigator.onLine);
     }
@@ -183,7 +170,7 @@ export const usePwa = (): IusePwa => {
 
   const installPrompt = useCallback(
     async (callback: (choice: UserChoice) => void) => {
-      if (!deferredPrompt.current || isServer()) {
+      if (!deferredPrompt.current) {
         return;
       }
 
