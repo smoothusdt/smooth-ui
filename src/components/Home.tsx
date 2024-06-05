@@ -23,9 +23,7 @@ export const Home = () => {
   const [history, refreshHistory] = useTransactionHistory();
 
   const handleRefresh = async () => {
-    console.log("Refreshing");
     await Promise.all([refreshHistory(), refreshBalance()]);
-    console.log("Refreshed");
   };
 
   if (!connected) return <div />;

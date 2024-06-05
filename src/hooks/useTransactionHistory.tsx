@@ -26,7 +26,6 @@ export const useTransactionHistory = (): [
     try {
       // TODO: Sometimes this is failing, not sure why
       const newHistory = await queryUsdtHistory(wallet.address);
-      console.log("Transactions in history:", newHistory.length);
       setHistory(newHistory);
     } catch (e) {
       console.error(e);
@@ -38,6 +37,5 @@ export const useTransactionHistory = (): [
     refreshHistory();
   }, [refreshHistory]);
 
-  console.log("History in the hook", history?.length);
   return [history, refreshHistory];
 };
