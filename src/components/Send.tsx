@@ -22,6 +22,18 @@ import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 
+function getAmountBigNumber(amountRaw: string): BigNumber {
+  let formattedAmount = amountRaw.replace(",", "."); // for Russian keyboard
+
+  if (formattedAmount.startsWith(".")) formattedAmount = "0" + formattedAmount; // allow stuff like ".3"
+  if (formattedAmount.endsWith(".")) formattedAmount = formattedAmount + "0";
+
+  let amount = new BigNumber(formattedAmount);
+  if (amount.isNaN()) amount = new BigNumber(0);
+
+  return amount;
+}
+
 /** Full page components which owns the send flow */
 export const Send = () => {
   const posthog = usePostHog();
@@ -33,10 +45,9 @@ export const Send = () => {
   const [balance] = useUSDTBalance();
   const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
-
   const [amountRaw, setAmountRaw] = useState<string>("");
-  let amount = new BigNumber(amountRaw);
-  if (amount.isNaN()) amount = new BigNumber(0);
+
+  const amount = getAmountBigNumber(amountRaw);
 
   // Animation
   const [sendButtonScope, sendButtonAnimate] = useAnimate();
