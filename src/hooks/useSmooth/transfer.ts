@@ -91,7 +91,7 @@ export async function getTxReceipt(tronWeb: TronWeb, txID: string): Promise<Tran
       return txInfo
     }
     if (Date.now() - startTs > timeout) {
-      throw new Error("Could not get the transaction receipt after a long time! This is extremly bad!!!!")
+      throw new Error("Could not get the transaction receipt after a long time!")
     }
     await new Promise(resolve => setTimeout(resolve, 500))
   }
