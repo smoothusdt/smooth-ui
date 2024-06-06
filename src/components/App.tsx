@@ -18,6 +18,7 @@ import { useLocation } from "wouter";
 import { Install } from "./Install";
 import { useWallet } from "@/hooks/useWallet";
 import { usePwa } from "@/hooks/usePwa";
+import { PinInput } from "./PinInput";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -98,6 +99,12 @@ export const App = () => {
   const [location, navigate] = useLocation();
   const { isStandalone } = usePwa();
   const { connected } = useWallet();
+
+  return (
+    <main className="container h-full w-full max-w-screen-sm">
+      <PinInput />
+    </main>
+  );
 
   const screen = RoutesConfig[location];
   if (!screen) {
