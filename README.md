@@ -11,6 +11,12 @@ This is a PWA which provides a simple, [diamo](https://daimo.com/) / [venmo](htt
 
 This project was built for [Backdrop Build v4](https://backdropbuild.com/builds/v5/smooth-usdt-9bha). You can mint our launch on [Forage](https://forage.xyz/p/01HZFS5B2Q10SKC66K4A4MEDJP).
 
+<p align="center">
+   <a href="https://youtu.be/IigIIiMYoXc?si=1Cfj4Ap3hfKm13a0" target="_blank" " align="center">
+      <img src="https://img.youtube.com/vi/IigIIiMYoXc/hqdefault.jpg" alt="Video Demo of SmoothUSDT" width="300">
+   </a>
+</p>
+
 ## Development
 
 Read the following to understand how to develop this project.
