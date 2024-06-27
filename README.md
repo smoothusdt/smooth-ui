@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/f16f0d2d-8bf1-4289-a098-5b2a735f6944/deploy-status)](https://app.netlify.com/sites/smoothusdt/deploys)
 
->[!WARNING]
+> [!WARNING]
 > This project is not actively mantained as of `2024-06-20`.
 
 **Helping everyday people access USDT on Tron by removing the need to buy TRX tokens to pay for transactions. Live on Tron mainnet.**
@@ -28,6 +28,7 @@ Read the following to understand how to develop this project.
 3. `npm run dev`
 
 ### Deployment
+
 `main` is the current stable release and is continuously deployed to [app.smoothusdt.com](https://app.smoothusdt.com/) on Netlify.
 
 `develop` is a staging environment to test new features in a producation-like environment and is continuously deployed to [app-shasta.smoothusdt.com](https://app-shasta.smoothusdt.com) on Netlify. Note that this deployment is configured to operate on the shasta testnet.
@@ -35,6 +36,8 @@ Read the following to understand how to develop this project.
 ### Updating the logo
 
 The source of truth for the logo is `public/logo.svg`. This is a logo designed elsewhere and exported. To update the logo, update `public/logo.svg` and run `npm run generate-pwa-assets`. Make sure to copy the output to the web app manifest in `vite.config.ts` if names changed. [Learn more](https://vite-pwa-org.netlify.app/assets-generator/cli.html).
+
+Note: Looks like there is a bug where you need to rename `apple-touch-icon-180x180.png` to `apple-touch-icon.png` so that it is referenced correctly in the built `index.html`.
 
 ### Expanding the ESLint configuration
 
