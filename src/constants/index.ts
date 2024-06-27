@@ -31,4 +31,3 @@ export const ApprovalStatusStorageKey = `${SmoothStoragePrefix}/approvalStatus`
 export const ApprovalGrantedValue = 'granted'
 export const AppInstalledKey = `${SmoothStoragePrefix}/appInstalled`
 export const AppInstalledValue = 'installed'
-export const DeviceIdKey = `${SmoothStoragePrefix}/deviceId`
