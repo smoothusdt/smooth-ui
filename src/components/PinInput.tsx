@@ -116,23 +116,7 @@ export function PinInput() {
         },
       ),
     ]);
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    setPin("");
-    await Promise.all([
-      loaderAnimate(loaderScope.current, {
-        opacity: 0,
-      }),
-      pinWindowAnimate(
-        pinWindowScope.current,
-        {
-          width: "100%",
-          opacity: 1,
-        },
-        {
-          delay: 0.25,
-        },
-      ),
-    ]);
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     setPinFieldDisabled(false);
   };
 
