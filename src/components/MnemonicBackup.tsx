@@ -40,7 +40,7 @@ export function StartBackup() {
 
   const revealClicked = () => {
     posthog.capture("Accepted backup wallet consequences");
-    navigate("backup", { replace: true });
+    navigate("backup");
   };
 
   return (
@@ -127,7 +127,7 @@ export function Backup() {
           </div>
           <Button
             className="w-full"
-            onClick={() => navigate("success", { replace: true })}
+            onClick={() => navigate("success")}
           >
             I backed it up
           </Button>
@@ -155,7 +155,7 @@ export function BackupSuccess() {
               You've backed up your secret phrase.
             </p>
           </div>
-          <Button onClick={() => navigate("/home", { replace: true })}>
+          <Button onClick={() => navigate("/home")}>
             Start making transfers
           </Button>
         </div>
@@ -209,12 +209,12 @@ export function BackupPrompt() {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            <Button onClick={() => navigate("start", { replace: true })}>
+            <Button onClick={() => navigate("start")}>
               Back up now
             </Button>
             <Button
               variant="secondary"
-              onClick={() => navigate("/home", { replace: true })}
+              onClick={() => navigate("/home")}
             >
               Back up later
             </Button>

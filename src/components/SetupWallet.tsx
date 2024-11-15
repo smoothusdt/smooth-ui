@@ -29,7 +29,7 @@ export const SetupWallet = () => {
     });
 
     // Navigate to the backup flow when a wallet is created
-    navigate("/backup/prompt", { replace: true });
+    navigate("/backup/prompt");
   }, [wallet, navigate, posthog]);
 
   // When create is clicked, generate mnemonic and set it
@@ -78,7 +78,7 @@ export const SetupWallet = () => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => navigate("/import", { replace: true })}
+                onClick={() => navigate("/import")}
                 className="h-fit p-4 bg-muted justify-start text-wrap"
               >
                 <ArrowDownCircle className="mr-4 size-6 flex-shrink-0" />

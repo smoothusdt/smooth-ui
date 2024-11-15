@@ -15,9 +15,7 @@ import {
 import { Transactions } from "@/components/Transactions";
 
 import { useLocation } from "wouter";
-import { Install } from "./Install";
 import { useWallet } from "@/hooks/useWallet";
-import { usePwa } from "@/hooks/usePwa";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -28,11 +26,6 @@ interface RouteConfig {
 const RoutesConfig: Record<string, RouteConfig> = {
   "/": {
     component: Root,
-    needsStandalone: false,
-    needsConnection: false,
-  },
-  "/install": {
-    component: Install,
     needsStandalone: false,
     needsConnection: false,
   },
@@ -96,7 +89,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [location, navigate] = useLocation();
-  const { isStandalone } = usePwa();
   const { connected } = useWallet();
 
   const screen = RoutesConfig[location];
@@ -106,10 +98,7 @@ export const App = () => {
 
   // Make sure the user doesn't get stuck on a stale page
   // (e.g. if useWallet resets we are fucked in most cases).
-  if (screen.needsStandalone && !isStandalone) {
-    navigate("/");
-    return <div />;
-  } else if (screen.needsConnection && !connected) {
+  if (screen.needsConnection && !connected) {
     navigate("/");
     return <div />;
   }

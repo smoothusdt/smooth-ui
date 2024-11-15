@@ -16,7 +16,6 @@ import { useSmooth } from "@/hooks/useSmooth/useSmooth";
 import { SmoothFee } from "@/constants";
 import { getTronScanLink, shortenAddress } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
-import { usePwa } from "@/hooks/usePwa";
 import { usePostHog } from "posthog-js/react";
 import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
@@ -43,7 +42,6 @@ export const Send = () => {
   const [successfullySent, setSuccessfullySent] = useState(false);
   const [txID, setTxID] = useState("");
   const [balance] = useUSDTBalance();
-  const { isOffline } = usePwa();
   const [checkApproval, transfer] = useSmooth();
   const [amountRaw, setAmountRaw] = useState<string>("");
 
@@ -72,8 +70,7 @@ export const Send = () => {
     amount.eq(0) ||
     receiver === "" ||
     isOverspending ||
-    receiverInvalid ||
-    isOffline;
+    receiverInvalid;
 
   // The button is disabled until the data in the fields is valid, so we
   // can omit validation here.

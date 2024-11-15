@@ -7,7 +7,6 @@ import PullToRefresh from "react-simple-pull-to-refresh";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
-import { usePwa } from "@/hooks/usePwa";
 import { useWallet } from "@/hooks/useWallet";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
@@ -18,7 +17,6 @@ import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 export const Home = () => {
   const { connected } = useWallet();
   const [, navigate] = useLocation();
-  const { isOffline } = usePwa();
   const [balance, refreshBalance] = useUSDTBalance();
   const [history, refreshHistory] = useTransactionHistory();
 
@@ -46,15 +44,14 @@ export const Home = () => {
             <div className="w-full flex gap-4 justify-between">
               <Button
                 className="w-96 h-14 gap-2"
-                disabled={isOffline}
-                onClick={() => navigate("send", { replace: true })}
+                onClick={() => navigate("send")}
               >
                 <ArrowUp />
                 Send
               </Button>
               <Button
                 className="w-96 h-14 gap-2"
-                onClick={() => navigate("receive", { replace: true })}
+                onClick={() => navigate("receive")}
               >
                 <ArrowDown />
                 Receive

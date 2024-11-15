@@ -1,4 +1,3 @@
-import { usePwa } from "@/hooks/usePwa";
 import { retrieveMnemonic, useWallet } from "@/hooks/useWallet";
 import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
@@ -9,19 +8,12 @@ export const Root = () => {
   const [, navigate] = useLocation();
   const { connected, setMnemonic } = useWallet();
   const posthog = usePostHog();
-  const { isStandalone } = usePwa();
 
   // Some checks that occur right after this component mounts.
   useEffect(() => {
-    if (!isStandalone) {
-      // The app needs to be installed first
-      navigate("install", { replace: true });
-      return;
-    }
-
     // Check if the app state is already set up
     if (connected) {
-      navigate("home", { replace: true });
+      navigate("home");
       return;
     }
 
@@ -33,8 +25,8 @@ export const Root = () => {
       return;
     }
 
-    navigate("setup", { replace: true });
-  }, [connected, navigate, setMnemonic, posthog, isStandalone]);
+    navigate("setup");
+  }, [connected, navigate, setMnemonic, posthog]);
 
   // No need to show anything - we just need useEffect to run and
   // redirect the user to the proper page.
