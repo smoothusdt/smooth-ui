@@ -11,8 +11,6 @@ import { Check, Earth } from "lucide-react";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 
-// Make sure this stays in sync with resource files
-// TODO: Could i just import and reference them here? Or would that be slow?
 type SupportedLanguage = "en" | "ru";
 const supportedLanguages: Record<SupportedLanguage, { nativeName: string }> = {
   en: { nativeName: "English" },
