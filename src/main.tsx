@@ -7,7 +7,6 @@ import { App } from "@/components/App.tsx";
 import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { ThemeProvider } from "@/context/ThemeProvider";
 import { WalletProvider } from "@/context/WalletProvider";
 
 // Initialize analytics
@@ -30,11 +29,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         FallbackComponent={ErrorFallback}
         onReset={() => (window.location.href = "/")}
       >
-        <ThemeProvider>
-          <WalletProvider>
-            <App />
-          </WalletProvider>
-        </ThemeProvider>
+        <WalletProvider>
+          <App />
+        </WalletProvider>
       </ErrorBoundary>
     </PostHogProvider>
   </React.StrictMode>,

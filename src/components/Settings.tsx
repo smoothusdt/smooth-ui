@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { DeleteWalletButton } from "@/components/DeleteWalletButton";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { Page, PageContent, PageHeader } from "@/components/Page";
@@ -25,10 +24,6 @@ export const Settings = () => {
       <PageHeader backPath="/home">Settings</PageHeader>
       <PageContent>
         <div className="w-full h-full flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <span>{t("colorTheme")}</span>
-            <ThemeSwitch />
-          </div>
           <div className="flex justify-between items-center">
             <span>{t("language")}</span>
             <LanguageSwitch />

@@ -11,7 +11,6 @@ const resources = {
     translation: {
       language: "Language",
       backupSecretPhrase: "Backup Secret Phrase",
-      colorTheme: "Color Theme",
       deleteWallet: "Delete Wallet",
     },
   },
@@ -19,7 +18,6 @@ const resources = {
     translation: {
       language: "Язык",
       backupSecretPhrase: "Резервная секретная фраза",
-      colorTheme: "Цветовая тема",
       deleteWallet: "Удалить кошелек",
     },
   },
