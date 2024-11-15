@@ -9,6 +9,7 @@ import { Transactions } from "@/components/Transactions";
 import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
 import { Welcome } from "./Welcome";
+import { TermsOfUse } from "./TermsOfUse";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -44,6 +45,10 @@ const RoutesConfig: Record<string, RouteConfig> = {
     component: Settings,
     needsConnection: true,
   },
+  "/terms-of-use": {
+    component: TermsOfUse,
+    needsConnection: false
+  }
 };
 
 /** Entry point of UI. Should be wrapped in all providers. */
