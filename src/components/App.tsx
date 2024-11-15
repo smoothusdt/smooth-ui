@@ -2,16 +2,8 @@ import { Send } from "@/components/Send";
 import { Receive } from "@/components/Receive";
 
 import { Root } from "@/components/Root";
-import { SetupWallet } from "@/components/SetupWallet";
-import { ImportWallet } from "@/components/ImportWallet";
 import { Home } from "@/components/Home";
 import { Settings } from "@/components/Settings";
-import {
-  Backup,
-  BackupPrompt,
-  BackupSuccess,
-  StartBackup,
-} from "@/components/MnemonicBackup";
 import { Transactions } from "@/components/Transactions";
 
 import { useLocation } from "wouter";
@@ -27,16 +19,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
   "/": {
     component: Root,
     needsStandalone: false,
-    needsConnection: false,
-  },
-  "/setup": {
-    component: SetupWallet,
-    needsStandalone: true,
-    needsConnection: false,
-  },
-  "/import": {
-    component: ImportWallet,
-    needsStandalone: true,
     needsConnection: false,
   },
   "/home": {
@@ -61,26 +43,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
   },
   "/settings": {
     component: Settings,
-    needsStandalone: true,
-    needsConnection: true,
-  },
-  "/backup/prompt": {
-    component: BackupPrompt,
-    needsStandalone: true,
-    needsConnection: true,
-  },
-  "/backup/start": {
-    component: StartBackup,
-    needsStandalone: true,
-    needsConnection: true,
-  },
-  "/backup/backup": {
-    component: Backup,
-    needsStandalone: true,
-    needsConnection: true,
-  },
-  "/backup/success": {
-    component: BackupSuccess,
     needsStandalone: true,
     needsConnection: true,
   },

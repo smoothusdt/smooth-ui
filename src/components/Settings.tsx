@@ -2,19 +2,17 @@ import { Button } from "@/components/ui/button";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { Page, PageContent, PageHeader } from "@/components/Page";
 
-import { useWallet } from "@/hooks/useWallet";
-import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
+import { usePrivy } from "@privy-io/react-auth";
 
 /** Full page component for displaying all the settings of Smooth USDT PWA */
 export const Settings = () => {
-  const [, navigate] = useLocation();
-  const { connected } = useWallet();
   const { t } = useTranslation();
+  const { logout } = usePrivy();
 
-  if (!connected) {
-    navigate("/"); // wallet was deleted
-    return <div />;
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
   }
 
   return (
@@ -26,7 +24,7 @@ export const Settings = () => {
             <span>{t("language")}</span>
             <LanguageSwitch />
           </div>
-          <Button variant="destructive">Log out</Button>
+          <Button onClick={onLogout} variant="destructive">Log out</Button>
         </div>
       </PageContent>
     </Page>

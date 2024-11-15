@@ -8,6 +8,8 @@ import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { WalletProvider } from "@/context/WalletProvider";
+import { PrivyProvider } from '@privy-io/react-auth';
+
 
 // Initialize analytics
 import posthog from "posthog-js";
@@ -29,9 +31,25 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         FallbackComponent={ErrorFallback}
         onReset={() => (window.location.href = "/")}
       >
-        <WalletProvider>
-          <App />
-        </WalletProvider>
+        <PrivyProvider
+          appId="cm3g27pox00mj12g3i951p7mq"
+          config={{
+            // Customize Privy's appearance in your app
+            appearance: {
+              theme: 'dark',
+              accentColor: '#339192',
+              logo: 'https://your-logo-url',
+            },
+            // Create embedded wallets for users who don't have a wallet
+            embeddedWallets: {
+              createOnLogin: 'users-without-wallets',
+            },
+          }}
+        >
+          <WalletProvider>
+            <App />
+          </WalletProvider>
+        </PrivyProvider>
       </ErrorBoundary>
     </PostHogProvider>
   </React.StrictMode>,
