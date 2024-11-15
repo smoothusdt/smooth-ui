@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { DeleteWalletButton } from "@/components/DeleteWalletButton";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { Page, PageContent, PageHeader } from "@/components/Page";
 
 import { useWallet } from "@/hooks/useWallet";
 import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
-import { CopyWallet } from "./CopyWallet";
 
 /** Full page component for displaying all the settings of Smooth USDT PWA */
 export const Settings = () => {
@@ -28,15 +26,7 @@ export const Settings = () => {
             <span>{t("language")}</span>
             <LanguageSwitch />
           </div>
-          <h2 className="text-lg font-semibold">Wallet</h2>
-          <CopyWallet />
-          <Button
-            variant="secondary"
-            onClick={() => navigate("/backup/start")}
-          >
-            {t("backupSecretPhrase")}
-          </Button>
-          <DeleteWalletButton />
+          <Button variant="destructive">Log out</Button>
         </div>
       </PageContent>
     </Page>
