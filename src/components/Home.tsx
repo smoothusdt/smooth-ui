@@ -7,7 +7,6 @@ import PullToRefresh from "react-simple-pull-to-refresh";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
-import { useWallet } from "@/hooks/useWallet";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 
@@ -15,7 +14,6 @@ import { useTransactionHistory } from "@/hooks/useTransactionHistory";
  * Includes balance, send, and receive buttons.
  */
 export const Home = () => {
-  const { connected } = useWallet();
   const [, navigate] = useLocation();
   const [balance, refreshBalance] = useUSDTBalance();
   const [history, refreshHistory] = useTransactionHistory();
@@ -23,8 +21,6 @@ export const Home = () => {
   const handleRefresh = async () => {
     await Promise.all([refreshHistory(), refreshBalance()]);
   };
-
-  if (!connected) return <div />;
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>

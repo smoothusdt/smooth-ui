@@ -1,24 +1,23 @@
 import { BigNumber } from "tronweb";
 import { useCallback, useEffect, useState } from "react";
-import { USDTAddressBase58, USDTDecimals } from "../constants";
+import { tronweb, USDTAddressBase58, USDTDecimals } from "../constants";
 import { USDTAbi } from "../constants/usdtAbi";
 import { useWallet } from "./useWallet";
 
-/** Use within `<WalletProvider />` to get the current wallets USDT Balance. */
 export const useUSDTBalance = (): [number | undefined, () => Promise<void>] => {
-  const { wallet, connected, tw } = useWallet();
+  const { tronUserAddress } = useWallet();
 
   // TODO: cache this and void going to the network every time?
   const [balance, setBalance] = useState<number | undefined>();
-  const USDTContract = tw.contract(USDTAbi, USDTAddressBase58);
+  const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
 
   const refreshBalance = useCallback(async () => {
-    if (!connected) {
+    if (!tronUserAddress) {
       return;
     }
 
     let balanceUint: BigNumber = await USDTContract.methods
-      .balanceOf(wallet!.address)
+      .balanceOf(tronUserAddress)
       .call();
     balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
 
@@ -26,7 +25,7 @@ export const useUSDTBalance = (): [number | undefined, () => Promise<void>] => {
       BigNumber(10).pow(USDTDecimals),
     );
     setBalance(balanceHuman.toNumber());
-  }, [USDTContract.methods, connected, wallet]);
+  }, [USDTContract.methods, tronUserAddress]);
 
   useEffect(() => {
     refreshBalance();

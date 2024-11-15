@@ -1,4 +1,4 @@
-import { BigNumber } from "tronweb";
+import { BigNumber, TronWeb } from "tronweb";
 import { NetworkConfig } from "./networkConfig";
 
 // misc constants
@@ -31,3 +31,7 @@ export const ApprovalStatusStorageKey = `${SmoothStoragePrefix}/approvalStatus`
 export const ApprovalGrantedValue = 'granted'
 export const AppInstalledKey = `${SmoothStoragePrefix}/appInstalled`
 export const AppInstalledValue = 'installed'
+
+export const tronweb = new TronWeb({
+    fullHost: NetworkConfig.rpcUrl,
+});

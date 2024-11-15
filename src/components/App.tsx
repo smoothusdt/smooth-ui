@@ -7,43 +7,41 @@ import { Settings } from "@/components/Settings";
 import { Transactions } from "@/components/Transactions";
 
 import { useLocation } from "wouter";
-import { useWallet } from "@/hooks/useWallet";
+import { usePrivy } from "@privy-io/react-auth";
+import { Welcome } from "./Welcome";
 
 interface RouteConfig {
   component: () => JSX.Element;
-  needsStandalone: boolean;
   needsConnection: boolean;
 }
 
 const RoutesConfig: Record<string, RouteConfig> = {
   "/": {
     component: Root,
-    needsStandalone: false,
+    needsConnection: false,
+  },
+  "/welcome": {
+    component: Welcome,
     needsConnection: false,
   },
   "/home": {
     component: Home,
-    needsStandalone: true,
     needsConnection: true,
   },
   "/send": {
     component: Send,
-    needsStandalone: true,
     needsConnection: true,
   },
   "/receive": {
     component: Receive,
-    needsStandalone: true,
     needsConnection: true,
   },
   "/transactions": {
     component: Transactions,
-    needsStandalone: true,
     needsConnection: true,
   },
   "/settings": {
     component: Settings,
-    needsStandalone: true,
     needsConnection: true,
   },
 };
@@ -51,16 +49,18 @@ const RoutesConfig: Record<string, RouteConfig> = {
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [location, navigate] = useLocation();
-  const { connected } = useWallet();
+  const { ready, authenticated } = usePrivy();
 
   const screen = RoutesConfig[location];
   if (!screen) {
     throw new Error(`Page ${location} not recognised`);
   }
 
-  // Make sure the user doesn't get stuck on a stale page
-  // (e.g. if useWallet resets we are fucked in most cases).
-  if (screen.needsConnection && !connected) {
+  if (!ready) {
+    return <p>loading...</p>
+  }
+
+  if (screen.needsConnection && !authenticated) {
     navigate("/");
     return <div />;
   }

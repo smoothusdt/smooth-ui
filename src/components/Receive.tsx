@@ -13,13 +13,11 @@ import { useCopyToClipboard } from "react-use";
 export const Receive = () => {
   const [copied, setCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
-  const { wallet, connected } = useWallet();
-
-  if (!connected) return <div />; // wait until the wallet loads
+  const { tronUserAddress } = useWallet();
 
   // Needs more investigation and testing https://web.dev/patterns/clipboard/copy-text
   const handleCopyClicked = () => {
-    wallet?.address && copyToClipboard(wallet?.address);
+    tronUserAddress && copyToClipboard(tronUserAddress);
 
     if (!state.error) {
       // UI confirms the copy, then resets. This is a common pattern.
@@ -41,7 +39,7 @@ export const Receive = () => {
           <div className="py-9">
             <QRCodeSVG
               className="p-3 rotate-45 border-2 border-primary rounded-md"
-              value={wallet?.address ?? ""}
+              value={tronUserAddress ?? ""}
               bgColor="#000000"
               fgColor="#ffffff"
             />

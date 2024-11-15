@@ -47,8 +47,8 @@ export const TransactionHistory = (props: TransactionsProps) => {
       {loading
         ? new Array(3).fill(undefined).map((_, i) => <SkeletonItem key={i} />)
         : transactions.map((transaction) => (
-            <Transaction key={transaction.txID} transaction={transaction} />
-          ))}
+          <Transaction key={transaction.txID} transaction={transaction} />
+        ))}
     </div>
   );
 };
@@ -58,9 +58,9 @@ export const TransactionHistory = (props: TransactionsProps) => {
 /** Local component for rendering a single transaction */
 const Transaction = (props: { transaction: HistoricalTransaction }) => {
   const { transaction } = props;
-  const { wallet } = useWallet();
+  const { tronUserAddress } = useWallet();
 
-  const isReceive = transaction.to === wallet?.address; // Was this a transaction where the wallet received usdt?
+  const isReceive = transaction.to === tronUserAddress; // Was this a transaction where the wallet received usdt?
   const address = isReceive ? transaction.from : transaction.to;
   const short = address.slice(0, 2);
   const sign = isReceive ? "+" : "-";

@@ -17,7 +17,6 @@ import { SmoothFee } from "@/constants";
 import { getTronScanLink, shortenAddress } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePostHog } from "posthog-js/react";
-import { useWallet } from "@/hooks/useWallet";
 import { BigNumber, TronWeb } from "tronweb";
 import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
 
@@ -36,7 +35,6 @@ function getAmountBigNumber(amountRaw: string): BigNumber {
 /** Full page components which owns the send flow */
 export const Send = () => {
   const posthog = usePostHog();
-  const { connected } = useWallet();
   const [receiver, setReceiver] = useState("");
   const [sending, setSending] = useState(false);
   const [successfullySent, setSuccessfullySent] = useState(false);
@@ -51,8 +49,6 @@ export const Send = () => {
   const [sendButtonScope, sendButtonAnimate] = useAnimate();
   const [loaderScope, loaderAnimate] = useAnimate();
   const [inputScreenScope, inputScreenAnimate] = useAnimate();
-
-  if (!connected) return <div />; // wait until the wallet loads
 
   const isOverspending =
     balance !== undefined && amountRaw && amount.plus(SmoothFee).gt(balance);
