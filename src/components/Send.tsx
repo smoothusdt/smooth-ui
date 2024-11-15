@@ -7,7 +7,6 @@ import { Link } from "@/components/Link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Page, PageContent, PageHeader } from "@/components/Page";
 import { ScanButton } from "@/components/ScanButton";
-import { SwipeableButton } from "@/components/SwipeableButton";
 
 import { AlertCircle, CircleCheck, Loader2 } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
@@ -52,13 +51,13 @@ export const Send = () => {
 
   const isOverspending =
     balance !== undefined && amountRaw && amount.plus(SmoothFee).gt(balance);
-  const receiverInvalid = receiver && !TronWeb.isAddress(receiver);
+  const receiverInvalid = Boolean(receiver && !TronWeb.isAddress(receiver));
 
   let alert = "";
   if (isOverspending) {
     alert = "You can't send more than you have";
   } else if (receiverInvalid) {
-    alert = '"To" is not a valid address';
+    alert = '"To" is not a valid Tron address';
   }
 
   const sendDisabled =
@@ -291,11 +290,11 @@ export const Send = () => {
                 <AlertDescription>{alert}</AlertDescription>
               </Alert>
             )}
-            <SwipeableButton
-              ref={sendButtonScope}
-              onSuccess={handleTransferClicked}
+            <Button
+              className="w-full"
+              onClick={handleTransferClicked}
               disabled={sendDisabled}
-            />
+            >Send</Button>
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
               style={{

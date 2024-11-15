@@ -36,9 +36,9 @@ export const Receive = () => {
       <PageContent>
         <div className="flex flex-col justify-center items-center gap-4">
           <p>Your USDT TRC-20 address</p>
-          <div className="py-9">
+          <div className="py-4">
             <QRCodeSVG
-              className="p-3 rotate-45 border-2 border-primary rounded-md"
+              className="w-40 h-40 p-3 border-2 border-primary rounded-md"
               value={tronUserAddress ?? ""}
               bgColor="#000000"
               fgColor="#ffffff"
