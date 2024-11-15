@@ -10,6 +10,9 @@ import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
 import { Welcome } from "./Welcome";
 import { TermsOfUse } from "./TermsOfUse";
+import { useEffect } from "react";
+import { Loading } from "./Loading";
+import { SignUp } from "./SignUp";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -23,6 +26,10 @@ const RoutesConfig: Record<string, RouteConfig> = {
   },
   "/welcome": {
     component: Welcome,
+    needsConnection: false,
+  },
+  "/sign-up": {
+    component: SignUp,
     needsConnection: false,
   },
   "/home": {
@@ -56,13 +63,18 @@ export const App = () => {
   const [location, navigate] = useLocation();
   const { ready, authenticated } = usePrivy();
 
+  useEffect(() => {
+    // If the user has just logged in
+    if (authenticated) return navigate("/home");
+  }, [authenticated]);
+
   const screen = RoutesConfig[location];
   if (!screen) {
     throw new Error(`Page ${location} not recognised`);
   }
 
   if (!ready) {
-    return <p>loading...</p>
+    return <Loading />
   }
 
   if (screen.needsConnection && !authenticated) {
@@ -70,9 +82,5 @@ export const App = () => {
     return <div />;
   }
 
-  return (
-    <main className="container h-full w-full max-w-screen-sm">
-      <screen.component />
-    </main>
-  );
+  return <screen.component />;
 };

@@ -8,7 +8,7 @@ export const Transactions = () => {
   const [history] = useTransactionHistory();
   return (
     <Page>
-      <PageHeader backPath="/home">Transactions</PageHeader>
+      <PageHeader canGoBack>Transactions</PageHeader>
       <ScrollArea>
         <PageContent>
           <TransactionHistory transactions={history} label="All Transactions" />

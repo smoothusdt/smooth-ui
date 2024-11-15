@@ -6,8 +6,7 @@ import { useRoute, useLocation } from "wouter";
 
 
 interface PageHeaderProps {
-  /** Should the header display a back button and where it shall lead? */
-  backPath?: string;
+  canGoBack?: boolean;
 }
 
 /**
@@ -15,8 +14,6 @@ interface PageHeaderProps {
  */
 export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
   const { children } = props;
-  const backPath = props.backPath;
-  const hasBack = backPath !== undefined;
 
   const [home] = useRoute("/home");
   const [, navigate] = useLocation();
@@ -25,7 +22,7 @@ export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = (props) => {
     <div className="flex justify-between items-center py-8">
       <div>
         <div className="flex items-center align-middle">
-          {hasBack && (
+          {props.canGoBack && (
             <Button
               size="sm"
               variant="ghost"

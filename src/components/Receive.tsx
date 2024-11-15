@@ -32,7 +32,7 @@ export const Receive = () => {
   // TODO: Use CopyWallet Component?
   return (
     <Page>
-      <PageHeader backPath="/home">Receive</PageHeader>
+      <PageHeader canGoBack>Receive</PageHeader>
       <PageContent>
         <div className="flex flex-col justify-center items-center gap-4">
           <p>Your USDT TRC-20 address</p>
@@ -49,7 +49,7 @@ export const Receive = () => {
               className="truncate"
               type="text"
               readOnly
-              value={wallet?.address}
+              value={tronUserAddress}
             />
             <Button
               data-ph-capture-attribute-button-action="copy-address"

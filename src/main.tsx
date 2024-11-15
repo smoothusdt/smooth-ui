@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
+import { Buffer } from 'buffer';
+window.Buffer = Buffer;
+
 import "./global.css";
 
 import { App } from "@/components/App.tsx";
@@ -37,7 +40,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             appearance: {
               theme: 'dark',
               accentColor: '#339192',
-              logo: 'https://your-logo-url',
+              logo: '/logo.svg',
             },
             // Create embedded wallets for users who don't have a wallet
             embeddedWallets: {

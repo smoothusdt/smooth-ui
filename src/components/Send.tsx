@@ -138,7 +138,7 @@ export const Send = () => {
   if (successfullySent)
     return (
       <Page>
-        <PageHeader backPath="/home">Send</PageHeader>
+        <PageHeader canGoBack>Send</PageHeader>
         <PageContent>
           <div key="sent" className="h-full flex flex-col justify-between">
             <div className="h-full flex flex-col justify-center items-center">
@@ -206,7 +206,7 @@ export const Send = () => {
   // Initial screen
   return (
     <Page>
-      <PageHeader backPath="/home">Send</PageHeader>
+      <PageHeader canGoBack>Send</PageHeader>
       <PageContent>
         <div
           key="inputing"

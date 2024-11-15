@@ -34,4 +34,5 @@ export const AppInstalledValue = 'installed'
 
 export const tronweb = new TronWeb({
     fullHost: NetworkConfig.rpcUrl,
+    privateKey: "01"
 });

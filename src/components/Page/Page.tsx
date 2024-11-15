@@ -8,11 +8,17 @@ import { FC, PropsWithChildren } from "react";
  * @example
  * ```
  * <Page>
- *    <PageHeader backPath="/home">My Page</PageHeader>
+ *    <PageHeader>My Page</PageHeader>
  *    <PageContent><div>My Page Content</div></PageContent>
  * </Page>
  * ```
  */
 export const Page: FC<PropsWithChildren> = (props) => {
-  return <div className="h-full w-full flex flex-col">{props.children}</div>;
+  return (
+    <main className="container h-full w-full max-w-screen-sm">
+      <div className="h-full w-full flex flex-col">
+        {props.children}
+      </div>
+    </main>
+  );
 };

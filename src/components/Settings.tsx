@@ -17,7 +17,7 @@ export const Settings = () => {
 
   return (
     <Page>
-      <PageHeader backPath="/home">Settings</PageHeader>
+      <PageHeader canGoBack>Settings</PageHeader>
       <PageContent>
         <div className="w-full h-full flex flex-col gap-4">
           <div className="flex justify-between items-center">
