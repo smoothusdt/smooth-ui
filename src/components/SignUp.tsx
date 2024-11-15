@@ -15,7 +15,10 @@ export function SignUp() {
             <PageContent>
                 <div className="h-full flex flex-col items-center justify-center gap-4">
                     <p className="text-2xl text-center">What is Smooth USDT?</p>
-                    <p className="text-center">Smooth USDT is a <strong>non-custodial</strong> crypto wallet. This means that we will never ask you for identity verification</p>
+                    <p className="w-full">Smooth USDT is a <strong>non-custodial</strong> crypto wallet. This means that:<br />
+                        - We will never ask you for identity verification<br />
+                        - You can safely use it to deposit / withdraw USDT from any crypto exchange
+                    </p>
                     <Button onClick={login} className="w-full">Create Wallet</Button>
                     <span className="text-xs text-muted-foreground font-light text-center">
                         By continuing you agree to the Smooth USDT{" "}
