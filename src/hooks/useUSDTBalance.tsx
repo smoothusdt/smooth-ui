@@ -4,6 +4,20 @@ import { tronweb, USDTAddressBase58, USDTDecimals } from "../constants";
 import { USDTAbi } from "../constants/usdtAbi";
 import { useWallet } from "./useWallet";
 
+export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumber> {
+  const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
+  let balanceUint: BigNumber = await USDTContract.methods
+    .balanceOf(tronUserAddress)
+    .call();
+  balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
+
+  const balanceHuman: BigNumber = balanceUint.dividedBy(
+    BigNumber(10).pow(USDTDecimals),
+  );
+
+  return balanceHuman
+}
+
 export const useUSDTBalance = (): [number | undefined, () => Promise<void>] => {
   const { tronUserAddress } = useWallet();
 
@@ -16,14 +30,7 @@ export const useUSDTBalance = (): [number | undefined, () => Promise<void>] => {
       return;
     }
 
-    let balanceUint: BigNumber = await USDTContract.methods
-      .balanceOf(tronUserAddress)
-      .call();
-    balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
-
-    const balanceHuman: BigNumber = balanceUint.dividedBy(
-      BigNumber(10).pow(USDTDecimals),
-    );
+    const balanceHuman = await fetchUsdtBalance(tronUserAddress)
     setBalance(balanceHuman.toNumber());
   }, [USDTContract.methods, tronUserAddress]);
 

@@ -1,4 +1,4 @@
-import { Send } from "@/components/Send";
+import Send from "./Send";
 import { Receive } from "@/components/Receive";
 
 import { Root } from "@/components/Root";

@@ -59,8 +59,6 @@ async function getWalletData(tronUserAddress: string): Promise<{ signerHex: Hex;
     const data = await smoothAdminContract.methods.wallets(tronUserAddress).call();
     const signerHex = `0x${data.signer.slice(2)}` as Hex // remove "41" prefix;
     const nonce: number = data.nonce.toNumber()
-    console.log("Data!", { signerHex, nonce, zeroAddress, isZero: signerHex === zeroAddress }, data)
-
     return { signerHex, nonce }
 }
 
@@ -105,7 +103,7 @@ export async function transferViaApi(
         callArguments = newWalletArguments.concat(callArguments)
     }
 
-    console.log("Call arguments", callArguments)
+    console.log("Executing a transfer via api with data", { callArguments, isNewWallet })
     const response = await fetch(`${SmoothApiURL}/transfer`, {
         method: "POST",
         body: JSON.stringify({
@@ -126,5 +124,6 @@ export async function transferViaApi(
         throw new Error(errorText)
     }
 
+    console.log("Executed a transfer via api. Transaction id:", txID)
     return txID
 }

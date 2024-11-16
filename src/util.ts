@@ -90,8 +90,8 @@ export function shuffle(array: number[]) {
 }
 
 export function shortenAddress(address: string) {
-  const firstPart = address.slice(0, 4)
-  const lastPart = address.slice(address.length - 4)
+  const firstPart = address.slice(0, 6)
+  const lastPart = address.slice(address.length - 6)
 
   return `${firstPart}...${lastPart}`
 }
