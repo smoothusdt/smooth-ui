@@ -3,7 +3,7 @@ interface NetworkConfigInterface {
   chainName: string;
   rpcUrl: string;
   usdtAddressBase58: string;
-  routerBase58: string;
+  adminBase58: string;
   tronProApiKey?: string;
   tronscanApi: string;
   explorerUrl: string;
@@ -15,10 +15,10 @@ const MainnetConfig: NetworkConfigInterface = {
   chainName: "mainnet",
   rpcUrl: "https://api.trongrid.io",
   usdtAddressBase58: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-  routerBase58: "TYrnoaW74cWTfxL4mMvcgbAsXUM47vqfCu",
+  adminBase58: "",
   tronscanApi: "https://apilist.tronscanapi.com/api",
   explorerUrl: 'https://tronscan.org/#',
-  smoothApiURL: 'https://not-too-useless.onrender.com'
+  smoothApiURL: 'https://smooth-api.onrender.com',
 };
 
 const ShastaConfig: NetworkConfigInterface = {
@@ -26,11 +26,12 @@ const ShastaConfig: NetworkConfigInterface = {
   chainName: "shasta",
   rpcUrl: "https://api.shasta.trongrid.io",
   usdtAddressBase58: "TG3XXyExBkPp9nzdajDZsozEu4BkaSJozs",
-  routerBase58: "TFAiKcphiJwyLNw2iQ9iJJauvz7PboisEH",
+  adminBase58: "TAw5Qyf94xu2pYaLh9LvsTaZJx1Sc16rfg",
   tronProApiKey: import.meta.env.VITE_TRON_PRO_API_KEY,
   tronscanApi: "https://shastapi.tronscan.org/api",
   explorerUrl: 'https://shasta.tronscan.org/#',
-  smoothApiURL: 'https://smooth-shasta.onrender.com'
+  // smoothApiURL: 'https://smooth-shasta.onrender.com'
+  smoothApiURL: "http://localhost:3000"
 };
 
 export let NetworkConfig: NetworkConfigInterface;

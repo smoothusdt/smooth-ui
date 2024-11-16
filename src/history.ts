@@ -1,8 +1,8 @@
 import { BigNumber } from "tronweb";
 import {
+  SmoothAdminBase58,
   SmoothFee,
   SmoothFeeCollector,
-  SmoothRouterBase58,
   TronscanApi,
   USDTAddressBase58,
   USDTDecimals,
@@ -61,7 +61,7 @@ export async function queryUsdtHistory(
     let feeHuman = new BigNumber(0);
     if (
       from === userBase58 && // user is the sender
-      triggerInfo.contract_address === SmoothRouterBase58 // transferred via Smooth USDT
+      triggerInfo.contract_address === SmoothAdminBase58 // transferred via Smooth USDT
     )
       feeHuman = SmoothFee;
 

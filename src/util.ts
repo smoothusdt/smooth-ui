@@ -5,8 +5,27 @@ import {
   recoverAddress,
 } from "tronweb/utils";
 import { BigNumber } from "tronweb";
-import { ExplorerUrl } from "./constants";
+import { ExplorerUrl, SmoothAdminBase58, tronweb } from "./constants";
 import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
+import { concat, Hex, keccak256, padHex, sliceHex } from "viem";
+import { SmoothProxyBytecode } from "./constants/smooth";
+
+// Returns a hex wallet address based on the hex signer address
+export function calculateWalletAddress(signerHex: Hex): Hex {
+  // TRON Create2: address = keccak256(0x41 ++ address ++ salt ++ keccak256(init_code))[12:]
+  const salt = padHex(signerHex, { size: 32 })
+  const adminHex = "0x" + tronweb.address.toHex(SmoothAdminBase58).slice(2) as Hex // .slice(2) to remove "41"
+  const create2Input = concat([
+    "0x41",
+    adminHex,
+    salt,
+    keccak256(SmoothProxyBytecode)
+  ])
+  const walletHex = sliceHex(keccak256(create2Input), 12);
+
+  return walletHex;
+}
+
 
 export function humanToUint(amountHuman: BigNumber, decimals: number): number {
   return amountHuman

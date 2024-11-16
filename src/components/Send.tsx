@@ -11,13 +11,15 @@ import { ScanButton } from "@/components/ScanButton";
 import { AlertCircle, CircleCheck, Loader2 } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
 
-import { useSmooth } from "@/hooks/useSmooth/useSmooth";
-import { SmoothFee } from "@/constants";
+import { SmoothApiURL, SmoothFee } from "@/constants";
 import { getTronScanLink, shortenAddress } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
 import { usePostHog } from "posthog-js/react";
 import { BigNumber, TronWeb } from "tronweb";
-import { CheckApprovalResult } from "@/hooks/useSmooth/approve";
+import { usePrivy } from "@privy-io/react-auth";
+import { transferViaApi } from "@/smoothApi";
+import { useWallet } from "@/hooks/useWallet";
+import { Hex } from "viem";
 
 function getAmountBigNumber(amountRaw: string): BigNumber {
   let formattedAmount = amountRaw.replace(",", "."); // for Russian keyboard
@@ -34,13 +36,14 @@ function getAmountBigNumber(amountRaw: string): BigNumber {
 /** Full page components which owns the send flow */
 export const Send = () => {
   const posthog = usePostHog();
+  const { signMessage, user } = usePrivy();
   const [receiver, setReceiver] = useState("");
   const [sending, setSending] = useState(false);
   const [successfullySent, setSuccessfullySent] = useState(false);
   const [txID, setTxID] = useState("");
   const [balance] = useUSDTBalance();
-  const [checkApproval, transfer] = useSmooth();
   const [amountRaw, setAmountRaw] = useState<string>("");
+  const { tronUserAddress } = useWallet();
 
   const amount = getAmountBigNumber(amountRaw);
 
@@ -70,68 +73,13 @@ export const Send = () => {
   // The button is disabled until the data in the fields is valid, so we
   // can omit validation here.
   const handleTransferClicked = async () => {
-    posthog.capture("Send button swiped");
-
-    const doTransfer = async () => {
-      // make sure the router is approved. Executes instantly if the approval
-      // is granted and known in local storage.
-      const [approvalGranted, checkApprovalResult] = await checkApproval();
-      if (!approvalGranted) {
-        console.error("Approval was not granted before sending!");
-        posthog.capture("Approval was not granted before sending!", {
-          approvalGranted,
-          checkApprovalResult,
-        });
-        throw new Error("Something went wrong. Please try again.");
-      }
-
-      // Make an informational warning if we had to execute the approval just now.
-      // Normally the approval executes in the background.
-      if (checkApprovalResult !== CheckApprovalResult.AlreadyGranted) {
-        console.warn("Approval was granted, but not in background");
-        posthog.capture("Approval was granted, but not in background", {
-          approvalGranted,
-          checkApprovalResult,
-        });
-      }
-
-      const res = await transfer(receiver, amount!);
-      return res;
-    };
-
-    try {
-      console.log("Sending");
-      setSending(true);
-      const doTransferPromise = doTransfer();
-      await Promise.all([
-        sendButtonAnimate(sendButtonScope.current, {
-          width: 0,
-          opacity: 0,
-        }),
-        loaderAnimate(
-          loaderScope.current,
-          {
-            opacity: 1,
-          },
-          {
-            delay: 0.25,
-          },
-        ),
-      ]);
-
-      const { txID } = await doTransferPromise;
-
-      await inputScreenAnimate(inputScreenScope.current, {
-        opacity: 0,
-      });
-      setTxID(txID);
-      setSuccessfullySent(true);
-    } catch (e) {
-      posthog.capture("error", {
-        error: JSON.stringify(e, Object.getOwnPropertyNames(e)),
-      });
-      throw e;
-    }
+    await transferViaApi(
+      tronUserAddress!,
+      "TKHaUJhihdPXHg3mDNFvV4tycvJvHNPRpc",
+      new BigNumber("20"),
+      user?.wallet?.address! as Hex,
+      async (message: string) => await signMessage(message, { showWalletUIs: false })
+    )
   };
 
   if (successfullySent)
@@ -293,7 +241,7 @@ export const Send = () => {
             <Button
               className="w-full"
               onClick={handleTransferClicked}
-              disabled={sendDisabled}
+            // disabled={sendDisabled}
             >Send</Button>
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"
