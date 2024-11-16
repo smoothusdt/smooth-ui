@@ -11,10 +11,9 @@ import { ScanButton } from "@/components/ScanButton";
 import { AlertCircle, CircleCheck, Loader2 } from "lucide-react";
 import { motion, useAnimate } from "framer-motion";
 
-import { SmoothApiURL, SmoothFee } from "@/constants";
+import { SmoothFee } from "@/constants";
 import { getTronScanLink, shortenAddress } from "@/util";
 import { useUSDTBalance } from "@/hooks/useUSDTBalance";
-import { usePostHog } from "posthog-js/react";
 import { BigNumber, TronWeb } from "tronweb";
 import { usePrivy } from "@privy-io/react-auth";
 import { transferViaApi } from "@/smoothApi";
@@ -35,12 +34,11 @@ function getAmountBigNumber(amountRaw: string): BigNumber {
 
 /** Full page components which owns the send flow */
 export const Send = () => {
-  const posthog = usePostHog();
   const { signMessage, user } = usePrivy();
   const [receiver, setReceiver] = useState("");
-  const [sending, setSending] = useState(false);
-  const [successfullySent, setSuccessfullySent] = useState(false);
-  const [txID, setTxID] = useState("");
+  const [sending] = useState(false);
+  const [successfullySent] = useState(false);
+  const [txID] = useState("");
   const [balance] = useUSDTBalance();
   const [amountRaw, setAmountRaw] = useState<string>("");
   const { tronUserAddress } = useWallet();
@@ -48,9 +46,8 @@ export const Send = () => {
   const amount = getAmountBigNumber(amountRaw);
 
   // Animation
-  const [sendButtonScope, sendButtonAnimate] = useAnimate();
-  const [loaderScope, loaderAnimate] = useAnimate();
-  const [inputScreenScope, inputScreenAnimate] = useAnimate();
+  const [loaderScope] = useAnimate();
+  const [inputScreenScope] = useAnimate();
 
   const isOverspending =
     balance !== undefined && amountRaw && amount.plus(SmoothFee).gt(balance);
@@ -241,7 +238,7 @@ export const Send = () => {
             <Button
               className="w-full"
               onClick={handleTransferClicked}
-            // disabled={sendDisabled}
+              disabled={sendDisabled}
             >Send</Button>
             <div
               className="absolute w-full h-full flex flex-col justify-center items-center"

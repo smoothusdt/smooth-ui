@@ -1,4 +1,4 @@
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Page, PageContent, PageHeader } from "./Page";
 
 export function Loading() {
