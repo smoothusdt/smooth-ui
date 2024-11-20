@@ -28,3 +28,6 @@ export const tronweb = new TronWeb({
     fullHost: NetworkConfig.rpcUrl,
     privateKey: "01"
 });
+
+export const StoragePrefix = "@Smooth"
+export const WalletStorageKey = `${StoragePrefix}/wallet`

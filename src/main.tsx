@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 
 import { Buffer } from 'buffer';
@@ -27,30 +26,28 @@ if (window.location.hostname !== "localhost") {
 import "./i18n";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <PostHogProvider client={posthog}>
-      <ErrorBoundary
-        FallbackComponent={ErrorFallback}
-        onReset={() => (window.location.href = "/")}
+  <PostHogProvider client={posthog}>
+    <ErrorBoundary
+      FallbackComponent={ErrorFallback}
+      onReset={() => (window.location.href = "/")}
+    >
+      <PrivyProvider
+        appId="cm3g27pox00mj12g3i951p7mq"
+        config={{
+          // Customize Privy's appearance in your app
+          appearance: {
+            theme: 'dark',
+            accentColor: '#339192',
+            logo: '/logo.svg',
+          },
+          // Create embedded wallets for users who don't have a wallet
+          embeddedWallets: {
+            createOnLogin: 'users-without-wallets',
+          },
+        }}
       >
-        <PrivyProvider
-          appId="cm3g27pox00mj12g3i951p7mq"
-          config={{
-            // Customize Privy's appearance in your app
-            appearance: {
-              theme: 'dark',
-              accentColor: '#339192',
-              logo: '/logo.svg',
-            },
-            // Create embedded wallets for users who don't have a wallet
-            embeddedWallets: {
-              createOnLogin: 'users-without-wallets',
-            },
-          }}
-        >
-          <App />
-        </PrivyProvider>
-      </ErrorBoundary>
-    </PostHogProvider>
-  </React.StrictMode>,
+        <App />
+      </PrivyProvider>
+    </ErrorBoundary>
+  </PostHogProvider>
 );

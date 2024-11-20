@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { SmoothFee, tronweb } from "@/constants";
 import { BigNumber } from "tronweb";
-import { useUSDTBalance } from "@/hooks/useUSDTBalance";
+import { useUSDTBalance } from "@/hooks/useBalance";
 
 function getAmountBigNumber(amountRaw: string): BigNumber {
     let formattedAmount = amountRaw.replace(",", "."); // for Russian keyboard

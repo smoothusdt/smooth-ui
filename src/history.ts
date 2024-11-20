@@ -7,12 +7,10 @@ import {
   USDTAddressBase58,
   USDTDecimals,
 } from "./constants";
-import { getTronScanLink, uintToHuman } from "./util";
+import { uintToHuman } from "./util";
 
 export interface HistoricalTransaction {
   txID: string;
-  explorerUrl: string;
-  block: number; // block number
   timestamp: number; // UTC
   from: string; // Base 58
   to: string; // Base 58
@@ -67,8 +65,6 @@ export async function queryUsdtHistory(
     const txID = transfer.transaction_id;
     const tx: HistoricalTransaction = {
       txID,
-      explorerUrl: getTronScanLink(txID),
-      block: transfer.block,
       timestamp: transfer.block_ts,
       from,
       to,

@@ -7,8 +7,9 @@ import PullToRefresh from "react-simple-pull-to-refresh";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { useLocation } from "wouter";
-import { useUSDTBalance } from "@/hooks/useUSDTBalance";
+import { useUSDTBalance } from "@/hooks/useBalance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
+import { useEffect } from "react";
 
 /** Full page component displaying the home page of Smooth.
  * Includes balance, send, and receive buttons.
@@ -21,6 +22,11 @@ export const Home = () => {
   const handleRefresh = async () => {
     await Promise.all([refreshHistory(), refreshBalance()]);
   };
+
+  // Refresh on every home screen load
+  useEffect(() => {
+    handleRefresh()
+  }, [])
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>

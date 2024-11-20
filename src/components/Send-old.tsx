@@ -13,7 +13,7 @@ import { motion, useAnimate } from "framer-motion";
 
 import { SmoothFee } from "@/constants";
 import { getTronScanLink, shortenAddress } from "@/util";
-import { useUSDTBalance } from "@/hooks/useUSDTBalance";
+import { useUSDTBalance } from "@/hooks/useBalance";
 import { BigNumber, TronWeb } from "tronweb";
 import { usePrivy } from "@privy-io/react-auth";
 import { transferViaApi } from "@/smoothApi";
