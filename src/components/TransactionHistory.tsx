@@ -89,8 +89,6 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
   );
 };
 
-// TODO: Skeleton should more closely match <Transaction />
-// TODO: Should animate in and out.
 // TODO: Should not render if transactions are cached.
 /** Local component for rendering the skeleton of a transaction while they are being fetched */
 const SkeletonItem = () => {

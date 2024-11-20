@@ -37,11 +37,10 @@ export default function Send() {
 
     return (
         <Page>
-            <PageHeader canGoBack>Send</PageHeader>
-            <SendSuccess txID="32cacb92c68f671668b53ced1f1b3092a340f7a589f613e87273f0ae4f28225f" />
-            {/* {stage === Stage.Input && <SendInput onInputed={onInputed} />}
+            <PageHeader canGoBack={stage !== Stage.Success}>Send</PageHeader>
+            {stage === Stage.Input && <SendInput onInputed={onInputed} />}
             {stage === Stage.Confirm && <SendConfirm toBase58={inputedData.current!.toBase58} amount={inputedData.current!.amount} onSent={onSent} />}
-            {stage === Stage.Success && <SendSuccess txID={txID.current!} />} */}
+            {stage === Stage.Success && <SendSuccess txID={txID.current!} toBase58={inputedData.current!.toBase58} amount={inputedData.current!.amount} />}
         </Page>
     );
 }
