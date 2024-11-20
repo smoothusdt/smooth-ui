@@ -11,6 +11,8 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import ru from "javascript-time-ago/locale/ru";
 import { useWallet } from "@/hooks/useWallet";
+import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { shortenAddress } from "@/util";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru); // TODO how to make sure this works when russian is selected
@@ -62,27 +64,26 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
 
   const isReceive = transaction.to === tronUserAddress; // Was this a transaction where the wallet received usdt?
   const address = isReceive ? transaction.from : transaction.to;
-  const short = address.slice(0, 2);
   const sign = isReceive ? "+" : "-";
-  const amount = sign + "$" + transaction.amountHuman;
+  const amount = sign + transaction.amountHuman + " USDT";
   const date = transaction.timestamp;
 
-  const abbreviatedAddress = address.slice(0, 8) + "..." + address.slice(-4);
+  const abbreviatedAddress = shortenAddress(address, 4)
 
   return (
     <div className="flex justify-between items-center w-full border-b border-b-muted pb-3 last:border-b-0">
       <div className="flex items-center gap-3">
         <Avatar className="size-10">
-          <AvatarFallback>{short}</AvatarFallback>
+          <AvatarFallback>{isReceive ? <ArrowDownRight /> : <ArrowUpRight />}</AvatarFallback>
         </Avatar>
-        <span className="text-sm font-semibold">{abbreviatedAddress}</span>
+        <span className="text-sm">{ isReceive ? "From: " : "To: " } {abbreviatedAddress}</span>
       </div>
       <div className="flex flex-col items-end">
-        <span className="text-sm">{amount}</span>
+        <span className={`text-sm ${isReceive && "text-primary"}`}>{amount}</span>
         <ReactTimeAgo
-          timeStyle="twitter-now"
-          className="text-muted-foreground text-sm"
+          className="text-muted-foreground text-sm text-right"
           date={date}
+          locale="ru"
         />
       </div>
     </div>

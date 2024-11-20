@@ -9,7 +9,7 @@ export const Transactions = () => {
   return (
     <Page>
       <PageHeader canGoBack>Transactions</PageHeader>
-      <ScrollArea>
+      <ScrollArea className="pr-3">
         <PageContent>
           <TransactionHistory transactions={history} label="All Transactions" />
         </PageContent>

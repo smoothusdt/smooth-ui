@@ -40,7 +40,7 @@ export function SendConfirm(props: { toBase58: string; amount: BigNumber, onSent
                 <div style={{
                     opacity: sending ? 0.5 : 1
                 }}>
-                    <p className="text-center text-xl mb-4">Confirm inputed data</p>
+                    <p className="text-center text-xl mb-4">Confirm entered details</p>
                     <InfoItem title="Recipient" content={shortenAddress(props.toBase58)} />
                     <InfoItem title="Network" content="TRC-20" />
                     <InfoItem title="Amount" content={`${props.amount.toString()} USDT`} />
