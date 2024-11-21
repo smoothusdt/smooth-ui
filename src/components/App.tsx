@@ -1,4 +1,3 @@
-import Send from "./Send";
 import { Receive } from "@/components/Receive";
 
 import { Root } from "@/components/Root";
@@ -13,6 +12,9 @@ import { TermsOfUse } from "./TermsOfUse";
 import { useEffect } from "react";
 import { Loading } from "./Loading";
 import { SignUp } from "./SignUp";
+import { SendInput } from "./Send/SendInput";
+import { SendConfirm } from "./Send/SendConfirm";
+import { SendSuccess } from "./Send/SendSuccess";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -37,7 +39,15 @@ const RoutesConfig: Record<string, RouteConfig> = {
     needsConnection: true,
   },
   "/send": {
-    component: Send,
+    component: SendInput,
+    needsConnection: true,
+  },
+  "/send/confirm": {
+    component: SendConfirm,
+    needsConnection: true,
+  },
+  "/tx-receipt": {
+    component: SendSuccess,
     needsConnection: true,
   },
   "/receive": {
@@ -61,11 +71,12 @@ const RoutesConfig: Record<string, RouteConfig> = {
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [location, navigate] = useLocation();
+  console.log({ location })
   const { ready, authenticated } = usePrivy();
 
   useEffect(() => {
-    // If the user has just logged in
-    if (authenticated) return navigate("/home");
+    // If privy auth has succeeded, but the user is still on the login screen
+    if (authenticated && !screen.needsConnection) return navigate("/home");
   }, [authenticated]);
 
   const screen = RoutesConfig[location];

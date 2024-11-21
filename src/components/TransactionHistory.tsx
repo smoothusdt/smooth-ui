@@ -1,4 +1,3 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ReactTimeAgo from "react-time-ago";
@@ -11,8 +10,9 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import ru from "javascript-time-ago/locale/ru";
 import { useWallet } from "@/hooks/useWallet";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { shortenAddress } from "@/util";
+import { useLocation } from "wouter";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(ru); // TODO how to make sure this works when russian is selected
@@ -30,7 +30,6 @@ export const TransactionHistory = (props: TransactionsProps) => {
   const transactions = props.transactions;
   const label = props.label ?? "Recent Transactions";
   const { showSeeAll } = props;
-  const loading = !transactions;
 
   return (
     <div className="flex flex-col justify-between gap-3">
@@ -46,9 +45,7 @@ export const TransactionHistory = (props: TransactionsProps) => {
           </Button>
         )}
       </div>
-      {loading
-        ? new Array(3).fill(undefined).map((_, i) => <SkeletonItem key={i} />)
-        : transactions.map((transaction) => (
+      {transactions?.map((transaction) => (
           <Transaction key={transaction.txID} transaction={transaction} />
         ))}
     </div>
@@ -61,6 +58,7 @@ export const TransactionHistory = (props: TransactionsProps) => {
 const Transaction = (props: { transaction: HistoricalTransaction }) => {
   const { transaction } = props;
   const { tronUserAddress } = useWallet();
+  const [_, navigate] = useLocation();
 
   const isReceive = transaction.to === tronUserAddress; // Was this a transaction where the wallet received usdt?
   const address = isReceive ? transaction.from : transaction.to;
@@ -71,12 +69,15 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
   const abbreviatedAddress = shortenAddress(address, 4)
 
   return (
-    <div className="flex justify-between items-center w-full border-b border-b-muted pb-3 last:border-b-0">
+    <div
+      className="flex justify-between items-center w-full border-b border-b-muted pb-3 last:border-b-0"
+      onClick={() => navigate(`/tx-receipt?txID=${props.transaction.txID}`)}
+    >
       <div className="flex items-center gap-3">
         <Avatar className="size-10">
-          <AvatarFallback>{isReceive ? <ArrowDownRight /> : <ArrowUpRight />}</AvatarFallback>
+          <AvatarFallback>{isReceive ? <ArrowDown /> : <ArrowUp />}</AvatarFallback>
         </Avatar>
-        <span className="text-sm">{ isReceive ? "From: " : "To: " } {abbreviatedAddress}</span>
+        <span className="text-sm"><span className="text-muted-foreground">{isReceive ? "From: " : "To: "}</span> {abbreviatedAddress}</span>
       </div>
       <div className="flex flex-col items-end">
         <span className={`text-sm ${isReceive && "text-primary"}`}>{amount}</span>
@@ -85,20 +86,6 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
           date={date}
           locale="ru"
         />
-      </div>
-    </div>
-  );
-};
-
-// TODO: Should not render if transactions are cached.
-/** Local component for rendering the skeleton of a transaction while they are being fetched */
-const SkeletonItem = () => {
-  return (
-    <div className="flex items-center space-x-4">
-      <Skeleton className="h-12 w-12 rounded-full" />
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-[250px]" />
-        <Skeleton className="h-4 w-[200px]" />
       </div>
     </div>
   );

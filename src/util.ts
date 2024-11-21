@@ -34,7 +34,7 @@ export function humanToUint(amountHuman: BigNumber, decimals: number): number {
     .toNumber();
 }
 
-export function uintToHuman(amountUint: number, decimals: number): BigNumber {
+export function uintToHuman(amountUint: number | BigNumber, decimals: number): BigNumber {
   return BigNumber(amountUint)
     .dividedBy(BigNumber(10).pow(decimals))
     .decimalPlaces(decimals);

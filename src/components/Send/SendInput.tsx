@@ -1,5 +1,5 @@
 import { AlertCircle } from "lucide-react";
-import { PageContent } from "../Page";
+import { Page, PageContent, PageHeader } from "../Page";
 import { ScanButton } from "../ScanButton";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Input } from "../ui/input";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SmoothFee, tronweb } from "@/constants";
 import { BigNumber } from "tronweb";
 import { useUSDTBalance } from "@/hooks/useBalance";
+import { useLocation } from "wouter";
 
 function getAmountBigNumber(amountRaw: string): BigNumber {
     let formattedAmount = amountRaw.replace(",", "."); // for Russian keyboard
@@ -22,13 +23,14 @@ function getAmountBigNumber(amountRaw: string): BigNumber {
     return amount;
 }
 
-export function SendInput(props: { onInputed: (toBase58: string, amount: BigNumber) => void }) {
+export function SendInput() {
     const [receiver, setReceiver] = useState("");
     const [amountRaw, setAmountRaw] = useState("");
     const [alert, setAlert] = useState("");
     const amount = getAmountBigNumber(amountRaw);
     const totalAmount = amount.plus(SmoothFee)
     const [balance] = useUSDTBalance();
+    const [_, navigate] = useLocation();
 
     const onContinue = () => {
         if (totalAmount.gt(balance || 0)) {
@@ -38,70 +40,73 @@ export function SendInput(props: { onInputed: (toBase58: string, amount: BigNumb
             return setAlert('"To" is not a valid Tron address')
         }
 
-        props.onInputed(receiver, amount)
+        navigate(`/send/confirm?receiver=${receiver}&amount=${amount.toString()}`)
     }
 
     return (
-        <PageContent>
-            <div
-                className="h-full flex flex-col justify-between"
-            >
-                <div className="flex flex-col gap-3">
-                    <Label htmlFor="text-input-to">
-                        To
-                    </Label>
-                    <div className="flex w-full items-center space-x-2">
+        <Page>
+            <PageHeader canGoBack>Send</PageHeader>
+            <PageContent>
+                <div
+                    className="h-full flex flex-col justify-between"
+                >
+                    <div className="flex flex-col gap-3">
+                        <Label htmlFor="text-input-to">
+                            To
+                        </Label>
+                        <div className="flex w-full items-center space-x-2">
+                            <Input
+                                id="text-input-to"
+                                type="text"
+                                value={receiver}
+                                onChange={(e) => setReceiver(e.target.value)}
+                                placeholder="Example: TR7NHq..."
+                            />
+                            <ScanButton
+                                onScan={(code) => {
+                                    setReceiver(code);
+                                }}
+                            />
+                        </div>
+                        <Label htmlFor="text-input-amount">
+                            Amount (USDT)
+                        </Label>
                         <Input
-                            id="text-input-to"
-                            type="text"
-                            value={receiver}
-                            onChange={(e) => setReceiver(e.target.value)}
-                            placeholder="Example: TR7NHq..."
+                            id="text-input-amount"
+                            type="number"
+                            inputMode="decimal"
+                            value={amountRaw}
+                            onChange={(e) => setAmountRaw(e.target.value)}
+                            min={0}
+                            placeholder="Example: 100"
                         />
-                        <ScanButton
-                            onScan={(code) => {
-                                setReceiver(code);
-                            }}
-                        />
-                    </div>
-                    <Label htmlFor="text-input-amount">
-                        Amount (USDT)
-                    </Label>
-                    <Input
-                        id="text-input-amount"
-                        type="number"
-                        inputMode="decimal"
-                        value={amountRaw}
-                        onChange={(e) => setAmountRaw(e.target.value)}
-                        min={0}
-                        placeholder="Example: 100"
-                    />
 
-                    <span className="text-sm text-muted-foreground">
-                        Fee: {SmoothFee.toString()}{" "}
-                        <span className="text-[0.5rem]">USDT</span>
-                    </span>
-                    {Boolean(amount) && (
-                        <span>
-                            Total: <strong>{totalAmount.toString()}</strong>{" "}
+                        <span className="text-sm text-muted-foreground">
+                            Fee: {SmoothFee.toString()}{" "}
                             <span className="text-[0.5rem]">USDT</span>
                         </span>
-                    )}
+                        {Boolean(amount) && (
+                            <span>
+                                Total: <strong>{totalAmount.toString()}</strong>{" "}
+                                <span className="text-[0.5rem]">USDT</span>
+                            </span>
+                        )}
+                    </div>
+                    <div className="relative flex flex-col items-center gap-4">
+                        {alert && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertTitle>Whoops</AlertTitle>
+                                <AlertDescription>{alert}</AlertDescription>
+                            </Alert>
+                        )}
+                        <Button
+                            className="w-full"
+                            onClick={onContinue}
+                        >Continue</Button>
+                    </div>
                 </div>
-                <div className="relative flex flex-col items-center gap-4">
-                    {alert && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Whoops</AlertTitle>
-                            <AlertDescription>{alert}</AlertDescription>
-                        </Alert>
-                    )}
-                    <Button
-                        className="w-full"
-                        onClick={onContinue}
-                    >Continue</Button>
-                </div>
-            </div>
-        </PageContent>
+            </PageContent>
+        </Page>
     );
 }

@@ -17,6 +17,7 @@ export const TRXDecimals = 6;
 // smooth onchain constants
 export const SmoothAdminBase58 = NetworkConfig.adminBase58;
 export const SmoothFeeCollector = "TPvSv9BofZrXP4NtkuSmY6X4qFt41yEF6x";
+export const TransferTopic = "ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 
 // The fee (in USDT) that the user pays
 export const SmoothFee = new BigNumber("1.5");
