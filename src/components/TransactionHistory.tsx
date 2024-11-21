@@ -32,7 +32,7 @@ export const TransactionHistory = (props: TransactionsProps) => {
   const { showSeeAll } = props;
 
   return (
-    <div className="flex flex-col justify-between gap-3">
+    <div className="flex flex-col justify-between">
       <div className="flex justify-between items-baseline border-b border-b-muted pb-3">
         <h2 className="w-full text-md text-muted-foreground">{label}</h2>
         {showSeeAll && (
@@ -70,7 +70,7 @@ const Transaction = (props: { transaction: HistoricalTransaction }) => {
 
   return (
     <div
-      className="flex justify-between items-center w-full border-b border-b-muted pb-3 last:border-b-0"
+      className="flex justify-between items-center w-full border-b border-b-muted py-3 last:border-b-0 hover:bg-muted"
       onClick={() => navigate(`/tx-receipt?txID=${props.transaction.txID}`)}
     >
       <div className="flex items-center gap-3">

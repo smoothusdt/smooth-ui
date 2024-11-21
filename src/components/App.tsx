@@ -14,7 +14,7 @@ import { Loading } from "./Loading";
 import { SignUp } from "./SignUp";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
-import { SendSuccess } from "./Send/SendSuccess";
+import { Receipt } from "./Send/Receipt";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -47,7 +47,7 @@ const RoutesConfig: Record<string, RouteConfig> = {
     needsConnection: true,
   },
   "/tx-receipt": {
-    component: SendSuccess,
+    component: Receipt,
     needsConnection: true,
   },
   "/receive": {

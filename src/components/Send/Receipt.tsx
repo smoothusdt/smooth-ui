@@ -1,7 +1,7 @@
-import { Check, Clock, Copy, ExternalLink } from "lucide-react";
+import { Clock, ExternalLink, Loader2 } from "lucide-react";
 import { Page, PageContent, PageHeader } from "../Page";
 import { Link } from "../Link";
-import { getTronScanLink, hexToBase58Address, shortenAddress, uintToHuman } from "@/util";
+import { getTronScanLink, hexToBase58Address, uintToHuman } from "@/util";
 import { Button } from "../ui/button";
 import { useLocation } from "wouter";
 import { useEffect, useState } from "react";
@@ -9,49 +9,11 @@ import { SmoothFeeCollector, TransferTopic, tronweb, USDTAddressBase58, USDTDeci
 import { HistoricalTransaction } from "@/history";
 import { TransactionInfo } from "node_modules/tronweb/lib/esm/types/Trx";
 import { BigNumber } from "tronweb";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useWallet } from "@/hooks/useWallet";
+import { DisplayedAddress } from "../DisplayedAddress";
 
-function AddressField(props: { label: string; address: string }) {
-  const [copied, setCopied] = useState(false)
 
-  const copyToClipboard = (value: string) => {
-    navigator.clipboard.writeText(value)
-
-    setCopied(true);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1000);
-  }
-
-  return (
-    <div className="space-y-2">
-      <div className="text-sm font-medium text-primary">{props.label}</div>
-      <div className="flex items-center justify-between bg-gray-700 p-2 rounded">
-        <div className="font-mono text-base text-white">{shortenAddress(props.address, 10)}</div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-primary hover:text-white"
-              onClick={() => copyToClipboard(props.address)}
-              >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Copy address</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-    </div>
-  );
-}
-
-export function SendSuccess() {
+export function Receipt() {
   const [_, navigate] = useLocation();
   const { tronUserAddress } = useWallet();
   const searchParams = new URLSearchParams(window.location.search);
@@ -108,12 +70,23 @@ export function SendSuccess() {
     fetchTransaction()
   }, [])
 
-  const receiptComponent = transaction && (
+  const loadingBlock = (
+    <div className="w-full h-48 flex justify-center items-center">
+      <div className="flex flex-col items-center">
+      <Loader2
+        className="text-primary animate-spin"
+      />
+        <p>Loading receipt...</p>
+      </div>
+    </div>
+  );
+
+  const receiptBlock = transaction && (
     <div className="h-full flex flex-col justify-between">
       <div className="space-y-4">
         {isReceive ?
-          <AddressField label="Received From" address={transaction.from} /> :
-          <AddressField label="Sent To" address={transaction.to} />
+          <DisplayedAddress label="Received From" address={transaction.from} /> :
+          <DisplayedAddress label="Sent To" address={transaction.to} />
         }
         <div className="flex justify-between items-center">
           <div className="text-sm font-medium text-primary">Amount</div>
@@ -142,7 +115,7 @@ export function SendSuccess() {
     <Page>
       <PageHeader canGoBack>Receipt</PageHeader>
       <PageContent>
-        {receiptComponent || "Loading transaction receipt..."}
+        {transaction ? receiptBlock : loadingBlock}
       </PageContent>
     </Page>
   );
