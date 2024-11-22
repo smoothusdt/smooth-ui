@@ -2,8 +2,6 @@ import { Receive } from "@/components/Receive";
 
 import { Root } from "@/components/Root";
 import { Home } from "@/components/Home";
-import { Settings } from "@/components/Settings";
-import { Transactions } from "@/components/Transactions";
 
 import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
@@ -52,14 +50,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
   },
   "/receive": {
     component: Receive,
-    needsConnection: true,
-  },
-  "/transactions": {
-    component: Transactions,
-    needsConnection: true,
-  },
-  "/settings": {
-    component: Settings,
     needsConnection: true,
   },
   "/terms-of-use": {

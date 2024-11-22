@@ -1,67 +1,93 @@
-import { Balance } from "@/components/Balance";
-import { Button } from "@/components/ui/button";
-import { Page, PageContent, PageHeader } from "@/components/Page";
-import { TransactionHistory } from "@/components/TransactionHistory";
-import PullToRefresh from "react-simple-pull-to-refresh";
+'use client'
 
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, QrCode, Settings } from 'lucide-react'
+import { TransactionHistory } from './TransactionHistory'
+import { SettingsModal } from './SettingsModal'
+import { useLocation } from 'wouter'
+import { useUSDTBalance } from '@/hooks/useBalance'
 
-import { useLocation } from "wouter";
-import { useUSDTBalance } from "@/hooks/useBalance";
-import { useTransactionHistory } from "@/hooks/useTransactionHistory";
-import { useEffect } from "react";
 
-/** Full page component displaying the home page of Smooth.
- * Includes balance, send, and receive buttons.
- */
-export const Home = () => {
+export function Home() {
+  const [showSettings, setShowSettings] = useState(false)
+  const [balance] = useUSDTBalance();
   const [, navigate] = useLocation();
-  const [balance, refreshBalance] = useUSDTBalance();
-  const [history, refreshHistory] = useTransactionHistory();
-
-  const handleRefresh = async () => {
-    await Promise.all([refreshHistory(), refreshBalance()]);
-  };
-
-  // Refresh on every home screen load
-  useEffect(() => {
-    handleRefresh()
-  }, [])
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
-      <Page>
-        <PageHeader>
-          <span>
-            smooth <span className="text-xs text-muted-foreground"> USDT</span>
-          </span>
-        </PageHeader>
-        <PageContent>
-          <div className="size-full flex flex-col justify-between">
-            <Balance balance={balance} />
-            <TransactionHistory
-              transactions={history?.slice(0, 3)}
-              showSeeAll
-            />
-            <div className="w-full flex gap-4 justify-between">
-              <Button
-                className="w-96 h-14 gap-2"
-                onClick={() => navigate("send")}
-              >
-                <ArrowUp />
-                Send
-              </Button>
-              <Button
-                className="w-96 h-14 gap-2"
-                onClick={() => navigate("receive")}
-              >
-                <ArrowDown />
-                Receive
-              </Button>
-            </div>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key="home"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="max-w-md mx-auto min-h-screen text-white flex flex-col"
+      >
+        {/* Header */}
+        <header className="flex justify-between items-center p-4">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl font-bold text-[#339192]"
+          >
+            Smooth USDT
+          </motion.h1>
+          <button
+            className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors"
+            onClick={() => setShowSettings(true)}
+          >
+            <Settings size={24} />
+          </button>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-grow flex flex-col items-center justify-start p-4 space-y-8 overflow-y-auto w-full">
+          {/* Balance Display */}
+          <motion.section
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-lg text-gray-400 mb-2">Total Balance</h2>
+            <p className="text-5xl font-bold">{balance && balance.toFixed(2)} USDT</p>
+          </motion.section>
+
+          {/* Quick Actions */}
+          <div className="flex justify-center space-x-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center space-x-2 px-6 py-3 bg-[#339192] rounded-lg shadow-md"
+              onClick={() => navigate("/send")}
+            >
+              <Send size={24} />
+              <span>Send</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center space-x-2 px-6 py-3 bg-[#339192] rounded-lg shadow-md"
+              onClick={() => navigate("/receive")}
+            >
+              <QrCode size={24} />
+              <span>Receive</span>
+            </motion.button>
           </div>
-        </PageContent>
-      </Page>
-    </PullToRefresh>
-  );
-};
+
+          <TransactionHistory/>
+        </main>
+
+        {/* Settings Modal */}
+        <SettingsModal
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          onLogout={() => {}}
+        />
+      </motion.div>
+
+    </AnimatePresence>
+  )
+}
+

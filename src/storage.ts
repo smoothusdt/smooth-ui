@@ -12,10 +12,24 @@ export function loadWalletCache(tronAddress: string): WalletCache | undefined {
     const raw = window.localStorage.getItem(WalletStorageKey)
     if (!raw) return;
 
-    let decoded: WalletCache = JSON.parse(raw)
+    let decoded: { tronAddress: string, history: any[], balance: string } = JSON.parse(raw)
     if (decoded.tronAddress !== tronAddress) return;
 
-    return decoded;
+    const parsedBalance = new BigNumber(decoded.balance)
+    const parsedHistory: HistoricalTransaction[] = decoded.history.map((el) => ({
+        txID: el.txID,
+        amount: new BigNumber(el.amount),
+        fee: new BigNumber(el.fee),
+        from: el.from,
+        to: el.to,
+        timestamp: el.timestamp
+    }))
+
+    return {
+        balance: parsedBalance,
+        history: parsedHistory,
+        tronAddress: decoded.tronAddress
+    };
 }
 
 function setWalletCache(cache: WalletCache) {
@@ -52,4 +66,27 @@ export function updateCachedHistory(tronAddress: string, newHistory: HistoricalT
     }
 
     setWalletCache(cache)
-} 
+}
+
+export function addTransaction(tronAddress: string, transaction: HistoricalTransaction) {
+    let cache = loadWalletCache(tronAddress)
+
+    if (!cache) {
+        cache = {
+            balance: new BigNumber(0),
+            tronAddress,
+            history: [transaction]
+        }
+    } else {
+        if (cache.history.some((el) => el.txID === transaction.txID)) return; // already in history
+        cache.history = [transaction].concat(cache.history)
+    }
+
+    setWalletCache(cache)
+}
+
+export function findTransaction(tronAddress: string, txID: string): HistoricalTransaction | undefined {
+    const cache = loadWalletCache(tronAddress)
+    const tx = cache?.history.find((el) => el.txID === txID)
+    return tx
+}

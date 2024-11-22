@@ -14,8 +14,8 @@ export interface HistoricalTransaction {
   timestamp: number; // UTC
   from: string; // Base 58
   to: string; // Base 58
-  amountHuman: BigNumber;
-  feeHuman: BigNumber;
+  amount: BigNumber;
+  fee: BigNumber;
 }
 
 /**
@@ -68,8 +68,8 @@ export async function queryUsdtHistory(
       timestamp: transfer.block_ts,
       from,
       to,
-      amountHuman,
-      feeHuman,
+      amount: amountHuman,
+      fee: feeHuman,
     };
     history.push(tx);
   }

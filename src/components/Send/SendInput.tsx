@@ -1,112 +1,83 @@
-import { AlertCircle } from "lucide-react";
-import { Page, PageContent, PageHeader } from "../Page";
-import { ScanButton } from "../ScanButton";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { useState } from "react";
-import { SmoothFee, tronweb } from "@/constants";
-import { BigNumber } from "tronweb";
-import { useUSDTBalance } from "@/hooks/useBalance";
-import { useLocation } from "wouter";
+import { motion } from 'framer-motion'
+import { PageContainer } from "../PageContainer";
+import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { useUSDTBalance } from '@/hooks/useBalance';
+import { BigNumber } from 'tronweb';
+import { SmoothFee } from '@/constants';
 
-function getAmountBigNumber(amountRaw: string): BigNumber {
-    let formattedAmount = amountRaw.replace(",", "."); // for Russian keyboard
+const stepVariants = {
+    initial: { opacity: 0, x: 50 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -50 }
+}
 
-    if (formattedAmount.startsWith(".")) formattedAmount = "0" + formattedAmount; // allow stuff like ".3"
-    if (formattedAmount.endsWith(".")) formattedAmount = formattedAmount + "0";
-
-    let amount = new BigNumber(formattedAmount);
-    if (amount.isNaN()) amount = new BigNumber(0);
-
-    return amount;
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
 }
 
 export function SendInput() {
-    const [receiver, setReceiver] = useState("");
-    const [amountRaw, setAmountRaw] = useState("");
-    const [alert, setAlert] = useState("");
-    const amount = getAmountBigNumber(amountRaw);
-    const totalAmount = amount.plus(SmoothFee)
     const [balance] = useUSDTBalance();
-    const [_, navigate] = useLocation();
+    const search = new URLSearchParams(window.location.search)
+    const [recipient, setRecipient] = useState(search.get("recipient") || "")
+    const [rawAmount, setRawAmount] = useState(search.get("amount") || "")
+    const [, navigate] = useLocation()
+
+    const availableAmount = balance === undefined ? new BigNumber(0) : balance.minus(SmoothFee)
 
     const onContinue = () => {
-        if (totalAmount.gt(balance || 0)) {
-            return setAlert("You can't send more than you have");
-        }
-        if (!receiver || !tronweb.isAddress(receiver)) {
-            return setAlert('"To" is not a valid Tron address')
-        }
+        // Cache values in case the user wants to come back and edit
+        navigate(`/send?recipient=${recipient}&amount=${rawAmount}`, { replace: true })
 
-        navigate(`/send/confirm?receiver=${receiver}&amount=${amount.toString()}`)
+        // Navigate to the confirmation screeens
+        navigate(`/send/confirm?recipient=${recipient}&amount=${rawAmount}`)
     }
 
     return (
-        <Page>
-            <PageHeader canGoBack>Send</PageHeader>
-            <PageContent>
-                <div
-                    className="h-full flex flex-col justify-between"
-                >
-                    <div className="flex flex-col gap-3">
-                        <Label htmlFor="text-input-to">
-                            To
-                        </Label>
-                        <div className="flex w-full items-center space-x-2">
-                            <Input
-                                id="text-input-to"
-                                type="text"
-                                value={receiver}
-                                onChange={(e) => setReceiver(e.target.value)}
-                                placeholder="Example: TR7NHq..."
-                            />
-                            <ScanButton
-                                onScan={(code) => {
-                                    setReceiver(code);
-                                }}
-                            />
-                        </div>
-                        <Label htmlFor="text-input-amount">
-                            Amount (USDT)
-                        </Label>
-                        <Input
-                            id="text-input-amount"
-                            type="number"
-                            inputMode="decimal"
-                            value={amountRaw}
-                            onChange={(e) => setAmountRaw(e.target.value)}
-                            min={0}
-                            placeholder="Example: 100"
+        <PageContainer title="Send USDT">
+            <motion.div
+                variants={stepVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="w-full bg-gray-800 rounded-lg p-6"
+            >
+                <h3 className="text-lg font-semibold mb-4">Enter Information</h3>
+                <div className="space-y-4">
+                    <motion.div variants={itemVariants}>
+                        <p className="text-sm text-gray-400 mb-1">Recipient Address:</p>
+                        <input
+                            type="text"
+                            id="recipient"
+                            value={recipient}
+                            onChange={(e) => setRecipient(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
                         />
-
-                        <span className="text-sm text-muted-foreground">
-                            Fee: {SmoothFee.toString()}{" "}
-                            <span className="text-[0.5rem]">USDT</span>
-                        </span>
-                        {Boolean(amount) && (
-                            <span>
-                                Total: <strong>{totalAmount.toString()}</strong>{" "}
-                                <span className="text-[0.5rem]">USDT</span>
-                            </span>
-                        )}
-                    </div>
-                    <div className="relative flex flex-col items-center gap-4">
-                        {alert && (
-                            <Alert variant="destructive">
-                                <AlertCircle className="h-4 w-4" />
-                                <AlertTitle>Whoops</AlertTitle>
-                                <AlertDescription>{alert}</AlertDescription>
-                            </Alert>
-                        )}
-                        <Button
-                            className="w-full"
-                            onClick={onContinue}
-                        >Continue</Button>
-                    </div>
+                    </motion.div>
+                    <motion.div variants={itemVariants}>
+                        <p className="text-sm text-gray-400 mb-1">Amount:</p>
+                        <input
+                            type="text"
+                            id="recipient"
+                            value={rawAmount}
+                            onChange={(e) => setRawAmount(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
+                        />
+                        <p className="text-sm text-gray-400 my-1">Available: {availableAmount.toFixed(2)} USDT</p>
+                    </motion.div>
+                    <motion.button
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors mt-4"
+                        onClick={onContinue}
+                    >
+                        Continue <ArrowRight size={20} className="ml-2" />
+                    </motion.button>
                 </div>
-            </PageContent>
-        </Page>
+            </motion.div>
+        </PageContainer>
     );
 }
