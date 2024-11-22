@@ -1,6 +1,5 @@
 import { Receive } from "@/components/Receive";
 
-import { Root } from "@/components/Root";
 import { Home } from "@/components/Home";
 
 import { useLocation } from "wouter";
@@ -12,7 +11,7 @@ import { Loading } from "./Loading";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
-import { isLoggedIn, useWallet } from "@/hooks/useWallet";
+import { isLoggedIn, logOut, useWallet } from "@/hooks/useWallet";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -21,10 +20,6 @@ interface RouteConfig {
 
 const RoutesConfig: Record<string, RouteConfig> = {
   "/": {
-    component: Root,
-    needsConnection: false,
-  },
-  "/welcome": {
     component: Welcome,
     needsConnection: false,
   },
@@ -57,26 +52,34 @@ const RoutesConfig: Record<string, RouteConfig> = {
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [location, navigate] = useLocation();
-  console.log({ location })
   const { ready, authenticated } = usePrivy();
-  // const [isLoggedIn, wallet] = useWallet();
-
-  // useEffect(() => {
-  //   // If privy auth has succeeded, but the user is still on the login screen
-  //   if (authenticated && !screen.needsConnection && location !== "/terms-of-use") return navigate("/home");
-  // }, [authenticated]);
-
   const screen = RoutesConfig[location];
+
+  console.log({ location })
+
+  useEffect(() => {
+    console.log("Checking privy authentication status")
+    if (!ready) return;
+    if (!authenticated && screen.needsConnection) {
+      // This is needed if privy auth tokens expire over time.
+      // But if the user actually logs out, this will result in double call to logOut();
+      // Not critical atm, but not good.
+      logOut();
+      return navigate("/");
+    }
+  }, [ready, authenticated, location, screen]);
+
   if (!screen) {
     throw new Error(`Page ${location} not recognised`);
   }
 
-  // if (!ready) {
-  //   return <Loading />
-  // }
-
   if (screen.needsConnection && !isLoggedIn()) {
     navigate("/");
+    return <div />;
+  }
+
+  if (location === "/" && isLoggedIn()) {
+    navigate("/home")
     return <div />;
   }
 

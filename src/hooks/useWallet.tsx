@@ -1,3 +1,4 @@
+import { Balance } from "@/components/Balance";
 import { WalletStorageKey } from "@/constants";
 import { HistoricalTransaction } from "@/history";
 import { useState } from "react";
@@ -15,6 +16,18 @@ interface StoredWallet {
 
 export function isLoggedIn() {
   return window.localStorage.getItem(WalletStorageKey) !== null
+}
+
+export function logIn(tronAddress: string) {
+  saveWalletToStorage({
+    balance: new BigNumber(0),
+    history: [],
+    tronAddress,
+  })
+}
+
+export function logOut() {
+  window.localStorage.removeItem(WalletStorageKey)
 }
 
 function loadWallet(): StoredWallet | undefined {
