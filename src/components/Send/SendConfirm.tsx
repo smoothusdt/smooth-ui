@@ -9,7 +9,6 @@ import { useWallet } from '@/hooks/useWallet';
 import { usePrivy } from '@privy-io/react-auth';
 import { BigNumber } from 'tronweb';
 import { Hex } from 'viem';
-import { addTransaction } from '@/storage';
 
 const stepVariants = {
   initial: { opacity: 0, x: 50 },
@@ -25,7 +24,7 @@ const itemVariants = {
 export function SendConfirm() {
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
-  const { tronUserAddress } = useWallet();
+  const { wallet, addTransaction } = useWallet();
   const { user, signMessage } = usePrivy();
   const search = new URLSearchParams(window.location.search)
 
@@ -36,16 +35,16 @@ export function SendConfirm() {
   const onSend = async () => {
     setSending(true)
     const txID = await transferViaApi({
-      tronUserAddress: tronUserAddress!,
+      tronUserAddress: wallet.tronAddress,
       toBase58: recipient,
       signerAddress: user?.wallet?.address! as Hex,
       transferAmount: amount,
       signMessage: (message) => signMessage(message, { showWalletUIs: false })
     })
-    addTransaction(tronUserAddress!, { // add transaction to local history
+    addTransaction({ // add transaction to local history
       amount,
       fee: SmoothFee,
-      from: tronUserAddress!,
+      from: wallet.tronAddress,
       to: recipient,
       timestamp: Date.now(),
       txID,

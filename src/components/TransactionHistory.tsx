@@ -8,9 +8,9 @@ import { useLocation } from 'wouter';
 
 function TransactionComponent(props: { transaction: HistoricalTransaction, index: number }) {
   const [, navigate] = useLocation()
-  const { tronUserAddress } = useWallet();
+  const { wallet } = useWallet();
 
-  const isSend = props.transaction.from === tronUserAddress
+  const isSend = props.transaction.from === wallet!.tronAddress
   const counterpaty = isSend ? props.transaction.to : props.transaction.from
 
   return (

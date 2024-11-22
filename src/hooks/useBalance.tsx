@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { tronweb, USDTAddressBase58, USDTDecimals } from "../constants";
 import { USDTAbi } from "../constants/usdtAbi";
 import { useWallet } from "./useWallet";
-import { loadWalletCache, updateCachedBalance } from "@/storage";
 
 export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumber> {
   const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
@@ -20,22 +19,16 @@ export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumb
 }
 
 export const useUSDTBalance = (): [BigNumber | undefined, () => Promise<void>] => {
-  const { tronUserAddress } = useWallet();
+  const { wallet, updateBalance } = useWallet();
 
-  const [balance, setBalance] = useState<BigNumber | undefined>();
+  const [balance, setBalance] = useState<BigNumber>(wallet.balance);
 
   const refreshBalance = useCallback(async () => {
-    if (!tronUserAddress) {
-      return;
-    }
-    const cache = loadWalletCache(tronUserAddress)
-    if (balance === undefined && cache) setBalance(cache.balance)
-
-    const newBalance = await fetchUsdtBalance(tronUserAddress)
+    const newBalance = await fetchUsdtBalance(wallet.tronAddress)
     setBalance(newBalance);
-    updateCachedBalance(tronUserAddress, newBalance)
+    updateBalance(newBalance)
     console.log("Updated balance")
-  }, [tronUserAddress]);
+  }, [wallet]);
 
   useEffect(() => {
     refreshBalance();

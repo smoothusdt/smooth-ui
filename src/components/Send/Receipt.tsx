@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, ArrowDownLeft, ExternalLink, Copy, Check, X } from 'lucide-react'
 import { PageContainer } from '../PageContainer'
-import { findTransaction } from '@/storage'
 import { useWallet } from '@/hooks/useWallet'
 import { getTronScanLink } from '@/util'
 import { useLocation } from 'wouter'
@@ -25,13 +24,13 @@ const itemVariants = {
 
 export function Receipt() {
   const [copiedFields, setCopiedFields] = useState<{ [key: string]: boolean }>({})
-  const { tronUserAddress } = useWallet();
+  const { wallet, findTransaction } = useWallet();
   const [, navigate] = useLocation();
 
   const search = new URLSearchParams(window.location.search)
   const txID = search.get("txID")!
   const sentNow = search.get("sentNow") === "true"
-  const transaction = findTransaction(tronUserAddress!, txID)
+  const transaction = findTransaction(txID)
 
   if (!transaction) return (
     <PageContainer title="Receipt">
@@ -46,7 +45,7 @@ export function Receipt() {
     </PageContainer>
   );
 
-  const isSend = transaction && transaction.from === tronUserAddress
+  const isSend = transaction && transaction.from === wallet!.tronAddress
   const counterparty = isSend ? transaction.to : transaction.from
 
   const copyToClipboard = (text: string, field: string) => {
