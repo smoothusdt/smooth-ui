@@ -1,5 +1,4 @@
-import { HistoricalTransaction } from '@/history';
-import { useTransactionHistory } from '@/hooks/useTransactionHistory';
+import { HistoricalTransaction } from '@/chainQuery';
 import { useWallet } from '@/hooks/useWallet';
 import { shortenAddress } from '@/util';
 import { motion, AnimatePresence } from 'framer-motion'
@@ -41,7 +40,7 @@ function TransactionComponent(props: { transaction: HistoricalTransaction, index
 }
 
 export function TransactionHistory() {
-  const [history] = useTransactionHistory();
+  const { wallet } = useWallet();
 
   return (
     <motion.section
@@ -54,7 +53,7 @@ export function TransactionHistory() {
         <h2 className="text-xl font-semibold text-[#339192]">Recent Transfers</h2>
       </div>
       <AnimatePresence>
-        {history && history.map((transaction, index) => (
+        {history && wallet.history.map((transaction, index) => (
           <TransactionComponent key={index} transaction={transaction} index={index} />
         ))}
       </AnimatePresence>

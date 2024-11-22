@@ -5,6 +5,7 @@ window.Buffer = Buffer;
 
 import "./global.css";
 
+import { WalletProvider } from "@/hooks/useWallet"
 import { App } from "@/components/App.tsx";
 import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
@@ -31,23 +32,25 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       FallbackComponent={ErrorFallback}
       onReset={() => (window.location.href = "/")}
     >
-      <PrivyProvider
-        appId="cm3g27pox00mj12g3i951p7mq"
-        config={{
-          // Customize Privy's appearance in your app
-          appearance: {
-            theme: 'dark',
-            accentColor: '#339192',
-            logo: '/logo.svg',
-          },
-          // Create embedded wallets for users who don't have a wallet
-          embeddedWallets: {
-            createOnLogin: 'users-without-wallets',
-          },
-        }}
-      >
-        <App />
-      </PrivyProvider>
+      <WalletProvider>
+        <PrivyProvider
+          appId="cm3g27pox00mj12g3i951p7mq"
+          config={{
+            // Customize Privy's appearance in your app
+            appearance: {
+              theme: 'dark',
+              accentColor: '#339192',
+              logo: '/logo.svg',
+            },
+            // Create embedded wallets for users who don't have a wallet
+            embeddedWallets: {
+              createOnLogin: 'users-without-wallets',
+            },
+          }}
+        >
+          <App />
+        </PrivyProvider>
+      </WalletProvider>
     </ErrorBoundary>
   </PostHogProvider>
 );

@@ -4,10 +4,12 @@ import {
   SmoothFee,
   SmoothFeeCollector,
   TronscanApi,
+  tronweb,
   USDTAddressBase58,
   USDTDecimals,
 } from "./constants";
 import { uintToHuman } from "./util";
+import { USDTAbi } from "./constants/usdtAbi";
 
 export interface HistoricalTransaction {
   txID: string;
@@ -16,6 +18,20 @@ export interface HistoricalTransaction {
   to: string; // Base 58
   amount: BigNumber;
   fee: BigNumber;
+}
+
+export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumber> {
+  const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
+  let balanceUint: BigNumber = await USDTContract.methods
+    .balanceOf(tronUserAddress)
+    .call();
+  balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
+
+  const balanceHuman: BigNumber = balanceUint.dividedBy(
+    BigNumber(10).pow(USDTDecimals),
+  );
+
+  return balanceHuman
 }
 
 /**

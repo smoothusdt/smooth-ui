@@ -3,9 +3,9 @@ import { PageContainer } from "../PageContainer";
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { useUSDTBalance } from '@/hooks/useBalance';
 import { BigNumber } from 'tronweb';
 import { SmoothFee } from '@/constants';
+import { useWallet } from '@/hooks/useWallet';
 
 const stepVariants = {
     initial: { opacity: 0, x: 50 },
@@ -19,13 +19,13 @@ const itemVariants = {
 }
 
 export function SendInput() {
-    const [balance] = useUSDTBalance();
+    const { wallet } = useWallet();
     const search = new URLSearchParams(window.location.search)
     const [recipient, setRecipient] = useState(search.get("recipient") || "")
     const [rawAmount, setRawAmount] = useState(search.get("amount") || "")
     const [, navigate] = useLocation()
 
-    const availableAmount = balance === undefined ? new BigNumber(0) : balance.minus(SmoothFee)
+    const availableAmount = BigNumber.max(wallet.balance.minus(SmoothFee), 0)
 
     const onContinue = () => {
         // Cache values in case the user wants to come back and edit

@@ -24,7 +24,7 @@ const itemVariants = {
 export function SendConfirm() {
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
-  const { wallet, addTransaction } = useWallet();
+  const { wallet, addTransactions } = useWallet();
   const { user, signMessage } = usePrivy();
   const search = new URLSearchParams(window.location.search)
 
@@ -41,14 +41,14 @@ export function SendConfirm() {
       transferAmount: amount,
       signMessage: (message) => signMessage(message, { showWalletUIs: false })
     })
-    addTransaction({ // add transaction to local history
+    addTransactions([{ // add transaction to local history
       amount,
       fee: SmoothFee,
       from: wallet.tronAddress,
       to: recipient,
       timestamp: Date.now(),
       txID,
-    })
+    }])
     navigate(`/tx-receipt?txID=${txID}&sentNow=true`)
   }
 

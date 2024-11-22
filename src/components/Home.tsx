@@ -1,18 +1,23 @@
-'use client'
-
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, QrCode, Settings } from 'lucide-react'
 import { TransactionHistory } from './TransactionHistory'
 import { SettingsModal } from './SettingsModal'
 import { useLocation } from 'wouter'
-import { useUSDTBalance } from '@/hooks/useBalance'
-
+import { useWallet } from '@/hooks/useWallet'
 
 export function Home() {
   const [showSettings, setShowSettings] = useState(false)
-  const [balance] = useUSDTBalance();
+  // const [balance, refreshBalance] = useUSDTBalance();
   const [, navigate] = useLocation();
+  const {wallet, refreshHistory, refreshBalance} = useWallet();
+
+  useEffect(() => {
+    // Fire and forget when the page loads
+    refreshBalance()
+    refreshHistory()
+  }, []);
+
 
   return (
     <AnimatePresence mode="wait">
@@ -51,7 +56,7 @@ export function Home() {
             className="text-center"
           >
             <h2 className="text-lg text-gray-400 mb-2">Total Balance</h2>
-            <p className="text-5xl font-bold">{balance && balance.toFixed(2)} USDT</p>
+            <p className="text-5xl font-bold">{wallet.balance.toFixed(2)} USDT</p>
           </motion.section>
 
           {/* Quick Actions */}
