@@ -50,7 +50,7 @@ export async function queryUsdtHistory(
 
     const from = transfer.from_address;
     const to = transfer.to_address;
-    if (to === SmoothFeeCollector) continue; // don't show fee transfers TODO: This seems not to be working
+    if (to === SmoothFeeCollector) continue; // don't show fee transfers
 
     const amountUint = parseInt(transfer.quant);
     const amountHuman = uintToHuman(amountUint, USDTDecimals);
@@ -70,7 +70,7 @@ export async function queryUsdtHistory(
       triggerInfo = tokenTransfersRaw[trueIndex].trigger_info;
     }
 
-    // fee can be unknown if this USDT transfer was made from another app
+    // Set the fee for outgoing transfers
     let feeHuman = new BigNumber(0);
     if (
       from === userBase58 && // user is the sender

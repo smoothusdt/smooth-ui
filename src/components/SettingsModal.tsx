@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface SettingsModalProps {
@@ -37,9 +37,14 @@ export function SettingsModal({ isOpen, onClose, onLogout }: SettingsModalProps)
                             </SelectContent>
                         </Select>
                     </div>
-                    <Button className="w-full rounded-lg" variant="destructive" onClick={onLogout}>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={onLogout}
+                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors"
+                    >
                         Log Out
-                    </Button>
+                    </motion.button>
                 </div>
             </DialogContent>
         </Dialog>
