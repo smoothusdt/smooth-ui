@@ -9,7 +9,6 @@ import { Welcome } from "./Welcome";
 import { TermsOfUse } from "./TermsOfUse";
 import { useEffect } from "react";
 import { Loading } from "./Loading";
-import { SignUp } from "./SignUp";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
@@ -26,10 +25,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
   },
   "/welcome": {
     component: Welcome,
-    needsConnection: false,
-  },
-  "/sign-up": {
-    component: SignUp,
     needsConnection: false,
   },
   "/home": {

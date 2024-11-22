@@ -27,7 +27,7 @@ export function SettingsModal({ isOpen, onClose, onLogout }: SettingsModalProps)
                 </DialogHeader>
                 <div className="space-y-6">
                     <div>
-                        <Label htmlFor="language" className="text-lg font-semibold mb-2 block">Language</Label>
+                        <label htmlFor="language" className="text-lg font-semibold mb-2 block">Language</label>
                         <Select onValueChange={handleLanguageChange} defaultValue={language}>
                             <SelectTrigger className="w-full bg-gray-700 border-gray-600 text-white">
                                 <SelectValue placeholder="Select a language" />
