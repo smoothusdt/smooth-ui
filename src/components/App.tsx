@@ -27,6 +27,10 @@ const RoutesConfig: Record<string, RouteConfig> = {
     component: Welcome,
     needsConnection: false,
   },
+  "/terms-of-use": {
+    component: TermsOfUse,
+    needsConnection: false
+  },
   "/home": {
     component: Home,
     needsConnection: true,
@@ -47,10 +51,6 @@ const RoutesConfig: Record<string, RouteConfig> = {
     component: Receive,
     needsConnection: true,
   },
-  "/terms-of-use": {
-    component: TermsOfUse,
-    needsConnection: false
-  }
 };
 
 /** Entry point of UI. Should be wrapped in all providers. */
@@ -61,7 +61,7 @@ export const App = () => {
 
   useEffect(() => {
     // If privy auth has succeeded, but the user is still on the login screen
-    if (authenticated && !screen.needsConnection) return navigate("/home");
+    if (authenticated && !screen.needsConnection && location !== "/terms-of-use") return navigate("/home");
   }, [authenticated]);
 
   const screen = RoutesConfig[location];

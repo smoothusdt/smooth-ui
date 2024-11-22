@@ -25,7 +25,7 @@ Information You Give Us. Information we collect from you includes:
 
 ### We will never collect the following information:
 
-- Never collect private keys, secret phrases, hashes, or any personal information
+- Never collect private keys, secret phrases or any personal information
 - Never sell data for profit
 
 ### How do we use the information we collect
