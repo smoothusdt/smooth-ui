@@ -5,10 +5,11 @@ import { TransactionHistory } from './TransactionHistory'
 import { SettingsModal } from './SettingsModal'
 import { useLocation } from 'wouter'
 import { useWallet } from '@/hooks/useWallet'
+import { useTranslation } from 'react-i18next'
 
 export function Home() {
+  const { t } = useTranslation()
   const [showSettings, setShowSettings] = useState(false)
-  // const [balance, refreshBalance] = useUSDTBalance();
   const [, navigate] = useLocation();
   const {wallet, refreshHistory, refreshBalance} = useWallet();
 
@@ -55,7 +56,7 @@ export function Home() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <h2 className="text-lg text-gray-400 mb-2">Total Balance</h2>
+            <h2 className="text-lg text-gray-400 mb-2">{t("yourBlance")}</h2>
             <p className="text-5xl font-bold">{wallet.balance.toFixed(2)} USDT</p>
           </motion.section>
 
@@ -68,7 +69,7 @@ export function Home() {
               onClick={() => navigate("/send")}
             >
               <Send size={24} />
-              <span>Send</span>
+              <span>{t("send")}</span>
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -77,7 +78,7 @@ export function Home() {
               onClick={() => navigate("/receive")}
             >
               <QrCode size={24} />
-              <span>Receive</span>
+              <span>{t("receive")}</span>
             </motion.button>
           </div>
 

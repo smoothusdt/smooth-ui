@@ -3,10 +3,12 @@ import { useWallet } from '@/hooks/useWallet';
 import { shortenAddress } from '@/util';
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'wouter';
 
 function TransactionComponent(props: { transaction: HistoricalTransaction, index: number }) {
-  const [, navigate] = useLocation()
+  const { t } = useTranslation();
+  const [, navigate] = useLocation();
   const { wallet } = useWallet();
 
   const isSend = props.transaction.from === wallet!.tronAddress
@@ -28,7 +30,7 @@ function TransactionComponent(props: { transaction: HistoricalTransaction, index
           <ArrowDownLeft size={20} className="text-green-400" />
         )}
         <div>
-          <p className="font-medium">{isSend ? 'Sent' : 'Received'}</p>
+          <p className="font-medium">{isSend ? t("sent") : t("received")}</p>
           <p className="text-sm text-gray-400">{shortenAddress(counterpaty)}</p>
         </div>
       </div>
@@ -40,6 +42,7 @@ function TransactionComponent(props: { transaction: HistoricalTransaction, index
 }
 
 export function TransactionHistory() {
+  const { t } = useTranslation();
   const { wallet } = useWallet();
 
   let historyBlock;
@@ -63,7 +66,7 @@ export function TransactionHistory() {
       className="w-full max-w-md"
     >
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-[#339192]">Recent Transfers</h2>
+        <h2 className="text-xl font-semibold text-[#339192]">{t("recentTransfers")}</h2>
       </div>
       <AnimatePresence>
         {historyBlock}

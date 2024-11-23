@@ -6,6 +6,7 @@ import { useLocation } from 'wouter';
 import { BigNumber } from 'tronweb';
 import { SmoothFee, tronweb } from '@/constants';
 import { useWallet } from '@/hooks/useWallet';
+import { useTranslation } from 'react-i18next';
 
 const stepVariants = {
     initial: { opacity: 0, x: 50 },
@@ -24,6 +25,7 @@ const shakeAnimation = {
 }
 
 export function SendInput() {
+    const { t } = useTranslation();
     const { wallet } = useWallet();
     const search = new URLSearchParams(window.location.search)
     const [recipient, setRecipient] = useState(search.get("recipient") || "")
@@ -32,26 +34,28 @@ export function SendInput() {
     const [, navigate] = useLocation()
     const recipientControls = useAnimation()
     const amountControls = useAnimation()
-    
+
     const availableAmount = BigNumber.max(wallet.balance.minus(SmoothFee), 0)
 
     const onContinue = () => {
         // Validate inputs
         if (!tronweb.isAddress(recipient)) {
             recipientControls.start(shakeAnimation)
-            const msg = recipient.length > 0 ? `${recipient} is not a valid address` : "Enter recipient address"
+            let msg: string;
+            if (recipient.length === 0) msg = t("errorEnterRecipient")
+            else msg = t("errorInvalidRecipient").replace("$1", recipient)
             setErrorMessage(msg)
             return;
         }
         const amount = new BigNumber(rawAmount.replaceAll(",", ".")) // for Russian keyboard
-        
+
         let amountError: string = ""
         if (amount.isNaN()) {
-            amountError = "Enter amount"
+            amountError = t("errorEnterAmount")
         } else if (amount.lt(0)) {
-            amountError = "Amount cannot be negative"
+            amountError = t("errorNegativeAmount")
         } else if (amount.gt(availableAmount)) {
-            amountError = `Maximum ${availableAmount.toFixed(2)} USDT can be sent.`
+            amountError = t("errorLimitExceeded").replace("$1", availableAmount.toFixed(2))
         }
 
         if (amountError) {
@@ -67,7 +71,7 @@ export function SendInput() {
     }
 
     return (
-        <PageContainer title="Send USDT">
+        <PageContainer title={t("sendUsdt")}>
             <motion.div
                 variants={stepVariants}
                 initial="initial"
@@ -75,10 +79,10 @@ export function SendInput() {
                 exit="exit"
                 className="w-full bg-gray-800 rounded-lg p-6"
             >
-                <h3 className="text-lg font-semibold mb-4">Enter Information</h3>
+                <h3 className="text-lg font-semibold mb-4">{t("enterDetails")}</h3>
                 <div className="space-y-4">
                     <motion.div variants={itemVariants} animate={recipientControls}>
-                        <p className="text-sm text-gray-400 mb-1">Recipient Address:</p>
+                        <p className="text-sm text-gray-400 mb-1">{t("recipientAddress")}</p>
                         <input
                             type="text"
                             id="recipient"
@@ -88,7 +92,7 @@ export function SendInput() {
                         />
                     </motion.div>
                     <motion.div variants={itemVariants} animate={amountControls}>
-                        <p className="text-sm text-gray-400 mb-1">Amount:</p>
+                        <p className="text-sm text-gray-400 mb-1">{t("amount")}</p>
                         <input
                             type="text"
                             id="recipient"
@@ -96,9 +100,9 @@ export function SendInput() {
                             onChange={(e) => setRawAmount(e.target.value)}
                             className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
                         />
-                        <p className="text-sm text-gray-400 my-1">Available: {availableAmount.toFixed(2)} USDT</p>
+                        <p className="text-sm text-gray-400 my-1">{t("availableAmount")} {availableAmount.toFixed(2)} USDT.</p>
                     </motion.div>
-                    {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1"/> {errorMessage}</p>}
+                    {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
                     <motion.button
                         variants={itemVariants}
                         whileHover={{ scale: 1.05 }}
@@ -106,7 +110,7 @@ export function SendInput() {
                         className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors mt-4"
                         onClick={onContinue}
                     >
-                        Continue <ArrowRight size={20} className="ml-2" />
+                        {t("continue")} <ArrowRight size={20} className="ml-2" />
                     </motion.button>
                 </div>
             </motion.div>

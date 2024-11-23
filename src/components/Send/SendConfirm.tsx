@@ -9,6 +9,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { usePrivy } from '@privy-io/react-auth';
 import { BigNumber } from 'tronweb';
 import { Hex } from 'viem';
+import { useTranslation } from 'react-i18next';
 
 const stepVariants = {
   initial: { opacity: 0, x: 50 },
@@ -22,6 +23,7 @@ const itemVariants = {
 }
 
 export function SendConfirm() {
+  const { t } = useTranslation()
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
   const { wallet, addTransactions, refreshBalance } = useWallet();
@@ -53,10 +55,10 @@ export function SendConfirm() {
     navigate(`/tx-receipt?txID=${txID}&sentNow=true`)
   }
 
-  const buttonContent = sending ? <><Loader className="animate-spin mr-2"/> Sending...</> : <>Send {rawAmount} USDT <ArrowRight size={20} className="ml-2" /></>
+  const buttonContent = sending ? <><Loader className="animate-spin mr-2" /> {t("sending")}</> : <>{t("send")} {rawAmount} USDT <ArrowRight size={20} className="ml-2" /></>
 
   return (
-    <PageContainer title="Send">
+    <PageContainer title={t("sendUsdt")}>
       <motion.div
         variants={stepVariants}
         initial="initial"
@@ -64,10 +66,10 @@ export function SendConfirm() {
         exit="exit"
         className="w-full bg-gray-800 rounded-lg p-6"
       >
-        <h3 className="text-lg font-semibold mb-4">Confirm Information</h3>
+        <h3 className="text-lg font-semibold mb-4">{t("confirmTransfer")}</h3>
         <div className="space-y-4">
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">Recipient Address:</p>
+            <p className="text-sm text-gray-400 mb-1">{t("recipientAddress")}</p>
             <input
               type="text"
               readOnly
@@ -78,7 +80,7 @@ export function SendConfirm() {
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">Network:</p>
+            <p className="text-sm text-gray-400 mb-1">{t("network")}</p>
             <input
               type="text"
               readOnly
@@ -89,7 +91,7 @@ export function SendConfirm() {
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">Amount:</p>
+            <p className="text-sm text-gray-400 mb-1">{t("amount")}</p>
             <input
               type="text"
               readOnly
@@ -100,7 +102,7 @@ export function SendConfirm() {
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">Network Fee:</p>
+            <p className="text-sm text-gray-400 mb-1">{t("networkFee")}</p>
             <input
               type="text"
               readOnly

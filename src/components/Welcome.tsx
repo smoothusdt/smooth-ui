@@ -8,20 +8,22 @@ import { Hex } from 'viem'
 import { tronweb } from '@/constants'
 import { calculateWalletAddress } from '@/util'
 import { SmoothLogo } from '@/svgs'
+import { useTranslation } from 'react-i18next'
 
 const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
     <motion.div
-        className="flex items-center space-x-2"
+        className="flex space-x-2"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
     >
         {icon}
-        <span>{text}</span>
+        <span className="text-left">{text}</span>
     </motion.div>
 )
 
 export function Welcome() {
+    const { t } = useTranslation()
     const { dispatch } = useContext(WalletContext);
     const { ready, authenticated, user, login: privyLogin, createWallet } = usePrivy();
 
@@ -76,7 +78,7 @@ export function Welcome() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
                 >
-                    A simple crypto wallet to send and receive USDT TRC-20
+                    {t("smoothDescription")}
                 </motion.p>
                 <motion.div
                     className="mb-8 space-y-2"
@@ -84,9 +86,9 @@ export function Welcome() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6, duration: 0.5 }}
                 >
-                    <Feature icon={<Send className="text-[#339192]" />} text="Pay network fees in USDT instead of TRX." />
-                    <Feature icon={<Wallet className="text-[#339192]" />} text="Non-custodial, but no secret phrases." />
-                    <Feature icon={<ShieldCheck className="text-[#339192]" />} text="Modern smart contract based security." />
+                    <Feature icon={<Send className="text-[#339192]" />} text={t("usdtFeesFeature")} />
+                    <Feature icon={<Wallet className="text-[#339192]" />} text={t("nonCustodialFeature")} />
+                    <Feature icon={<ShieldCheck className="text-[#339192]" />} text={t("securityFeature")} />
                 </motion.div>
                 <div className="space-y-4">
                     <motion.button
@@ -98,7 +100,7 @@ export function Welcome() {
                         onClick={privyLogin}
                         className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors"
                     >
-                        Create Wallet
+                        {t("createWallet")}
                     </motion.button>
                     <motion.button
                         initial={{ opacity: 0, y: 20 }}
@@ -109,7 +111,7 @@ export function Welcome() {
                         onClick={privyLogin}
                         className="flex items-center justify-center w-full border-2 border-[#339192] text-[#339192] py-3 rounded-lg  hover:text-white transition-all duration-300 bg-transparent"
                     >
-                        Log In
+                        {t("logIn")}
                     </motion.button>
                 </div>
             </motion.div>

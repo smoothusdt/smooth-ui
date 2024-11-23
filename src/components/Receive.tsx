@@ -4,10 +4,12 @@ import { QRCodeSVG } from 'qrcode.react'
 import { Copy, Check } from 'lucide-react'
 import { PageContainer } from './PageContainer'
 import { useWallet } from '@/hooks/useWallet'
+import { useTranslation } from 'react-i18next'
 
 export function Receive() {
-  const [copied, setCopied] = useState(false)
-  const { wallet } = useWallet()
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const { wallet } = useWallet();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(wallet.tronAddress)
@@ -16,7 +18,7 @@ export function Receive() {
   }
 
   return (
-    <PageContainer title="Receive USDT">
+    <PageContainer title={t("receiveUsdt")}>
       <div className="flex-grow flex flex-col items-center justify-start p-6 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
@@ -32,7 +34,7 @@ export function Receive() {
           transition={{ duration: 0.2, delay: 0.1 }}
           className="text-center mb-4"
         >
-          Show this QR code to receive USDT
+          {t("walletQrLabel")}
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,7 +42,7 @@ export function Receive() {
           transition={{ duration: 0.2, delay: 0.2 }}
           className="bg-gray-800 p-4 rounded-lg w-full mb-4"
         >
-          <p className="text-sm text-gray-400 mb-1">Your wallet address:</p>
+          <p className="text-sm text-gray-400 mb-1">{t("yourWalletAddress")}</p>
           <p className="font-medium break-all">{wallet.tronAddress}</p>
         </motion.div>
         <motion.button
@@ -62,8 +64,8 @@ export function Receive() {
               className="flex items-center"
             >
               {copied ?
-                <><Check size={20} className="mr-2" /> Copied!</> :
-                <><Copy size={20} className="mr-2" /> Copy Address</>
+                <><Check size={20} className="mr-2" />{t("copied")}</> :
+                <><Copy size={20} className="mr-2" />{t("copyAddress")}</>
               }
             </motion.div>
           </AnimatePresence>

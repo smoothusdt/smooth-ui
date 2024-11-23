@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { usePrivy } from '@privy-io/react-auth'
 import { WalletContext } from '@/hooks/useWallet'
 import { Loader } from 'lucide-react'
+import { useTranslation } from "react-i18next";
+import { Language, usePreferences } from '@/hooks/usePreferences'
 
 interface SettingsModalProps {
     isOpen: boolean
@@ -12,16 +14,11 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-    const [language, setLanguage] = useState('english')
+    const { t } = useTranslation();
+    const { language, changeLanguage } = usePreferences();
     const [loggingOut, setLoggingOut] = useState(false)
     const { logout: privyLogout } = usePrivy()
     const { dispatch } = useContext(WalletContext);
-
-    const handleLanguageChange = (value: string) => {
-        setLanguage(value)
-        // Here you would typically update the app's language setting
-        console.log(`Language changed to ${value}`)
-    }
 
     const onLogout = async () => {
         setLoggingOut(true)
@@ -34,30 +31,30 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     let logOutButtonContent;
     if (loggingOut) {
         logOutButtonContent = (
-            <><Loader className="animate-spin mr-2" /> Logging out...</>
+            <><Loader className="animate-spin mr-2" />{t("loggingOut")}</>
         );
     } else {
         logOutButtonContent = (
-            <>Log Out</>
+            <>{t("logOut")}</>
         );
     }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-gray-800 text-white border-gray-700 max-w-sm rounded-lg">
+            <DialogContent className="bg-gray-800 text-white border-gray-700 max-w-sm rounded-lg w-80 md:w-full">
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-[#339192]">Settings</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold text-[#339192]">{t("settings")}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
                     <div>
-                        <label htmlFor="language" className="text-lg font-semibold mb-2 block">Language</label>
-                        <Select onValueChange={handleLanguageChange} defaultValue={language}>
+                        <label htmlFor="language" className="text-lg font-semibold mb-2 block">{t("language")}</label>
+                        <Select onValueChange={(value: string) => changeLanguage(value as Language)} defaultValue={language}>
                             <SelectTrigger className="w-full bg-gray-700 border-gray-600 text-white">
-                                <SelectValue placeholder="Select a language" />
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700 border-gray-600 text-white">
-                                <SelectItem value="english" className="hover:bg-gray-500">English</SelectItem>
-                                <SelectItem value="russian" className="hover:bg-gray-500">Русский</SelectItem>
+                                <SelectItem value="en" className="hover:bg-gray-500">English</SelectItem>
+                                <SelectItem value="ru" className="hover:bg-gray-500">Русский</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

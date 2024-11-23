@@ -5,6 +5,8 @@ import { PageContainer } from '../PageContainer'
 import { useWallet } from '@/hooks/useWallet'
 import { getTronScanLink } from '@/util'
 import { useLocation } from 'wouter'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { useTranslation } from 'react-i18next'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -23,6 +25,7 @@ const itemVariants = {
 }
 
 export function Receipt() {
+  const { t } = useTranslation()
   const [copiedFields, setCopiedFields] = useState<{ [key: string]: boolean }>({})
   const { wallet, findTransaction } = useWallet();
   const [, navigate] = useLocation();
@@ -33,14 +36,14 @@ export function Receipt() {
   const transaction = findTransaction(txID)
 
   if (!transaction) return (
-    <PageContainer title="Receipt">
+    <PageContainer title={t("receipt")}>
       <motion.div
         className="flex-grow flex flex-col items-center justify-start p-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        Transaction not found
+        {t("transferNotFound")}
       </motion.div>
     </PageContainer>
   );
@@ -64,7 +67,7 @@ export function Receipt() {
   }
 
   return (
-    <PageContainer customBackComponent={customBackComponent} title="Receipt">
+    <PageContainer customBackComponent={customBackComponent} title={t("receipt")}>
       <motion.div
         className="flex-grow flex flex-col items-center justify-start p-6"
         variants={containerVariants}
@@ -83,7 +86,7 @@ export function Receipt() {
                 <ArrowDownLeft size={24} className="text-green-400 mr-2" />
               )}
               <span className="text-xl font-semibold">
-                {isSend ? 'Sent' : 'Received'}
+                {isSend ? t("sent") : t("received")}
               </span>
             </div>
             <motion.span
@@ -96,18 +99,18 @@ export function Receipt() {
             </motion.span>
           </div>
           <motion.div className="space-y-2" variants={itemVariants}>
-            <p className="text-gray-400">Status: <span className="text-white">Completed</span></p>
-            <p className="text-gray-400">Date: <span className="text-white">{new Date(transaction.timestamp).toLocaleString()}</span></p>
+            <p className="text-gray-400">{t("status")} <span className="text-white">{t("completed")}</span></p>
+            <p className="text-gray-400">{t("date")} <span className="text-white">{new Date(transaction.timestamp).toLocaleString()}</span></p>
           </motion.div>
         </motion.div>
         <motion.div
           variants={itemVariants}
           className="w-full bg-gray-800 rounded-lg p-6"
         >
-          <h3 className="text-lg font-semibold mb-4">Transaction Details</h3>
+          <h3 className="text-lg font-semibold mb-4">{t("transferDetails")}</h3>
           <div className="space-y-4">
             <motion.div variants={itemVariants}>
-              <p className="text-sm text-gray-400 mb-1">{isSend ? 'Recipient' : 'Sender'} Address:</p>
+              <p className="text-sm text-gray-400 mb-1">{isSend ? t("recipientAddress") : t("senderAddress")}</p>
               <div className="flex items-center">
                 <p className="font-medium break-all flex-grow">{counterparty}</p>
                 <motion.button
@@ -143,7 +146,7 @@ export function Receipt() {
               </div>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <p className="text-sm text-gray-400 mb-1">Transaction Hash:</p>
+              <p className="text-sm text-gray-400 mb-1">{t("transactionId")}</p>
               <div className="flex items-center">
                 <p className="font-medium break-all flex-grow">{transaction.txID}</p>
                 <motion.button
@@ -178,12 +181,19 @@ export function Receipt() {
                 </motion.button>
               </div>
             </motion.div>
-            <motion.button
-              variants={itemVariants}
-              whileTap={{ scale: 0.95 }}
-              className="w-full"
-            ><span className="text-gray-400 border-b-2 border-gray-400 hover:text-gray-500 hover:border-gray-500">What's next?</span>
-            </motion.button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <motion.button
+                  variants={itemVariants}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full"
+                ><span className="text-gray-400 border-b-2 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("whatsNext")}</span>
+                </motion.button>
+              </PopoverTrigger>
+              <PopoverContent className="bg-gray-700 border-0" align="center">
+                hello
+              </PopoverContent>
+            </Popover>
             <motion.a
               href={getTronScanLink(transaction.txID)}
               target="_blank"
@@ -192,7 +202,7 @@ export function Receipt() {
               whileTap={{ scale: 0.95 }}
               className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors mt-4"
             >
-              View on Tronscan <ExternalLink size={20} className="ml-2" />
+              {t("viewOnTronscan")} <ExternalLink size={20} className="ml-2" />
             </motion.a>
           </div>
         </motion.div>
