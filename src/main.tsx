@@ -31,20 +31,20 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       onReset={() => (window.location.href = "/")}
     >
       <PreferencesProvider>
-      <WalletProvider>
-        <PrivyProvider
-          appId="cm3g27pox00mj12g3i951p7mq"
-          config={{
-            // Customize Privy's appearance in your app
-            appearance: {
-              theme: 'dark',
-              accentColor: '#339192',
-              logo: '/logo.svg',
-            },
-          }}
-        >
-          <App />
-        </PrivyProvider>
+        <WalletProvider>
+          <PrivyProvider
+            appId="cm3g27pox00mj12g3i951p7mq"
+            clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
+            config={{
+              appearance: {
+                theme: 'dark',
+                accentColor: '#339192',
+                logo: '/logo.svg',
+              },
+            }}
+          >
+            <App />
+          </PrivyProvider>
         </WalletProvider>
       </PreferencesProvider>
     </ErrorBoundary>
