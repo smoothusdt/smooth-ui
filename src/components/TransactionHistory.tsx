@@ -48,7 +48,7 @@ export function TransactionHistory() {
   let historyBlock;
   if (wallet.history.length === 0) {
     historyBlock = (
-      <p className="text-muted-foreground text-center">Your transfers will be displayed here</p>
+      <p className="text-muted-foreground text-center">{t("emptyHistoryPlaceholder")}</p>
     );
   } else {
     historyBlock = (

@@ -54,7 +54,8 @@ const resources = {
       errorLimitExceeded: "Maximum $1 USDT can be sent.",
       confirmTransfer: "Confirm Transfer",
       transferNotFound: "Transfer Not Found",
-      whatsNext: "What's next?"
+      whatsNext: "What's next?",
+      emptyHistoryPlaceholder: "Your transfers will be displayed here."
     },
   },
   ru: {
@@ -104,7 +105,8 @@ const resources = {
       errorLimitExceeded: "Максимум $1 USDT может быть отправлено.",
       confirmTransfer: "Подтвердите перевод",
       transferNotFound: "Перевод не найден",
-      whatsNext: "Что дальше?"
+      whatsNext: "Что дальше?",
+      emptyHistoryPlaceholder: "Здесь будут отображаться ваши переводы."
     },
   },
 };
