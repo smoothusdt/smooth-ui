@@ -56,8 +56,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                                 <SelectValue placeholder="Select a language" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700 border-gray-600 text-white">
-                                <SelectItem value="english">English</SelectItem>
-                                <SelectItem value="russian">Русский</SelectItem>
+                                <SelectItem value="english" className="hover:bg-gray-500">English</SelectItem>
+                                <SelectItem value="russian" className="hover:bg-gray-500">Русский</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
