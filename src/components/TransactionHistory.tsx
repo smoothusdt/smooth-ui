@@ -42,6 +42,19 @@ function TransactionComponent(props: { transaction: HistoricalTransaction, index
 export function TransactionHistory() {
   const { wallet } = useWallet();
 
+  let historyBlock;
+  if (wallet.history.length === 0) {
+    historyBlock = (
+      <p className="text-muted-foreground text-center">Your transfers will be displayed here</p>
+    );
+  } else {
+    historyBlock = (
+      wallet.history.map((transaction, index) => (
+        <TransactionComponent key={index} transaction={transaction} index={index} />
+      ))
+    );
+  }
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 20 }}
@@ -53,9 +66,7 @@ export function TransactionHistory() {
         <h2 className="text-xl font-semibold text-[#339192]">Recent Transfers</h2>
       </div>
       <AnimatePresence>
-        {history && wallet.history.map((transaction, index) => (
-          <TransactionComponent key={index} transaction={transaction} index={index} />
-        ))}
+        {historyBlock}
       </AnimatePresence>
     </motion.section>
   );
