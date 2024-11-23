@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { usePrivy } from '@privy-io/react-auth'
 import { WalletContext } from '@/hooks/useWallet'
+import { Loader } from 'lucide-react'
 
 interface SettingsModalProps {
     isOpen: boolean
@@ -12,6 +13,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const [language, setLanguage] = useState('english')
+    const [loggingOut, setLoggingOut] = useState(false)
     const { logout: privyLogout } = usePrivy()
     const { dispatch } = useContext(WalletContext);
 
@@ -21,11 +23,23 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         console.log(`Language changed to ${value}`)
     }
 
-    const onLogout = async() => {
+    const onLogout = async () => {
+        setLoggingOut(true)
         await privyLogout()
         dispatch({
             type: "LogOut"
         })
+    }
+
+    let logOutButtonContent;
+    if (loggingOut) {
+        logOutButtonContent = (
+            <><Loader className="animate-spin mr-2" /> Logging out...</>
+        );
+    } else {
+        logOutButtonContent = (
+            <>Log Out</>
+        );
     }
 
     return (
@@ -51,9 +65,10 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={onLogout}
-                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#b0304e] transition-colors"
+                        disabled={loggingOut}
+                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#c44d4d] transition-colors disabled:text-gray-300"
                     >
-                        Log Out
+                        {logOutButtonContent}
                     </motion.button>
                 </div>
             </DialogContent>
