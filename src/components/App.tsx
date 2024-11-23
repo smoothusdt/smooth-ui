@@ -6,11 +6,11 @@ import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
 import { Welcome } from "./Welcome";
 import { TermsOfUse } from "./TermsOfUse";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
-import { isLoggedIn, logOut } from "@/hooks/useWallet";
+import { WalletContext } from "@/hooks/useWallet";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -53,6 +53,9 @@ export const App = () => {
   const [location, navigate] = useLocation();
   const { ready, authenticated } = usePrivy();
   const screen = RoutesConfig[location];
+  const { wallet, dispatch } = useContext(WalletContext);
+
+  const isLoggedIn = wallet !== undefined
 
   console.log({ location })
 
@@ -61,10 +64,11 @@ export const App = () => {
     if (!ready) return;
     if (!authenticated && screen.needsConnection) {
       // This is needed if privy auth tokens expire over time.
-      // But if the user actually logs out, this will result in double call to logOut();
+      // But if the user manually logs out, this will result in double call to logOut();
       // Not critical atm, but not good.
-      logOut();
-      return navigate("/");
+      dispatch({
+        type: "LogOut"
+      })
     }
   }, [ready, authenticated, location, screen]);
 
@@ -72,12 +76,12 @@ export const App = () => {
     throw new Error(`Page ${location} not recognised`);
   }
 
-  if (screen.needsConnection && !isLoggedIn()) {
+  if (screen.needsConnection && !isLoggedIn) {
     navigate("/");
     return <div />;
   }
 
-  if (location === "/" && isLoggedIn()) {
+  if (location === "/" && isLoggedIn) {
     navigate("/home")
     return <div />;
   }

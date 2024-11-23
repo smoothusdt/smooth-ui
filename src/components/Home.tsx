@@ -88,7 +88,6 @@ export function Home() {
         <SettingsModal
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
-          onLogout={() => {}}
         />
       </motion.div>
 

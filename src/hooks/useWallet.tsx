@@ -3,9 +3,14 @@ import { fetchUsdtBalance, HistoricalTransaction, queryUsdtHistory } from "@/cha
 import { createContext, Dispatch, useContext, useReducer } from "react";
 import { BigNumber } from "tronweb";
 
-function saveWalletToStorage(wallet: StoredWallet) {
-  console.log("Saving wallet to storage", wallet.balance.toString())
-  window.localStorage.setItem(WalletStorageKey, JSON.stringify(wallet))
+function saveWalletToStorage(wallet: StoredWallet | undefined) {
+  console.log("Saving wallet to storage", wallet)
+
+  if (wallet === undefined) {
+    window.localStorage.removeItem(WalletStorageKey)
+  } else {
+    window.localStorage.setItem(WalletStorageKey, JSON.stringify(wallet))
+  }
 }
 
 interface StoredWallet {
@@ -14,20 +19,12 @@ interface StoredWallet {
   balance: BigNumber
 }
 
-export function isLoggedIn() {
-  return window.localStorage.getItem(WalletStorageKey) !== null
-}
-
 export function logIn(tronAddress: string) {
   saveWalletToStorage({
     balance: new BigNumber(0),
     history: [],
     tronAddress,
   })
-}
-
-export function logOut() {
-  window.localStorage.removeItem(WalletStorageKey)
 }
 
 function loadWallet(): StoredWallet | undefined {
@@ -54,6 +51,8 @@ function loadWallet(): StoredWallet | undefined {
 }
 
 type Action =
+  { type: "SetupWallet"; wallet: StoredWallet } |
+  { type: "LogOut"; } |
   { type: "UpdateBalance"; newBalance: BigNumber } |
   { type: "AddTransactions"; transactions: HistoricalTransaction[] }
 
@@ -63,31 +62,31 @@ interface IWalletContext {
 }
 
 // the value is set in WalletProvider always
-const WalletContext = createContext<IWalletContext>(undefined as any)
+export const WalletContext = createContext<IWalletContext>(undefined as any)
 
 function reducer(state: StoredWallet | undefined, action: Action): StoredWallet | undefined {
-  if (state === undefined) throw new Error("state is undefined in wallet reducer")
-
-  let newState: StoredWallet
+  let newState: StoredWallet | undefined
   if (action.type === "UpdateBalance") {
-    newState = { ...state, balance: action.newBalance }
+    newState = { ...state!, balance: action.newBalance }
   } else if (action.type === "AddTransactions") {
     // Add transactions to history that are not there yet
-    const newHistory = [...state.history]
+    const newHistory = [...state!.history]
     for (let newTx of action.transactions) {
       if (!newHistory.some((el) => el.txID === newTx.txID)) {
         newHistory.push(newTx)
       }
     }
-
     // Sort by timestamp, most recent transactions first
     newHistory.sort((a, b) => {
       if (a.timestamp < b.timestamp) return 1;
       if (a.timestamp === b.timestamp) return 0;
       else return -1;
     })
-    
-    return {...state, history: newHistory}
+    newState = { ...state!, history: newHistory }
+  } else if (action.type === "SetupWallet") {
+    newState = action.wallet
+  } else if (action.type === "LogOut") {
+    newState = undefined
   } else {
     throw new Error(`Unexpected action ${(action as any).type} in wallet reducer`)
   }

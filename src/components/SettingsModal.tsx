@@ -1,21 +1,31 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { usePrivy } from '@privy-io/react-auth'
+import { WalletContext } from '@/hooks/useWallet'
 
 interface SettingsModalProps {
     isOpen: boolean
     onClose: () => void
-    onLogout: () => void
 }
 
-export function SettingsModal({ isOpen, onClose, onLogout }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     const [language, setLanguage] = useState('english')
+    const { logout: privyLogout } = usePrivy()
+    const { dispatch } = useContext(WalletContext);
 
     const handleLanguageChange = (value: string) => {
         setLanguage(value)
         // Here you would typically update the app's language setting
         console.log(`Language changed to ${value}`)
+    }
+
+    const onLogout = async() => {
+        await privyLogout()
+        dispatch({
+            type: "LogOut"
+        })
     }
 
     return (
@@ -41,7 +51,7 @@ export function SettingsModal({ isOpen, onClose, onLogout }: SettingsModalProps)
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={onLogout}
-                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors"
+                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#b0304e] transition-colors"
                     >
                         Log Out
                     </motion.button>
