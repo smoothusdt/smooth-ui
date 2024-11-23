@@ -4,18 +4,16 @@ import { Buffer } from 'buffer';
 window.Buffer = Buffer;
 
 import "./global.css";
-
+import { WalletProvider } from "@/hooks/useWallet"
 import { App } from "@/components/App.tsx";
 import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
-
 import { PrivyProvider } from '@privy-io/react-auth';
 
 
 // Initialize analytics
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
-
 if (window.location.hostname !== "localhost") {
   posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
     api_host: "https://us.i.posthog.com",
@@ -24,6 +22,7 @@ if (window.location.hostname !== "localhost") {
 
 // Initialize i18n
 import "./i18n";
+import { PreferencesProvider } from "./hooks/usePreferences";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <PostHogProvider client={posthog}>
@@ -31,23 +30,23 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       FallbackComponent={ErrorFallback}
       onReset={() => (window.location.href = "/")}
     >
-      <PrivyProvider
-        appId="cm3g27pox00mj12g3i951p7mq"
-        config={{
-          // Customize Privy's appearance in your app
-          appearance: {
-            theme: 'dark',
-            accentColor: '#339192',
-            logo: '/logo.svg',
-          },
-          // Create embedded wallets for users who don't have a wallet
-          embeddedWallets: {
-            createOnLogin: 'users-without-wallets',
-          },
-        }}
-      >
-        <App />
-      </PrivyProvider>
+      <PreferencesProvider>
+      <WalletProvider>
+        <PrivyProvider
+          appId="cm3g27pox00mj12g3i951p7mq"
+          config={{
+            // Customize Privy's appearance in your app
+            appearance: {
+              theme: 'dark',
+              accentColor: '#339192',
+              logo: '/logo.svg',
+            },
+          }}
+        >
+          <App />
+        </PrivyProvider>
+        </WalletProvider>
+      </PreferencesProvider>
     </ErrorBoundary>
   </PostHogProvider>
 );

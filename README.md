@@ -1,13 +1,10 @@
-# Smooth PWA
+# Smooth UI
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/f16f0d2d-8bf1-4289-a098-5b2a735f6944/deploy-status)](https://app.netlify.com/sites/smoothusdt/deploys)
 
-> [!WARNING]
-> This project is not actively mantained as of `2024-06-20`.
-
 **Helping everyday people access USDT on Tron by removing the need to buy TRX tokens to pay for transactions. Live on Tron mainnet.**
 
-This is a PWA which provides a simple, [diamo](https://daimo.com/) / [venmo](https://venmo.com/)-like experience to move USDT on Tron. This is done by accessing the [SmoothUSDT API](https://info.smoothusdt.com/). Live at [app.smoothusdt.com](https://app.smoothusdt.com/).
+This is a web application which provides a simple, [diamo](https://daimo.com/) / [venmo](https://venmo.com/)-like experience to move USDT on Tron. This is done by accessing the [SmoothUSDT API](https://info.smoothusdt.com/). Live at [app.smoothusdt.com](https://app.smoothusdt.com/).
 
 This project was built for [Backdrop Build v4](https://backdropbuild.com/builds/v5/smooth-usdt-9bha). You can mint our launch on [Forage](https://forage.xyz/p/01HZFS5B2Q10SKC66K4A4MEDJP).
 
@@ -23,7 +20,7 @@ Read the following to understand how to develop this project.
 
 ### Quickstart
 
-1. `git clone https://github.com/smoothusdt/smooth-pwa.git`
+1. `git clone https://github.com/smoothusdt/smooth-ui.git`
 2. `npm i`
 3. `npm run dev`
 

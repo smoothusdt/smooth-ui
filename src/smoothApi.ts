@@ -65,12 +65,20 @@ async function getWalletData(tronUserAddress: string): Promise<{ signerHex: Hex;
 
 // Signs a message and makes a gasless transfer through the api
 export async function transferViaApi(
-    tronUserAddress: string,
-    toBase58: string,
-    transferAmount: BigNumber, // in human format
-    signerAddress: Hex,
-    signMessage: (message: string) => Promise<string>,
-) {
+    {
+        tronUserAddress,
+        toBase58,
+        transferAmount,
+        signerAddress,
+        signMessage
+    }: {
+        tronUserAddress: string,
+        toBase58: string,
+        transferAmount: BigNumber, // in human format
+        signerAddress: Hex,
+        signMessage: (message: string) => Promise<string>
+    }
+): Promise<string> {
     const { signerHex, nonce } = await getWalletData(tronUserAddress)
 
     const messageDigest = computeMessageDigest(

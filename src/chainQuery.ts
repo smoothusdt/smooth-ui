@@ -4,18 +4,34 @@ import {
   SmoothFee,
   SmoothFeeCollector,
   TronscanApi,
+  tronweb,
   USDTAddressBase58,
   USDTDecimals,
 } from "./constants";
 import { uintToHuman } from "./util";
+import { USDTAbi } from "./constants/usdtAbi";
 
 export interface HistoricalTransaction {
   txID: string;
   timestamp: number; // UTC
   from: string; // Base 58
   to: string; // Base 58
-  amountHuman: BigNumber;
-  feeHuman: BigNumber;
+  amount: BigNumber;
+  fee: BigNumber;
+}
+
+export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumber> {
+  const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
+  let balanceUint: BigNumber = await USDTContract.methods
+    .balanceOf(tronUserAddress)
+    .call();
+  balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
+
+  const balanceHuman: BigNumber = balanceUint.dividedBy(
+    BigNumber(10).pow(USDTDecimals),
+  );
+
+  return balanceHuman
 }
 
 /**
@@ -34,7 +50,7 @@ export async function queryUsdtHistory(
 
     const from = transfer.from_address;
     const to = transfer.to_address;
-    if (to === SmoothFeeCollector) continue; // don't show fee transfers TODO: This seems not to be working
+    if (to === SmoothFeeCollector) continue; // don't show fee transfers
 
     const amountUint = parseInt(transfer.quant);
     const amountHuman = uintToHuman(amountUint, USDTDecimals);
@@ -54,7 +70,7 @@ export async function queryUsdtHistory(
       triggerInfo = tokenTransfersRaw[trueIndex].trigger_info;
     }
 
-    // fee can be unknown if this USDT transfer was made from another app
+    // Set the fee for outgoing transfers
     let feeHuman = new BigNumber(0);
     if (
       from === userBase58 && // user is the sender
@@ -68,8 +84,8 @@ export async function queryUsdtHistory(
       timestamp: transfer.block_ts,
       from,
       to,
-      amountHuman,
-      feeHuman,
+      amount: amountHuman,
+      fee: feeHuman,
     };
     history.push(tx);
   }
