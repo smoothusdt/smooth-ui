@@ -22,10 +22,10 @@ export interface HistoricalTransaction {
 
 export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumber> {
   const USDTContract = tronweb.contract(USDTAbi, USDTAddressBase58);
-  let balanceUint: BigNumber = await USDTContract.methods
+  let balanceUint: any = await USDTContract.methods
     .balanceOf(tronUserAddress)
     .call();
-  balanceUint = BigNumber(balanceUint.toString()); // for some reason we need an explicit conversion
+  balanceUint = BigNumber(balanceUint.toString());
 
   const balanceHuman: BigNumber = balanceUint.dividedBy(
     BigNumber(10).pow(USDTDecimals),

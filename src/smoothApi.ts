@@ -56,9 +56,9 @@ function computeMessageDigest(
 
 async function getWalletData(tronUserAddress: string): Promise<{ signerHex: Hex; nonce: number }> {
     const smoothAdminContract = tronweb.contract(SmoothAdminAbi, SmoothAdminBase58);
-    const data = await smoothAdminContract.methods.wallets(tronUserAddress).call();
-    const signerHex = `0x${data.signer.slice(2)}` as Hex // remove "41" prefix;
-    const nonce: number = data.nonce.toNumber()
+    const [rawSigner, rawNonce] = await smoothAdminContract.methods.wallets(tronUserAddress).call();
+    const signerHex = `0x${rawSigner.slice(2)}` as Hex // remove "41" prefix;
+    const nonce = Number(rawNonce)
     return { signerHex, nonce }
 }
 
