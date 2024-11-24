@@ -5,7 +5,7 @@ import { Loader } from 'lucide-react';
 import { useState } from 'react';
 
 export function TestnetUsdtButton() {
-    const { wallet } = useWallet();
+    const { wallet, refreshBalance, refreshHistory } = useWallet();
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState(0)
 
@@ -22,7 +22,8 @@ export function TestnetUsdtButton() {
 
         await getFreeUsdt(wallet.tronAddress)
         await new Promise(resolve => setTimeout(resolve, 5000)) // make sure tronscan indexes the transaction
-        window.location.reload()
+        refreshBalance()
+        refreshHistory()
     }
 
     let buttonContent;
