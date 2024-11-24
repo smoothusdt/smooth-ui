@@ -1,10 +1,12 @@
 import { HistoricalTransaction } from '@/chainQuery';
+import { ChainName } from '@/constants';
 import { useWallet } from '@/hooks/useWallet';
 import { shortenAddress } from '@/util';
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'wouter';
+import { TestnetUsdtButton } from './TestnetUsdtButton';
 
 function TransactionComponent(props: { transaction: HistoricalTransaction, index: number }) {
   const { t } = useTranslation();
@@ -48,7 +50,10 @@ export function TransactionHistory() {
   let historyBlock;
   if (wallet.history.length === 0) {
     historyBlock = (
-      <p className="text-muted-foreground text-center">{t("emptyHistoryPlaceholder")}</p>
+      <div>
+        <p className="text-muted-foreground text-center">{t("emptyHistoryPlaceholder")}</p>
+        {ChainName === "shasta" && <TestnetUsdtButton />}
+      </div>
     );
   } else {
     historyBlock = (

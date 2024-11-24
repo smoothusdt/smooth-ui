@@ -116,7 +116,7 @@ export function SendConfirm() {
             variants={itemVariants}
             whileHover={sending ? {} : { scale: 1.05 }}
             whileTap={sending ? {} : { scale: 0.95 }}
-            className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors mt-4  disabled:text-gray-300"
+            className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors mt-4 disabled:bg-[#2a7475] disabled:text-gray-300"
             onClick={onSend}
             disabled={sending}
           >

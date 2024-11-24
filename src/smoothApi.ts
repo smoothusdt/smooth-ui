@@ -135,3 +135,25 @@ export async function transferViaApi(
     console.log("Executed a transfer via api. Transaction id:", txID)
     return txID
 }
+
+export async function getFreeUsdt(recipient: string): Promise<string> {
+    const response = await fetch(`${SmoothApiURL}/getFreeUsdt`, {
+        method: "POST",
+        body: JSON.stringify({
+            recipient
+        }),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    const data = await response.json()
+    const txID = data.txID;
+    if (!txID) {
+        let errorText = "Couldnt get free usdt via api"
+        if (data.error) errorText = `Couldnt get free usdt via api due to ${data.error}`
+        throw new Error(errorText)
+    }
+    
+    console.log("Got free usdt via appi. Transaction id:", txID)
+    return txID
+}
