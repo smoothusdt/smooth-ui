@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Wallet, Send, ShieldCheck } from 'lucide-react'
 import { usePrivy } from '@privy-io/react-auth'
 import { WalletContext } from '@/hooks/useWallet'
@@ -9,6 +9,7 @@ import { tronweb } from '@/constants'
 import { calculateWalletAddress } from '@/util'
 import { SmoothLogo } from '@/svgs'
 import { useTranslation } from 'react-i18next'
+import { CreateWallet } from './Security/CreateWallet'
 
 const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
     <motion.div
@@ -26,6 +27,7 @@ export function Welcome() {
     const { t } = useTranslation()
     const { dispatch } = useContext(WalletContext);
     const { ready, authenticated, user, login: privyLogin, createWallet } = usePrivy();
+    const [isCreatingWallet, setIsCreatingWallet] = useState(false)
 
     useEffect(() => {
         if (!ready) return;
@@ -50,6 +52,7 @@ export function Welcome() {
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-gray-900 text-white p-4 overflow-hidden">
+            <CreateWallet isOpen={isCreatingWallet} onClose={() => setIsCreatingWallet(false)} />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -97,7 +100,7 @@ export function Welcome() {
                         transition={{ duration: 0.2, delay: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={privyLogin}
+                        onClick={() => setIsCreatingWallet(true)}
                         className="flex items-center justify-center w-full bg-[#339192] text-white py-3 rounded-lg hover:bg-[#2a7475] transition-colors"
                     >
                         {t("createWallet")}
@@ -111,7 +114,7 @@ export function Welcome() {
                         onClick={privyLogin}
                         className="flex items-center justify-center w-full border-2 border-[#339192] text-[#339192] py-3 rounded-lg  hover:text-white transition-all duration-300 bg-transparent"
                     >
-                        {t("logIn")}
+                    {t("importWallet")}
                     </motion.button>
                 </div>
             </motion.div>
