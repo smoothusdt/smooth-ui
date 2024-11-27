@@ -187,7 +187,7 @@ export function Receipt() {
                   variants={itemVariants}
                   whileTap={{ scale: 0.95 }}
                   className="w-full"
-                ><span className="text-gray-400 border-b-2 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("whatsNext")}</span>
+                ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("whatsNext")}</span>
                 </motion.button>
               </PopoverTrigger>
               <PopoverContent className="bg-gray-700 border-0" align="center">

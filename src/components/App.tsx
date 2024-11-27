@@ -4,8 +4,8 @@ import { Home } from "@/components/Home";
 
 import { useLocation } from "wouter";
 import { usePrivy } from "@privy-io/react-auth";
-import { Welcome } from "./Welcome";
-import { TermsOfUse } from "./TermsOfUse";
+import { Welcome } from "./Login/Welcome";
+import { TermsOfUse } from "./Login/TermsOfUse";
 import { useContext, useEffect } from "react";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
@@ -81,10 +81,10 @@ export const App = () => {
     return <div />;
   }
 
-  if (location === "/" && isLoggedIn) {
-    navigate("/home")
-    return <div />;
-  }
+  // if (location === "/" && isLoggedIn) {
+  //   navigate("/home")
+  //   return <div />;
+  // }
 
   return <screen.component />;
 };

@@ -9,7 +9,7 @@ import { tronweb } from '@/constants'
 import { calculateWalletAddress } from '@/util'
 import { SmoothLogo } from '@/svgs'
 import { useTranslation } from 'react-i18next'
-import { CreateWallet } from './Security/CreateWallet'
+import { CreateWallet } from './CreateWalletModal'
 
 const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
     <motion.div
@@ -50,8 +50,14 @@ export function Welcome() {
         }
     }, [ready, authenticated, user?.wallet])
 
+
     return (
-        <div className="relative flex min-h-screen items-center justify-center bg-gray-900 text-white p-4 overflow-hidden">
+        <div
+            className="relative flex min-h-screen items-center justify-center text-white p-4 overflow-hidden"
+            style={{
+                backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0), rgba(42,116,117,0.1))`
+            }}
+        >
             <CreateWallet isOpen={isCreatingWallet} onClose={() => setIsCreatingWallet(false)} />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -114,7 +120,7 @@ export function Welcome() {
                         onClick={privyLogin}
                         className="flex items-center justify-center w-full border-2 border-[#339192] text-[#339192] py-3 rounded-lg  hover:text-white transition-all duration-300 bg-transparent"
                     >
-                    {t("importWallet")}
+                        {t("importWallet")}
                     </motion.button>
                 </div>
             </motion.div>
