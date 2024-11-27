@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useRef, useState } from 'react';
 import { DotIcon, Loader, CheckCircle, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { generateSecretPhrase, getEncryptedPhrasehash, ISecretPhraseGenerated, saveSignerData, useSigner } from '@/hooks/useSigner';
+import { SmoothApiURL } from '@/constants';
 
 const shakeAnimation = {
     x: [0, -10, 10, -10, 10, 0],
@@ -370,14 +372,24 @@ function Introduction(props: { onGetStarted: () => void }) {
     );
 }
 
-function CreatePhrase(props: { onCreated: (phrase: string) => void }) {
+function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
+    const { decrypt } = useSigner();
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
     const onCreatePhrase = async () => {
         setCreatingPhrase(true)
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        // props.onCreated(TronWeb.createRandom().mnemonic!.phrase)
-        props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
+        
+        const generationData = await generateSecretPhrase()
+        // Manually performing these steps to double-check that the phrase
+        // and the encryption key are correct.
+        saveSignerData({
+            encryptedPhraseHex: generationData.encryptedPhraseHex,
+            ivHex: generationData.ivHex
+        })
+        const secretPhrase = await decrypt(generationData.encryptionKeyHex)
+        props.onCreated(secretPhrase)
+        // props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
     }
 
     const buttonContent = creatingPhrase ? <><Loader className="animate-spin mr-2" />Creating...</> : <>Create My Wallet</>
@@ -428,10 +440,21 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
     const [pinCode, setPincode] = useState<string>()
 
     // 1. TODO: Upload pin to the server.
-    // 2. Save encrypted secret phrase in local storage.
-    // 3. Initialize useWallet for this particular session.
+    // 2. Initialize useWallet.
     const onSetupCompleted = async () => {
-        
+        const phraseHash = getEncryptedPhrasehash()!
+
+        const response = await fetch(`${SmoothApiURL}/userPin`, {
+            method: "POST",
+            body: JSON.stringify({
+                phraseHash,
+                pinCode
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+
     }
 
     let stageContent;
@@ -440,8 +463,8 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
             onGetStarted={() => setStage(CreateWalletStage.CREATE_PHRASE)}
         />
     } else if (stage === CreateWalletStage.CREATE_PHRASE) {
-        stageContent = <CreatePhrase onCreated={(phrase: string) => {
-            setSecretPhrase(phrase)
+        stageContent = <CreatePhrase onCreated={(secretPhrase: string) => {
+            setSecretPhrase(secretPhrase)
             setStage(CreateWalletStage.PHRASE_CREATED)
         }} />
     } else if (stage === CreateWalletStage.PHRASE_CREATED) {

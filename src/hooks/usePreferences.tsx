@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 export type Language = "en" | "ru"
 
 interface IPreferences {
+    deviceId: string
     language: Language
 }
 
@@ -15,7 +16,8 @@ function loadPreferences(): IPreferences | undefined {
     const decoded = JSON.parse(raw)
 
     return {
-        language: decoded.language
+        language: decoded.language,
+        deviceId: decoded.deviceId
     }
 }
 
@@ -30,12 +32,18 @@ interface IPreferencesContext {
 
 const PreferencesContext = createContext<IPreferencesContext>(undefined as any)
 
+function generateDeviceId(): string {
+    const randomChars = window.crypto.getRandomValues()
+}
+
 export function PreferencesProvider(props: { children: any }) {
     const { i18n } = useTranslation();
     const [preferences, _setPreferencesState] = useState<IPreferences>(() => {
         const savedPreferences = loadPreferences()
         if (savedPreferences) return savedPreferences;
 
+
+        // const deviceId = `device-${}`
         let language: Language = "en"
         if (navigator.language.toLowerCase().startsWith("ru")) {
             language = "ru"
