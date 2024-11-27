@@ -1,4 +1,4 @@
-import { PageContainer } from "./PageContainer";
+import { PageContainer } from "../PageContainer";
 import Markdown from "react-markdown";
 
 const TermsOfUseContent = `
