@@ -32,4 +32,5 @@ export const tronweb = new TronWeb({
 
 export const StoragePrefix = "@Smooth"
 export const WalletStorageKey = `${StoragePrefix}/wallet`
+export const SignerStorageKey = `${StoragePrefix}/signer`
 export const PreferencesStorageKey = `${StoragePrefix}/preferences`
