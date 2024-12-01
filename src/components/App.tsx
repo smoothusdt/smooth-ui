@@ -3,14 +3,11 @@ import { Receive } from "@/components/Receive";
 import { Home } from "@/components/Home";
 
 import { useLocation } from "wouter";
-import { usePrivy } from "@privy-io/react-auth";
 import { Welcome } from "./Login/Welcome";
 import { TermsOfUse } from "./Login/TermsOfUse";
-import { useContext, useEffect } from "react";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
-import { WalletContext } from "@/hooks/useWallet";
 import { PinLogin } from "./Login/PinLogin";
 import { useSigner } from "@/hooks/useSigner";
 

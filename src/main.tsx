@@ -8,7 +8,6 @@ import { WalletProvider } from "@/hooks/useWallet"
 import { App } from "@/components/App.tsx";
 import { ErrorFallback } from "@/components/ErrorFallback.tsx";
 import { ErrorBoundary } from "react-error-boundary";
-import { PrivyProvider } from '@privy-io/react-auth';
 
 
 // Initialize analytics
@@ -34,19 +33,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <PreferencesProvider>
         <SignerProvider>
           <WalletProvider>
-            <PrivyProvider
-              appId="cm3g27pox00mj12g3i951p7mq"
-              clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
-              config={{
-                appearance: {
-                  theme: 'dark',
-                  accentColor: '#339192',
-                  logo: '/logo.svg',
-                },
-              }}
-            >
-              <App />
-            </PrivyProvider>
+            <App />
           </WalletProvider>
         </SignerProvider>
       </PreferencesProvider>

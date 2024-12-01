@@ -1,4 +1,5 @@
-import { SignerStorageKey } from "@/constants";
+import { SignerStorageKey, tronweb } from "@/constants";
+import { SignedTransaction, Transaction, TriggerSmartContract } from "node_modules/tronweb/lib/esm/types";
 import { createContext, useContext, useState } from "react";
 import { TronWeb } from "tronweb";
 import { ECKeySign } from "tronweb/utils";
@@ -39,7 +40,7 @@ export function getEncryptedPhrasehash(): Hex | undefined {
 interface ISignerContext {
     decrypt: (encryptionKeyHex: Hex) => Promise<string>;
     logOut: () => void;
-    signRawMessage: (message: Hex) => string;
+    signTransaction: (transaction: Transaction<TriggerSmartContract>) => Promise<SignedTransaction<TriggerSmartContract>>;
     isEncryptedPhraseSet: boolean;
     isDecryptedPhraseSet: boolean;
     eraseSigner: () => void;
@@ -82,7 +83,7 @@ export async function generateSecretPhrase(): Promise<ISecretPhraseGenerated> {
     return {
         encryptedPhraseHex: bytesToHex(encryptedPhraseBytes),
         ivHex: bytesToHex(iv),
-        encryptionKeyHex: bytesToHex(encryptionKeyBytes) 
+        encryptionKeyHex: bytesToHex(encryptionKeyBytes)
     }
 }
 
@@ -119,14 +120,12 @@ export function SignerProvider(props: { children: any }) {
         setSecretPhrase(undefined)
     }
 
-    const signRawMessage = (message: Hex): string => {
-        if (!secretPhrase) throw new Error("No secret phrase is loaded")
+    const signTransaction = async (transaction: Transaction<TriggerSmartContract>): Promise<SignedTransaction<TriggerSmartContract>> => {
+        if (!secretPhrase) throw new Error("No secret phrase is loaded in signTransaction")
         const { address, privateKey } = TronWeb.fromMnemonic(secretPhrase)
-        console.log("TODO: REMOVE THIS LINE", { privateKey })
-        console.log(`Signing raw message ${message} with address ${address}`)
-
-        const signature = ECKeySign(hexToBytes(message), hexToBytes(privateKey as Hex))
-        return signature
+        const signedTx = await tronweb.trx.sign(transaction, privateKey);
+        console.log(`Signed transaction ${transaction.txID} with wallet ${address}. Signature: ${signedTx.signature}`);
+        return signedTx
     }
 
     const eraseSigner = () => {
@@ -138,7 +137,7 @@ export function SignerProvider(props: { children: any }) {
         <SignerContext.Provider value={{
             decrypt,
             logOut,
-            signRawMessage,
+            signTransaction,
             isEncryptedPhraseSet: loadSignerData() !== undefined,
             isDecryptedPhraseSet: secretPhrase !== undefined,
             eraseSigner
