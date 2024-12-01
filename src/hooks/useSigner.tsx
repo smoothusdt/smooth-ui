@@ -40,6 +40,8 @@ interface ISignerContext {
     decrypt: (encryptionKeyHex: Hex) => Promise<string>;
     logOut: () => void;
     signRawMessage: (message: Hex) => string;
+    isEncryptedPhraseSet: boolean;
+    isDecryptedPhraseSet: boolean;
 }
 
 const SignerContext = createContext<ISignerContext>(undefined as any)
@@ -107,6 +109,7 @@ export function SignerProvider(props: { children: any }) {
 
         const decoded = new TextDecoder().decode(decrypted)
         setSecretPhrase(decoded)
+        console.log("Decrypted secret phrase")
         return decoded // return the secret phrase to show it in wallet creation flow
     }
 
@@ -129,7 +132,9 @@ export function SignerProvider(props: { children: any }) {
         <SignerContext.Provider value={{
             decrypt,
             logOut,
-            signRawMessage
+            signRawMessage,
+            isEncryptedPhraseSet: loadSignerData() !== undefined,
+            isDecryptedPhraseSet: secretPhrase !== undefined,
         }}>
             {props.children}
         </SignerContext.Provider>
