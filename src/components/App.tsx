@@ -9,7 +9,7 @@ import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
 import { PinLogin } from "./Login/PinLogin";
-import { useSigner } from "@/hooks/useSigner";
+import { isEncryptedPhraseSet, useSigner } from "@/hooks/useSigner";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -51,7 +51,8 @@ const RoutesConfig: Record<string, RouteConfig> = {
 export const App = () => {
   const [location, navigate] = useLocation();
   const screen = RoutesConfig[location];
-  const { isEncryptedPhraseSet, isDecryptedPhraseSet } = useSigner();
+  const { signerReady } = useSigner();
+  const encryptedPhraseSet = isEncryptedPhraseSet()
 
   console.log("On screen:", location);
 
@@ -59,20 +60,21 @@ export const App = () => {
     throw new Error(`Screen ${location} not recognised`);
   }
 
+
   if (screen.needsConnection) {
     // needs to go through the entire login flow.
-    if (!isEncryptedPhraseSet) {
+    if (!encryptedPhraseSet) {
       navigate("/")
       return;
     }
 
     // Ask for pin code without altering the URL.
-    if (!isDecryptedPhraseSet) {
+    if (!signerReady) {
       return <PinLogin navigateAfterLogin={false} />
     }
   }
 
-  if (location === "/" && isEncryptedPhraseSet && !isDecryptedPhraseSet) {
+  if (location === "/" && encryptedPhraseSet && !signerReady) {
     return <PinLogin navigateAfterLogin={true} />
   }
 

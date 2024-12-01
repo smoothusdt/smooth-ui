@@ -1,13 +1,8 @@
 import { AnimationControls, motion, useAnimation } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { useContext, useRef, useState } from 'react';
-import { Loader, CheckCircle, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
-import { useLocation } from 'wouter';
-import { generateEncryptedSecretPhrase, getEncryptedPhrasehash, saveSignerData, useSigner } from '@/hooks/useSigner';
-import { SmoothApiURL } from '@/constants';
-import { Hex } from 'viem';
+import { useRef, useState } from 'react';
+import { Loader, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { TronWeb } from 'tronweb';
-import { WalletContext } from '@/hooks/useWallet';
 import { TextBlock } from '../shared/TextBlock';
 import { FlyInBlock } from '../shared/FlyInBlock';
 import { CoolButton } from '../shared/CoolButton';
@@ -210,23 +205,15 @@ function Introduction(props: { onGetStarted: () => void }) {
     );
 }
 
-function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHex: Hex) => void }) {
-    const { decrypt } = useSigner();
+function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
     const onCreatePhrase = async () => {
         setCreatingPhrase(true)
         await new Promise((resolve) => setTimeout(resolve, 2000))
         
-        const generationData = await generateEncryptedSecretPhrase()
-        // Manually performing these steps to double-check that the phrase
-        // and the encryption key are correct.
-        saveSignerData({
-            encryptedPhraseHex: generationData.encryptedPhraseHex,
-            ivHex: generationData.ivHex
-        })
-        const secretPhrase = await decrypt(generationData.encryptionKeyHex)
-        props.onCreated(secretPhrase, generationData.encryptionKeyHex)
+        const secretPhrase = TronWeb.createRandom().mnemonic!.phrase
+        props.onCreated(secretPhrase)
         // props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
     }
 
@@ -255,7 +242,6 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
         setPincode,
         secretPhrase,
         setSecretPhrase,
-        setEncryptionKeyHex,
         onSetupCompleted
     } = useSetupFlow()
 
@@ -265,9 +251,8 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
             onGetStarted={() => setStage(CreateWalletStage.CREATE_PHRASE)}
         />
     } else if (stage === CreateWalletStage.CREATE_PHRASE) {
-        stageContent = <CreatePhrase onCreated={(secretPhrase: string, encryptionKeyHex: Hex) => {
+        stageContent = <CreatePhrase onCreated={(secretPhrase: string) => {
             setSecretPhrase(secretPhrase)
-            setEncryptionKeyHex(encryptionKeyHex)
             setStage(CreateWalletStage.PHRASE_CREATED)
         }} />
     } else if (stage === CreateWalletStage.PHRASE_CREATED) {

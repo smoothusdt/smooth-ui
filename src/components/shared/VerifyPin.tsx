@@ -4,6 +4,7 @@ import { shakeAnimation } from "../animations";
 import { TextBlock } from "./TextBlock";
 import { EnterPin } from "./EnterPin";
 import { CoolButton } from "./CoolButton";
+import { AlertCircle } from "lucide-react";
 
 export function VerifyPin(props: { correctPin: string; onVerified: () => void }) {
     const [pinVerificationError, setPinVerificationError] = useState(false)

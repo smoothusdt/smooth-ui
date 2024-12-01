@@ -28,6 +28,10 @@ function loadSignerData(): SignerData | undefined {
     }
 }
 
+export function isEncryptedPhraseSet() {
+    return loadSignerData() !== undefined
+}
+
 export function getEncryptedPhrasehash(): Hex | undefined {
     const signerData = loadSignerData()
     if (!signerData) return;
@@ -37,11 +41,9 @@ export function getEncryptedPhrasehash(): Hex | undefined {
 }
 
 interface ISignerContext {
+    signerReady: boolean
     decrypt: (encryptionKeyHex: Hex) => Promise<string>;
-    logOut: () => void;
     signTransaction: (transaction: Transaction<TriggerSmartContract>) => Promise<SignedTransaction<TriggerSmartContract>>;
-    isEncryptedPhraseSet: boolean;
-    isDecryptedPhraseSet: boolean;
     eraseSigner: () => void;
 }
 
@@ -56,12 +58,8 @@ export interface ISecretPhraseGenerated {
 // Generates encryption key and a counter for the seceret phrase.
 // If no secret phrase is passed - generates the phrase too.
 // Doesn't save anything neither to state nor to storage.
-export async function generateEncryptedSecretPhrase(secretPhrase?: string): Promise<ISecretPhraseGenerated> {
-    if (!secretPhrase) {
-        secretPhrase = TronWeb.createRandom().mnemonic!.phrase
-    }
+export async function encryptSecretPhrase(secretPhrase: string): Promise<ISecretPhraseGenerated> {
     const encodedPhrase = new TextEncoder().encode(secretPhrase)
-
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
     const encryptionKey = await window.crypto.subtle.generateKey(
         {
@@ -119,11 +117,6 @@ export function SignerProvider(props: { children: any }) {
         return decoded // return the secret phrase to show it in wallet creation flow
     }
 
-    const logOut = () => {
-        saveSignerData(undefined)
-        setSecretPhrase(undefined)
-    }
-
     const signTransaction = async (transaction: Transaction<TriggerSmartContract>): Promise<SignedTransaction<TriggerSmartContract>> => {
         if (!secretPhrase) throw new Error("No secret phrase is loaded in signTransaction")
         const { address, privateKey } = TronWeb.fromMnemonic(secretPhrase)
@@ -139,11 +132,9 @@ export function SignerProvider(props: { children: any }) {
 
     return (
         <SignerContext.Provider value={{
+            signerReady: secretPhrase !== undefined,
             decrypt,
-            logOut,
             signTransaction,
-            isEncryptedPhraseSet: loadSignerData() !== undefined,
-            isDecryptedPhraseSet: secretPhrase !== undefined,
             eraseSigner
         }}>
             {props.children}

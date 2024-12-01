@@ -2,25 +2,28 @@ import { SmoothApiURL } from '@/constants';
 import { getEncryptedPhrasehash, useSigner } from '@/hooks/useSigner';
 import { WalletContext } from '@/hooks/useWallet';
 import { SmoothLogo } from '@/svgs';
-import { AnimationControls, motion, useAnimation } from 'framer-motion'
-import { AlertCircle, DotIcon, Loader } from 'lucide-react';
+import { motion, useAnimation } from 'framer-motion'
+import { AlertCircle } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { TronWeb } from 'tronweb';
 import { useLocation } from 'wouter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { TextBlock } from '../shared/TextBlock';
+import { shakeAnimation } from '../animations';
+import { EnterPin } from '../shared/EnterPin';
 
 function ForgotPinButton() {
     const [showDialog, setShowDialog] = useState(false)
     const { eraseSigner } = useSigner();
     const { dispatch } = useContext(WalletContext);
+    const [, navigate] = useLocation()
 
     const onLogout = () => {
         eraseSigner()
         dispatch({
             type: "LogOut"
         })
-        window.location.reload()
+        navigate("/")
     }
 
     return (
