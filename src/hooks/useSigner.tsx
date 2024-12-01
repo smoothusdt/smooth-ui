@@ -2,7 +2,6 @@ import { SignerStorageKey, tronweb } from "@/constants";
 import { SignedTransaction, Transaction, TriggerSmartContract } from "node_modules/tronweb/lib/esm/types";
 import { createContext, useContext, useState } from "react";
 import { TronWeb } from "tronweb";
-import { ECKeySign } from "tronweb/utils";
 import { bytesToHex, Hex, hexToBytes, keccak256 } from "viem";
 
 interface SignerData {

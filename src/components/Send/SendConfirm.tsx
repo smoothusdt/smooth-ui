@@ -7,7 +7,6 @@ import { SmoothFee } from '@/constants';
 import { transferViaApi } from '@/smoothApi';
 import { useWallet } from '@/hooks/useWallet';
 import { BigNumber } from 'tronweb';
-import { Hex } from 'viem';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from '@/hooks/useSigner';
 

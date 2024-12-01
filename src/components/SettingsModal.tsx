@@ -1,9 +1,8 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { motion } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { WalletContext } from '@/hooks/useWallet'
-import { Loader } from 'lucide-react'
 import { useTranslation } from "react-i18next";
 import { Language, usePreferences } from '@/hooks/usePreferences'
 import { useSigner } from '@/hooks/useSigner'
