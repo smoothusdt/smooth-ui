@@ -23,6 +23,7 @@ if (window.location.hostname !== "localhost") {
 // Initialize i18n
 import "./i18n";
 import { PreferencesProvider } from "./hooks/usePreferences";
+import { SignerProvider } from "./hooks/useSigner";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <PostHogProvider client={posthog}>
@@ -31,21 +32,23 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       onReset={() => (window.location.href = "/")}
     >
       <PreferencesProvider>
-        <WalletProvider>
-          <PrivyProvider
-            appId="cm3g27pox00mj12g3i951p7mq"
-            clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
-            config={{
-              appearance: {
-                theme: 'dark',
-                accentColor: '#339192',
-                logo: '/logo.svg',
-              },
-            }}
-          >
-            <App />
-          </PrivyProvider>
-        </WalletProvider>
+        <SignerProvider>
+          <WalletProvider>
+            <PrivyProvider
+              appId="cm3g27pox00mj12g3i951p7mq"
+              clientId={import.meta.env.VITE_PRIVY_CLIENT_ID}
+              config={{
+                appearance: {
+                  theme: 'dark',
+                  accentColor: '#339192',
+                  logo: '/logo.svg',
+                },
+              }}
+            >
+              <App />
+            </PrivyProvider>
+          </WalletProvider>
+        </SignerProvider>
       </PreferencesProvider>
     </ErrorBoundary>
   </PostHogProvider>

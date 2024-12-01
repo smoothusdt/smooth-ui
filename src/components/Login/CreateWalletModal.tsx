@@ -1,15 +1,14 @@
 import { AnimationControls, motion, useAnimation } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { useRef, useState } from 'react';
-import { DotIcon, Loader, CheckCircle, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
+import { useContext, useRef, useState } from 'react';
+import { Loader, CheckCircle, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { generateSecretPhrase, getEncryptedPhrasehash, ISecretPhraseGenerated, saveSignerData, useSigner } from '@/hooks/useSigner';
+import { generateSecretPhrase, getEncryptedPhrasehash, saveSignerData, useSigner } from '@/hooks/useSigner';
 import { SmoothApiURL } from '@/constants';
-
-const shakeAnimation = {
-    x: [0, -10, 10, -10, 10, 0],
-    transition: { duration: 0.4 }
-}
+import { Hex } from 'viem';
+import { TronWeb } from 'tronweb';
+import { EnterPin, shakeAnimation } from './PinLogin';
+import { WalletContext } from '@/hooks/useWallet';
 
 enum CreateWalletStage {
     INTRODUCTION,
@@ -217,59 +216,6 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
     );
 }
 
-function DigitWindow(props: { filled: boolean }) {
-    return (
-        <motion.div className="relative w-10 h-12 flex justify-center items-center">
-            <div className="absolute w-full h-full border-current border-2 rounded-lg opacity-15 transition-all duration-300"></div>
-            <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: props.filled ? 1 : 0 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            >
-                <DotIcon className="text-[#339192]" size={32} />
-            </motion.div>
-        </motion.div>
-    );
-}
-
-function EnterPin(props: {
-    pinLength: number;
-    onPinEntered: (pin: string) => void;
-    animationControls?: AnimationControls
-}) {
-    const [pin, setPin] = useState("");
-
-    const onPinChange = (newPin: string) => {
-        if (!/^[0-9]*$/.test(newPin)) return;
-        if (newPin.length > props.pinLength) return;
-        if (newPin.length === props.pinLength) {
-            setPin("") // reset state
-            props.onPinEntered(newPin)
-        } else {
-            setPin(newPin)
-        }
-    }
-
-    return (
-        <motion.form
-            className="w-full h-12 flex justify-center gap-4"
-            animate={props.animationControls}
-        >
-            <input /* Ugly, but needed to open the native keyboard on mobile devices. */
-                id="pinVirtualInput"
-                autoFocus
-                type="number"
-                value={pin}
-                onChange={((e) => onPinChange(e.target.value))}
-                className="absolute w-0"
-            />
-            {[...Array(props.pinLength).keys()].map(
-                (value) => <DigitWindow key={value} filled={pin.length >= value + 1} />
-            )}
-        </motion.form>
-    );
-}
-
 function TextBlock(props: { title: string; children: any }) {
     return (
         <div>
@@ -372,7 +318,7 @@ function Introduction(props: { onGetStarted: () => void }) {
     );
 }
 
-function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
+function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHex: Hex, tronUserAddress: string) => void }) {
     const { decrypt } = useSigner();
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
@@ -388,7 +334,8 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
             ivHex: generationData.ivHex
         })
         const secretPhrase = await decrypt(generationData.encryptionKeyHex)
-        props.onCreated(secretPhrase)
+        const { address: tronUserAddress } = TronWeb.fromMnemonic(secretPhrase)
+        props.onCreated(secretPhrase, generationData.encryptionKeyHex, tronUserAddress)
         // props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
     }
 
@@ -435,26 +382,42 @@ function AllSet() {
 }
 
 export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
+    const { logIn } = useContext(WalletContext)
     const [stage, setStage] = useState(CreateWalletStage.INTRODUCTION)
     const [secretPhrase, setSecretPhrase] = useState<string>()
+    const [encryptionKeyHex, setEncryptionKeyHex] = useState<string>()
+    const [tronUserAddress, setTronUserAddress] = useState<string>()
     const [pinCode, setPincode] = useState<string>()
 
-    // 1. TODO: Upload pin to the server.
+    // 1. Upload pin to the server.
     // 2. Initialize useWallet.
     const onSetupCompleted = async () => {
         const phraseHash = getEncryptedPhrasehash()!
-
-        const response = await fetch(`${SmoothApiURL}/userPin`, {
+        const response = await fetch(`${SmoothApiURL}/setEncryptionKey`, {
             method: "POST",
             body: JSON.stringify({
                 phraseHash,
-                pinCode
+                pinCode,
+                encryptionKeyHex,
+                tronUserAddress
             }),
             headers: {
                 "Content-Type": "application/json",
             },
         })
+        const data = await response.json()
+        if (!data.success) {
+            let message = "Couldnt set user pin code"
+            if (data.error) message = `${message} due to ${data.error}`
+            throw new Error(message)
+        }
 
+        // Successfully set the pin code! Set the current wallet address.
+        logIn(tronUserAddress!)
+
+        // Reload to make sure that the state of CreateWalletModal with
+        // a lot of sensitive data gets reset.
+        window.location.reload()
     }
 
     let stageContent;
@@ -463,8 +426,10 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
             onGetStarted={() => setStage(CreateWalletStage.CREATE_PHRASE)}
         />
     } else if (stage === CreateWalletStage.CREATE_PHRASE) {
-        stageContent = <CreatePhrase onCreated={(secretPhrase: string) => {
+        stageContent = <CreatePhrase onCreated={(secretPhrase: string, encryptionKeyHex: Hex, tronUserAddress: string) => {
             setSecretPhrase(secretPhrase)
+            setEncryptionKeyHex(encryptionKeyHex)
+            setTronUserAddress(tronUserAddress)
             setStage(CreateWalletStage.PHRASE_CREATED)
         }} />
     } else if (stage === CreateWalletStage.PHRASE_CREATED) {
