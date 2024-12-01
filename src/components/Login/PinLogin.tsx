@@ -15,16 +15,16 @@ export const shakeAnimation = {
     transition: { duration: 0.4 }
 }
 
-function DigitWindow(props: { filled: boolean; processing?: boolean }) {
+function DigitWindow(props: { filled: boolean; disabled?: boolean }) {
     return (
         <motion.div className="relative w-10 h-12 flex justify-center items-center">
-            <div className={`absolute w-full h-full border-current border-2 rounded-lg transition-all duration-300 ${props.processing ? "opacity-5" : "opacity-15"}`}></div>
+            <div className={`absolute w-full h-full border-current border-2 rounded-lg transition-all duration-300 ${props.disabled ? "opacity-5" : "opacity-15"}`}></div>
             <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: props.filled ? 1 : 0 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
-                <DotIcon className={`text-[#339192] ${props.processing && "opacity-30"}`} size={32} />
+                <DotIcon className={`text-[#339192] ${props.disabled && "opacity-30"}`} size={32} />
             </motion.div>
         </motion.div>
     );
@@ -35,6 +35,7 @@ export function EnterPin(props: {
     onPinEntered: (pin: string) => void;
     animationControls?: AnimationControls;
     processing?: boolean
+    disabled?: boolean
 }) {
     const [pin, setPin] = useState("");
 
@@ -60,11 +61,16 @@ export function EnterPin(props: {
                     autoFocus
                     type="number"
                     value={pin}
-                    onChange={((e) => onPinChange(e.target.value))}
+                    onChange={((e) => {
+                        e.preventDefault()
+                        if (!props.disabled) {
+                            onPinChange(e.target.value)
+                        }
+                    })}
                     className="absolute w-0"
                 />
                 {[...Array(props.pinLength).keys()].map(
-                    (value) => <DigitWindow processing={props.processing} key={value} filled={pin.length >= value + 1} />
+                    (value) => <DigitWindow disabled={props.processing || props.disabled} key={value} filled={pin.length >= value + 1} />
                 )}
                 {props.processing && <div className="fixed w-full h-12 flex justify-center items-center">
                     <Loader className=" animate-spin w-8 h-8 opacity-70" />
@@ -187,6 +193,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
                 <EnterPin
                     pinLength={6}
                     processing={fetching}
+                    disabled={remainingAttempts === 0}
                     onPinEntered={onPinVerify}
                     animationControls={pinAnimationControls}
                 />
