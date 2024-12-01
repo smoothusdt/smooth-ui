@@ -6,10 +6,10 @@ import { useLocation } from 'wouter';
 import { SmoothFee } from '@/constants';
 import { transferViaApi } from '@/smoothApi';
 import { useWallet } from '@/hooks/useWallet';
-import { usePrivy } from '@privy-io/react-auth';
 import { BigNumber } from 'tronweb';
 import { Hex } from 'viem';
 import { useTranslation } from 'react-i18next';
+import { useSigner } from '@/hooks/useSigner';
 
 const stepVariants = {
   initial: { opacity: 0, x: 50 },
@@ -26,8 +26,8 @@ export function SendConfirm() {
   const { t } = useTranslation()
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
+  const { signTransaction } = useSigner();
   const { wallet, addTransactions, refreshBalance } = useWallet();
-  const { user, signMessage } = usePrivy();
   const search = new URLSearchParams(window.location.search)
 
   const recipient = search.get("recipient")!
@@ -37,11 +37,9 @@ export function SendConfirm() {
   const onSend = async () => {
     setSending(true)
     const txID = await transferViaApi({
-      tronUserAddress: wallet.tronAddress,
       toBase58: recipient,
-      signerAddress: user?.wallet?.address! as Hex,
       transferAmount: amount,
-      signMessage: (message) => signMessage(message, { showWalletUIs: false })
+      signTransaction,
     })
     addTransactions([{ // add this transaction to local history
       amount,

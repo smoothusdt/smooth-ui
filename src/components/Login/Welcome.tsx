@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { useContext, useEffect, useState } from 'react'
 import { Wallet, Send, ShieldCheck } from 'lucide-react'
-import { usePrivy } from '@privy-io/react-auth'
 import { WalletContext } from '@/hooks/useWallet'
 import { BigNumber } from 'tronweb'
 import { Hex } from 'viem'
@@ -25,31 +24,7 @@ const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
 
 export function Welcome() {
     const { t } = useTranslation()
-    const { dispatch } = useContext(WalletContext);
-    const { ready, authenticated, user, login: privyLogin, createWallet } = usePrivy();
     const [isCreatingWallet, setIsCreatingWallet] = useState(false)
-
-    useEffect(() => {
-        if (!ready) return;
-        if (authenticated) {
-            if (!user?.wallet) {
-                createWallet()
-            } else {
-                const signerAddress = user.wallet.address as Hex
-                const tronUserAddress = tronweb.address.fromHex(calculateWalletAddress(signerAddress))
-                console.log("Logging in with", { signerAddress, tronUserAddress })
-                dispatch({ // user will be navigated to "/home" in App.tsx
-                    type: "SetupWallet",
-                    wallet: {
-                        balance: new BigNumber(0),
-                        history: [],
-                        tronAddress: tronUserAddress
-                    }
-                })
-            }
-        }
-    }, [ready, authenticated, user?.wallet])
-
 
     return (
         <div
@@ -117,7 +92,7 @@ export function Welcome() {
                         transition={{ duration: 0.2, delay: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={privyLogin}
+                        onClick={() => {}}
                         className="flex items-center justify-center w-full border-2 border-[#339192] text-[#339192] py-3 rounded-lg  hover:text-white transition-all duration-300 bg-transparent"
                     >
                         {t("importWallet")}

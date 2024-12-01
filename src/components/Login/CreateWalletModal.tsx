@@ -414,10 +414,6 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
 
         // Successfully set the pin code! Set the current wallet address.
         logIn(tronUserAddress!)
-
-        // Reload to make sure that the state of CreateWalletModal with
-        // a lot of sensitive data gets reset.
-        window.location.reload()
     }
 
     let stageContent;
