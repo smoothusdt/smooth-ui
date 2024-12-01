@@ -7,6 +7,8 @@ import { AlertCircle, DotIcon, Loader } from 'lucide-react';
 import { useContext, useState } from 'react';
 import { TronWeb } from 'tronweb';
 import { useLocation } from 'wouter';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { TextBlock } from './CreateWalletModal';
 
 export const shakeAnimation = {
     x: [0, -10, 10, -10, 10, 0],
@@ -69,6 +71,51 @@ export function EnterPin(props: {
                 </div>}
             </motion.form>
         </div>
+    );
+}
+
+function ForgotPinButton() {
+    const [showDialog, setShowDialog] = useState(false)
+    const { eraseSigner } = useSigner();
+    const { dispatch } = useContext(WalletContext);
+
+    const onLogout = () => {
+        eraseSigner()
+        dispatch({
+            type: "LogOut"
+        })
+        window.location.reload()
+    }
+
+    return (
+        <>
+            <Dialog open={showDialog} onOpenChange={() => setShowDialog(false)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            <p className="text-2xl">Forgot pin code</p>
+                        </DialogTitle>
+                    </DialogHeader>
+                    <TextBlock title="How to reset pin code">
+                        1. Log out.<br />
+                        2. Click "Import Wallet" and enter your secret phrase.
+                    </TextBlock>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={onLogout}
+                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#c44d4d] transition-colors"
+                    >
+                        Log out
+                    </motion.button>
+                </DialogContent>
+            </Dialog>
+            <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowDialog(true)}
+            ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">Forgot your pin code?</span>
+            </motion.button>
+        </>
     );
 }
 
@@ -144,10 +191,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
                     animationControls={pinAnimationControls}
                 />
                 {remainingAttempts !== -1 && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words text-left"><AlertCircle className="inline mr-1" />Incorrect pin. You have {remainingAttempts} attempts left.</p>}
-                <motion.button
-                    whileTap={{ scale: 0.95 }}
-                ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">Forgot your pin code?</span>
-                </motion.button>
+                <ForgotPinButton />
             </div>
         </div>
     );
