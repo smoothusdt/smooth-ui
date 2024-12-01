@@ -42,6 +42,7 @@ interface ISignerContext {
     signRawMessage: (message: Hex) => string;
     isEncryptedPhraseSet: boolean;
     isDecryptedPhraseSet: boolean;
+    eraseSigner: () => void;
 }
 
 const SignerContext = createContext<ISignerContext>(undefined as any)
@@ -128,6 +129,11 @@ export function SignerProvider(props: { children: any }) {
         return signature
     }
 
+    const eraseSigner = () => {
+        saveSignerData(undefined)
+        setSecretPhrase(undefined)
+    }
+
     return (
         <SignerContext.Provider value={{
             decrypt,
@@ -135,6 +141,7 @@ export function SignerProvider(props: { children: any }) {
             signRawMessage,
             isEncryptedPhraseSet: loadSignerData() !== undefined,
             isDecryptedPhraseSet: secretPhrase !== undefined,
+            eraseSigner
         }}>
             {props.children}
         </SignerContext.Provider>

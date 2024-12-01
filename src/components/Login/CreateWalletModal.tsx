@@ -44,7 +44,7 @@ function FlyInBlock(props: { children: any; delay: number }) {
 // Cool button.
 // Handles props.disabled via tailwind if-else instead of a proper disabled
 // to preserve clicks propagation to the parent container.
-function CoolButton(props: { onClick: () => void; children: any; disabled?: boolean }) {
+export function CoolButton(props: { onClick: () => void; children: any; disabled?: boolean }) {
     return (
         <motion.button
             onClick={props.disabled ? () => { } : props.onClick}
@@ -216,7 +216,7 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
     );
 }
 
-function TextBlock(props: { title: string; children: any }) {
+export function TextBlock(props: { title: string; children: any }) {
     return (
         <div>
             <div className="flex items-center justify-between mb-4 text-xl">
