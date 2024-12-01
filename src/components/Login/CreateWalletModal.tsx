@@ -3,12 +3,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useContext, useRef, useState } from 'react';
 import { Loader, CheckCircle, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { generateSecretPhrase, getEncryptedPhrasehash, saveSignerData, useSigner } from '@/hooks/useSigner';
+import { generateEncryptedSecretPhrase, getEncryptedPhrasehash, saveSignerData, useSigner } from '@/hooks/useSigner';
 import { SmoothApiURL } from '@/constants';
 import { Hex } from 'viem';
 import { TronWeb } from 'tronweb';
-import { EnterPin, shakeAnimation } from './PinLogin';
 import { WalletContext } from '@/hooks/useWallet';
+import { TextBlock } from '../shared/TextBlock';
+import { FlyInBlock } from '../shared/FlyInBlock';
+import { CoolButton } from '../shared/CoolButton';
+import { shakeAnimation } from '../animations';
+import { CreatePin } from '../shared/CreatePin';
+import { VerifyPin } from '../shared/VerifyPin';
+import { useSetupFlow } from './useSetupFlow';
+import { AllSet } from '../shared/AllSet';
 
 enum CreateWalletStage {
     INTRODUCTION,
@@ -18,43 +25,6 @@ enum CreateWalletStage {
     CREATE_PINCODE,
     VERIFY_PINCODE,
     ALLSET
-}
-
-function FlyInBlock(props: { children: any; delay: number }) {
-    return (
-        <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{
-                y: 0,
-                opacity: 1,
-                transition: {
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 24,
-                    delay: props.delay
-                },
-
-            }}
-        >
-            {props.children}
-        </motion.div>
-    );
-}
-
-// Cool button.
-// Handles props.disabled via tailwind if-else instead of a proper disabled
-// to preserve clicks propagation to the parent container.
-export function CoolButton(props: { onClick: () => void; children: any; disabled?: boolean }) {
-    return (
-        <motion.button
-            onClick={props.disabled ? () => { } : props.onClick}
-            whileHover={props.disabled ? {} : { scale: 1.05 }}
-            whileTap={props.disabled ? {} : { scale: 0.95 }}
-            className={`flex items-center justify-center w-full py-3 rounded-lg hover:bg-[#2a7475] transition-all duration-300 mt-4 ${props.disabled ? "bg-[#2a7475] text-gray-400" : "bg-[#339192] text-white"} shadow-lg hover:shadow-xl`}
-        >
-            {props.children}
-        </motion.button>
-    );
 }
 
 function Word(props: { word: string | null; index: number }) {
@@ -216,84 +186,6 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
     );
 }
 
-export function TextBlock(props: { title: string; children: any }) {
-    return (
-        <div>
-            <div className="flex items-center justify-between mb-4 text-xl">
-                {props.title}
-            </div>
-            <div className="space-y-2">
-                <p className="text-gray-400">{props.children}</p>
-            </div>
-        </div>
-    );
-}
-
-function CreatePin(props: { onPinEntered: (pin: string) => void }) {
-    return (
-        <motion.div
-            className="space-y-4"
-            onClick={() => {
-                // Ugly, but we need to keep the input always focused for pin entering.
-                document.getElementById("pinVirtualInput")?.focus()
-            }}
-        >
-            <TextBlock title="Create a pin code">
-                - Your wallet is almost ready. Create a secure pin code for extra protection.<br />
-                - If you forget your pin code, you can reset it with a secret phrase.
-            </TextBlock>
-            <EnterPin pinLength={6} onPinEntered={props.onPinEntered} />
-            <CoolButton
-                disabled
-                onClick={() => { }} // navigates automatically after pin is entered
-            >
-                Continue
-            </CoolButton>
-        </motion.div>
-    );
-}
-
-function VerifyPin(props: { correctPin: string; onVerified: () => void }) {
-    const [pinVerificationError, setPinVerificationError] = useState(false)
-    const pinAnimationControls = useAnimation()
-
-    const onPinVerify = (enteredPin: string) => {
-        if (enteredPin !== props.correctPin) {
-            setPinVerificationError(true)
-            pinAnimationControls.start(shakeAnimation)
-            return;
-        }
-
-        props.onVerified()
-    }
-
-    return (
-        <motion.div
-            className="space-y-4"
-            onClick={() => {
-                // Ugly, but we need to keep the input always focused for pin entering.
-                document.getElementById("pinVirtualInput")?.focus()
-            }}
-        >
-            <TextBlock title="Verify your pin code">
-                You will be asked for your pin code every time you log in to Smooth USDT.
-            </TextBlock>
-            <EnterPin
-                pinLength={6}
-                onPinEntered={onPinVerify}
-                animationControls={pinAnimationControls}
-            />
-            {pinVerificationError && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" />Incorrect pin</p>}
-            <CoolButton
-                disabled
-                onClick={() => { }} // navigates automatically after pin is entered
-            >
-                Continue
-            </CoolButton>
-        </motion.div>
-    );
-}
-
 function Introduction(props: { onGetStarted: () => void }) {
     return (
         <motion.div className="space-y-4">
@@ -318,7 +210,7 @@ function Introduction(props: { onGetStarted: () => void }) {
     );
 }
 
-function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHex: Hex, tronUserAddress: string) => void }) {
+function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHex: Hex) => void }) {
     const { decrypt } = useSigner();
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
@@ -326,7 +218,7 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHe
         setCreatingPhrase(true)
         await new Promise((resolve) => setTimeout(resolve, 2000))
         
-        const generationData = await generateSecretPhrase()
+        const generationData = await generateEncryptedSecretPhrase()
         // Manually performing these steps to double-check that the phrase
         // and the encryption key are correct.
         saveSignerData({
@@ -334,8 +226,7 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHe
             ivHex: generationData.ivHex
         })
         const secretPhrase = await decrypt(generationData.encryptionKeyHex)
-        const { address: tronUserAddress } = TronWeb.fromMnemonic(secretPhrase)
-        props.onCreated(secretPhrase, generationData.encryptionKeyHex, tronUserAddress)
+        props.onCreated(secretPhrase, generationData.encryptionKeyHex)
         // props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
     }
 
@@ -357,64 +248,16 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string, encryptionKeyHe
     );
 }
 
-function AllSet() {
-    const [, navigate] = useLocation()
-
-    return (
-        <motion.div className="space-y-8">
-            <FlyInBlock delay={0.2}>
-                <TextBlock title="All set">
-                    Your Smooth USDT wallet is ready to be used.
-                </TextBlock>
-            </FlyInBlock>
-            <FlyInBlock delay={0.4}>
-                <div className="flex justify-center items-center mb-4">
-                    <CheckCircle size={64} className="text-[#339192]" />
-                </div>
-            </FlyInBlock >
-            <FlyInBlock delay={0.6}>
-                <CoolButton onClick={() => navigate("/home")}>
-                    Start using
-                </CoolButton>
-            </FlyInBlock >
-        </motion.div>
-    );
-}
-
 export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
-    const { logIn } = useContext(WalletContext)
     const [stage, setStage] = useState(CreateWalletStage.INTRODUCTION)
-    const [secretPhrase, setSecretPhrase] = useState<string>()
-    const [encryptionKeyHex, setEncryptionKeyHex] = useState<string>()
-    const [tronUserAddress, setTronUserAddress] = useState<string>()
-    const [pinCode, setPincode] = useState<string>()
-
-    // 1. Upload pin to the server.
-    // 2. Initialize useWallet.
-    const onSetupCompleted = async () => {
-        const phraseHash = getEncryptedPhrasehash()!
-        const response = await fetch(`${SmoothApiURL}/setEncryptionKey`, {
-            method: "POST",
-            body: JSON.stringify({
-                phraseHash,
-                pinCode,
-                encryptionKeyHex,
-                tronUserAddress
-            }),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        const data = await response.json()
-        if (!data.success) {
-            let message = "Couldnt set user pin code"
-            if (data.error) message = `${message} due to ${data.error}`
-            throw new Error(message)
-        }
-
-        // Successfully set the pin code! Set the current wallet address.
-        logIn(tronUserAddress!)
-    }
+    const {
+        pinCode,
+        setPincode,
+        secretPhrase,
+        setSecretPhrase,
+        setEncryptionKeyHex,
+        onSetupCompleted
+    } = useSetupFlow()
 
     let stageContent;
     if (stage === CreateWalletStage.INTRODUCTION) {
@@ -422,10 +265,9 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
             onGetStarted={() => setStage(CreateWalletStage.CREATE_PHRASE)}
         />
     } else if (stage === CreateWalletStage.CREATE_PHRASE) {
-        stageContent = <CreatePhrase onCreated={(secretPhrase: string, encryptionKeyHex: Hex, tronUserAddress: string) => {
+        stageContent = <CreatePhrase onCreated={(secretPhrase: string, encryptionKeyHex: Hex) => {
             setSecretPhrase(secretPhrase)
             setEncryptionKeyHex(encryptionKeyHex)
-            setTronUserAddress(tronUserAddress)
             setStage(CreateWalletStage.PHRASE_CREATED)
         }} />
     } else if (stage === CreateWalletStage.PHRASE_CREATED) {
@@ -463,7 +305,7 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
                         </button> : <div />
                     }
                     <DialogTitle>
-                        <p className="text-3xl">Create Wallet</p>
+                        <p className="text-2xl">Create Wallet</p>
                     </DialogTitle>
                     <div className="w-4" /> {/* For alignment */}
                 </DialogHeader>

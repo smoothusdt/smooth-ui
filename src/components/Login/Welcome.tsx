@@ -4,6 +4,7 @@ import { Wallet, Send, ShieldCheck } from 'lucide-react'
 import { SmoothLogo } from '@/svgs'
 import { useTranslation } from 'react-i18next'
 import { CreateWallet } from './CreateWalletModal'
+import { ImportWallet } from './ImportWalletModal'
 
 const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
     <motion.div
@@ -20,6 +21,7 @@ const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
 export function Welcome() {
     const { t } = useTranslation()
     const [isCreatingWallet, setIsCreatingWallet] = useState(false)
+    const [isImportingWallet, setIsImportingWallet] = useState(false)
 
     return (
         <div
@@ -29,6 +31,7 @@ export function Welcome() {
             }}
         >
             <CreateWallet isOpen={isCreatingWallet} onClose={() => setIsCreatingWallet(false)} />
+            <ImportWallet isOpen={isImportingWallet} onClose={() => setIsImportingWallet(false)} />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -87,7 +90,7 @@ export function Welcome() {
                         transition={{ duration: 0.2, delay: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => {}}
+                        onClick={() => setIsImportingWallet(true)}
                         className="flex items-center justify-center w-full border-2 border-[#339192] text-[#339192] py-3 rounded-lg  hover:text-white transition-all duration-300 bg-transparent"
                     >
                         {t("importWallet")}

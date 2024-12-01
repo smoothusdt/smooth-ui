@@ -53,8 +53,13 @@ export interface ISecretPhraseGenerated {
     encryptionKeyHex: Hex;
 }
 
-export async function generateSecretPhrase(): Promise<ISecretPhraseGenerated> {
-    const secretPhrase = TronWeb.createRandom().mnemonic!.phrase
+// Generates encryption key and a counter for the seceret phrase.
+// If no secret phrase is passed - generates the phrase too.
+// Doesn't save anything neither to state nor to storage.
+export async function generateEncryptedSecretPhrase(secretPhrase?: string): Promise<ISecretPhraseGenerated> {
+    if (!secretPhrase) {
+        secretPhrase = TronWeb.createRandom().mnemonic!.phrase
+    }
     const encodedPhrase = new TextEncoder().encode(secretPhrase)
 
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
