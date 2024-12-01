@@ -1,19 +1,25 @@
 import { SmoothApiURL } from "@/constants"
-import { getEncryptedPhrasehash } from "@/hooks/useSigner"
+import { encryptSecretPhrase, getEncryptedPhrasehash, saveSignerData, useSigner } from "@/hooks/useSigner"
 import { WalletContext } from "@/hooks/useWallet"
 import { useContext, useState } from "react"
 import { TronWeb } from "tronweb"
 
 export function useSetupFlow() {
+    const { decrypt } = useSigner()
     const { logIn } = useContext(WalletContext)
     const [secretPhrase, setSecretPhrase] = useState<string>()
     const [pinCode, setPincode] = useState<string>()
-    const [encryptionKeyHex, setEncryptionKeyHex] = useState<string>()
     const [tronUserAddress, setTronUserAddress] = useState<string>()
 
     // 1. Upload pin to the server.
     // 2. Initialize useWallet.
     const onSetupCompleted = async () => {
+        const generationData = await encryptSecretPhrase(secretPhrase!)
+        saveSignerData({
+            encryptedPhraseHex: generationData.encryptedPhraseHex,
+            ivHex: generationData.ivHex
+        })
+        await decrypt(generationData.encryptionKeyHex)
         const phraseHash = getEncryptedPhrasehash()!
         const tronUserAddress = TronWeb.fromMnemonic(secretPhrase!).address
 
@@ -22,7 +28,7 @@ export function useSetupFlow() {
             body: JSON.stringify({
                 phraseHash,
                 pinCode,
-                encryptionKeyHex,
+                encryptionKeyHex: generationData.encryptionKeyHex,
                 tronUserAddress
             }),
             headers: {
@@ -45,8 +51,6 @@ export function useSetupFlow() {
         setSecretPhrase,
         pinCode,
         setPincode,
-        encryptionKeyHex,
-        setEncryptionKeyHex,
         tronUserAddress,
         setTronUserAddress,
         onSetupCompleted

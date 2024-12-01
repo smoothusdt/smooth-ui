@@ -23,7 +23,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         dispatch({
             type: "LogOut"
         })
-        window.location.reload()
     }
 
     return (

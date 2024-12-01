@@ -10,8 +10,6 @@ import { CreatePin } from '../shared/CreatePin';
 import { VerifyPin } from '../shared/VerifyPin';
 import { useSetupFlow } from './useSetupFlow';
 import { AllSet } from '../shared/AllSet';
-import { Hex } from 'viem';
-import { generateEncryptedSecretPhrase, saveSignerData, useSigner } from '@/hooks/useSigner';
 
 enum ImportWalletStage {
     INTRODUCTION,
@@ -45,10 +43,9 @@ function Introduction(props: { onNext: () => void }) {
     );
 }
 
-function ImportPhrase(props: { onImported: (phrase: string, encryptionKeyHex: Hex) => void }) {
+function ImportPhrase(props: { onImported: (phrase: string) => void }) {
     const [rawPhrase, setRawPhrase] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
-    const { decrypt } = useSigner();
 
     const onImport = async () => {
         const formatted = rawPhrase.trim().toLowerCase()
@@ -56,30 +53,20 @@ function ImportPhrase(props: { onImported: (phrase: string, encryptionKeyHex: He
             setErrorMessage("Secret phrase must consist of 12 words.")
             return;
         }
-
-        let importedPhrase: string;
         try {
-            importedPhrase = TronWeb.fromMnemonic(formatted).mnemonic!.phrase
+            const importedPhrase = TronWeb.fromMnemonic(formatted).mnemonic!.phrase
+            props.onImported(importedPhrase)
         } catch {
             setErrorMessage("Invalid secret phrase.")
             return;
         }
-
-        const generationData = await generateEncryptedSecretPhrase(importedPhrase)
-        // Manually performing these steps to double-check that the phrase
-        // and the encryption key are correct.
-        saveSignerData({
-            encryptedPhraseHex: generationData.encryptedPhraseHex,
-            ivHex: generationData.ivHex
-        })
-        const secretPhrase = await decrypt(generationData.encryptionKeyHex)
-        props.onImported(secretPhrase, generationData.encryptionKeyHex)
     }
 
     return (
         <motion.div className="space-y-4">
             <p className="text-xl">Enter your secret phrase:</p>
             <textarea
+                autoFocus
                 rows={2}
                 value={rawPhrase}
                 onChange={(e) => setRawPhrase(e.target.value)}
@@ -99,10 +86,9 @@ export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
         pinCode,
         setPincode,
         setSecretPhrase,
-        setEncryptionKeyHex,
         onSetupCompleted
     } = useSetupFlow()
-    
+
     let stageContent;
     if (stage === ImportWalletStage.INTRODUCTION) {
         stageContent = <Introduction
@@ -110,9 +96,8 @@ export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
         />
     } else if (stage === ImportWalletStage.IMPORT_PHRASE) {
         stageContent = <ImportPhrase
-            onImported={(secretPhrase: string, encryptionKeyHex: Hex) => {
+            onImported={(secretPhrase: string) => {
                 setSecretPhrase(secretPhrase)
-                setEncryptionKeyHex(encryptionKeyHex)
                 setStage(ImportWalletStage.CREATE_PINCODE)
             }}
         />
@@ -129,7 +114,7 @@ export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
     } else if (stage === ImportWalletStage.ALLSET) {
         stageContent = <AllSet />
     }
-    
+
     const canGoBack = stage !== 0 && stage !== ImportWalletStage.ALLSET
     return (
         <Dialog open={props.isOpen} onOpenChange={props.onClose}>
