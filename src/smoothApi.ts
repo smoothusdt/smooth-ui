@@ -1,9 +1,6 @@
-import { encodePacked, Hex, hexToNumber, keccak256, sliceHex, zeroAddress } from "viem";
-import { ChainID, SmoothAdminBase58, SmoothApiURL, SmoothFee, SmoothFeeCollector, tronweb, USDTAddressBase58, USDTDecimals } from "./constants";
-import { SmoothAdminAbi, SmoothProxyBytecode } from "./constants/smooth";
+import { SmoothApiURL, tronweb, USDTAddressBase58, USDTDecimals } from "./constants";
 import { BigNumber } from "tronweb";
 import { humanToUint } from "./util";
-import { USDTAbi } from "./constants/usdtAbi";
 import { SignedTransaction, Transaction, TriggerSmartContract } from "node_modules/tronweb/lib/esm/types";
 
 // Signs a message and makes a gasless transfer through the api
