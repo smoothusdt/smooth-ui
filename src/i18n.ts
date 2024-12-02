@@ -84,9 +84,10 @@ const resources = {
         whatsNextLine2: "Usually the recipient's wallet / crypto exchange needs a few minutes to detect and process the transfer.",
       },
       termsConsentWindow: {
-        pleaseAgree: "Please agree to the Terms of Use.",
+        agreeTo: "Agree to the Terms of Use.",
         termsOfUse: "Terms of Use",
-        iAgreeTo: "I agree to the"
+        createIAgreeTo: "By creating a wallet I agree to",
+        importIAgreeTo: "By importing a wallet I agree to",
       },
       createWalletFlow: {
         createWallet: "Create Wallet",
@@ -236,9 +237,10 @@ const resources = {
         whatsNextLine2: "Обычно кошельку / бирже получателя требуется несколько минут чтобы обнаружить и обработать перевод.",
       },
       termsConsentWindow: {
-        pleaseAgree: "Пожалуйста согласитесь с Правилами Пользования.",
+        agreeTo: "Cогласитесь с Правилами Пользования.",
         termsOfUse: "Правилами Пользования",
-        iAgreeTo: "Я соглашаюсь с"
+        importIAgreeTo: "Импортируя кошелек я соглашаюсь с",
+        createIAgreeTo: "Создавая кошелек я соглашаюсь с"
       },
       createWalletFlow: {
         createWallet: "Создать Кошелек",
