@@ -24,19 +24,6 @@ enum ImportWalletStage {
 
 function Introduction(props: { onNext: () => void }) {
     const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
-    const [agreedToTerms, setAgreedToTerms] = useState(false)
-    const [error, setError] = useState(false)
-    const termsControls = useAnimation()
-
-    const onImport = () => {
-        if (!agreedToTerms) {
-            setError(true)
-            termsControls.start(shakeAnimation)
-            return;
-        }
-        props.onNext()
-    }
-
     return (
         <motion.div className="space-y-4">
             <FlyInBlock delay={0.2}>
@@ -52,10 +39,7 @@ function Introduction(props: { onNext: () => void }) {
                 </TextBlock>
             </FlyInBlock >
             <FlyInBlock delay={0.6}>
-                <TermsConsent agreed={agreedToTerms} error={error} setAgreed={setAgreedToTerms} controls={termsControls} />
-            </FlyInBlock>
-            <FlyInBlock delay={0.8}>
-                <CoolButton disabled={!agreedToTerms} clickableWhileDisabled onClick={onImport}>
+                <CoolButton onClick={props.onNext}>
                     {t("importWallet")}
                 </CoolButton>
             </FlyInBlock >
@@ -67,6 +51,9 @@ function ImportPhrase(props: { onImported: (phrase: string) => void }) {
     const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
     const [rawPhrase, setRawPhrase] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
+    const [agreedToTerms, setAgreedToTerms] = useState(false)
+    const [termsError, setTermsError] = useState(false)
+    const termsControls = useAnimation()
 
     const onImport = async () => {
         const formatted = rawPhrase.trim().toLowerCase()
@@ -74,13 +61,22 @@ function ImportPhrase(props: { onImported: (phrase: string) => void }) {
             setErrorMessage(t("secretPhraseMustHave12Words"))
             return;
         }
+
+        let importedPhrase: string;
         try {
-            const importedPhrase = TronWeb.fromMnemonic(formatted).mnemonic!.phrase
-            props.onImported(importedPhrase)
+            importedPhrase = TronWeb.fromMnemonic(formatted).mnemonic!.phrase
+            setErrorMessage("")
         } catch {
             setErrorMessage(t("invalidSecretPhrase"))
             return;
         }
+
+        if (!agreedToTerms) {
+            setTermsError(true)
+            termsControls.start(shakeAnimation)
+            return;
+        }
+        props.onImported(importedPhrase)
     }
 
     return (
@@ -93,8 +89,18 @@ function ImportPhrase(props: { onImported: (phrase: string) => void }) {
                 onChange={(e) => setRawPhrase(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
             />
+            <TermsConsent
+                newWallet={false}
+                agreed={agreedToTerms}
+                error={termsError}
+                setAgreed={setAgreedToTerms}
+                controls={termsControls}
+            />
             {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
-            <CoolButton disabled={rawPhrase.length === 0} onClick={onImport}>
+            <CoolButton
+                disabled={rawPhrase.length === 0}
+                onClick={onImport}
+            >
                 {t("import")}
             </CoolButton>
         </motion.div>

@@ -242,7 +242,13 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
                 {t("whatIsSecretPhraseLine1")}<br />
                 {t("whatIsSecretPhraseLine2")}
             </TextBlock>
-            <TermsConsent agreed={agreedToTerms} error={error} setAgreed={setAgreedToTerms} controls={termsControls} />
+            <TermsConsent
+                newWallet={true}
+                agreed={agreedToTerms}
+                error={error}
+                setAgreed={setAgreedToTerms}
+                controls={termsControls}
+            />
             <CoolButton
                 onClick={onCreatePhrase}
                 disabled={!agreedToTerms || creatingPhrase}
