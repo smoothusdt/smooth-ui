@@ -12,6 +12,7 @@ import { VerifyPin } from '../shared/VerifyPin';
 import { useSetupFlow } from './useSetupFlow';
 import { AllSet } from '../shared/AllSet';
 import { useTranslation } from 'react-i18next';
+import { TermsConsent } from '../shared/TermsConsent';
 
 enum CreateWalletStage {
     INTRODUCTION,
@@ -211,9 +212,18 @@ function Introduction(props: { onGetStarted: () => void }) {
 
 function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
     const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
+    const [agreedToTerms, setAgreedToTerms] = useState(false)
+    const [error, setError] = useState(false)
+    const termsControls = useAnimation()
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
     const onCreatePhrase = async () => {
+        if (!agreedToTerms) {
+            setError(true)
+            termsControls.start(shakeAnimation)
+            return;
+        }
+
         setCreatingPhrase(true)
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -232,7 +242,12 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
                 {t("whatIsSecretPhraseLine1")}<br />
                 {t("whatIsSecretPhraseLine2")}
             </TextBlock>
-            <CoolButton onClick={onCreatePhrase} disabled={creatingPhrase}>
+            <TermsConsent agreed={agreedToTerms} error={error} setAgreed={setAgreedToTerms} controls={termsControls} />
+            <CoolButton
+                onClick={onCreatePhrase}
+                disabled={!agreedToTerms || creatingPhrase}
+                clickableWhileDisabled={!agreedToTerms}
+            >
                 {buttonContent}
             </CoolButton>
         </motion.div>

@@ -83,6 +83,11 @@ const resources = {
         whatsNextLine1: "Your USDT has been sent successfully and the transaction has been fully processed by the blockchain.",
         whatsNextLine2: "Usually the recipient's wallet / crypto exchange needs a few minutes to detect and process the transfer.",
       },
+      termsConsentWindow: {
+        pleaseAgree: "Please agree to the Terms of Use.",
+        termsOfUse: "Terms of Use",
+        iAgreeTo: "I agree to the"
+      },
       createWalletFlow: {
         createWallet: "Create Wallet",
         dialogTitle: "Create Wallet",
@@ -229,7 +234,11 @@ const resources = {
         transactionIdTooltip: "Уникальный ID транзакции. С помощью этого ID и отправитель, и получатель могут найти транзакцию на блокчейне.",
         whatsNextLine1: "Ваши USDT были успешно отправлены и транзакция уже полностью обработана блокчейном.",
         whatsNextLine2: "Обычно кошельку / бирже получателя требуется несколько минут чтобы обнаружить и обработать перевод.",
-
+      },
+      termsConsentWindow: {
+        pleaseAgree: "Пожалуйста согласитесь с Правилами Пользования.",
+        termsOfUse: "Правилами Пользования",
+        iAgreeTo: "Я соглашаюсь с"
       },
       createWalletFlow: {
         createWallet: "Создать Кошелек",
