@@ -7,6 +7,7 @@ import { BigNumber } from 'tronweb';
 import { SmoothFee, tronweb } from '@/constants';
 import { useWallet } from '@/hooks/useWallet';
 import { useTranslation } from 'react-i18next';
+import { InfoTooltip } from '../shared/InfoTooltip';
 
 const stepVariants = {
     initial: { opacity: 0, x: 50 },
@@ -82,7 +83,10 @@ export function SendInput() {
                 <h3 className="text-lg font-semibold mb-4">{t("enterDetails")}</h3>
                 <div className="space-y-4">
                     <motion.div variants={itemVariants} animate={recipientControls}>
-                        <p className="text-sm text-gray-400 mb-1">{t("recipientAddress")}</p>
+                        <div className="text-sm text-gray-400 mb-1">
+                            <InfoTooltip content={t("recipientTooltip")} />
+                            {t("recipientAddress")}
+                        </div>
                         <input
                             type="text"
                             id="recipient"

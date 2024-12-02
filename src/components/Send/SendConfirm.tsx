@@ -9,6 +9,7 @@ import { useWallet } from '@/hooks/useWallet';
 import { BigNumber } from 'tronweb';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from '@/hooks/useSigner';
+import { InfoTooltip } from '../shared/InfoTooltip';
 
 const stepVariants = {
   initial: { opacity: 0, x: 50 },
@@ -32,6 +33,7 @@ export function SendConfirm() {
   const recipient = search.get("recipient")!
   const rawAmount = search.get("amount")!
   const amount = new BigNumber(rawAmount)
+  const totalAmount = amount.plus(SmoothFee)
 
   const onSend = async () => {
     setSending(true)
@@ -78,7 +80,10 @@ export function SendConfirm() {
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">{t("network")}</p>
+            <div className="text-sm text-gray-400 mb-1">
+              <InfoTooltip content={t("networkTooltip")} />
+              {t("network")}
+            </div>
             <input
               type="text"
               readOnly
@@ -100,12 +105,26 @@ export function SendConfirm() {
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">{t("networkFee")}</p>
+            <div className="text-sm text-gray-400 mb-1">
+              <InfoTooltip content={t("networkFeeTooltip")} />
+              {t("networkFee")}
+            </div>
             <input
               type="text"
               readOnly
               id="networkFee"
               value={`${SmoothFee.toString()} USDT`}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
+              disabled={sending}
+            />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <p className="text-sm text-gray-400 mb-1">{t("total")}</p>
+            <input
+              type="text"
+              readOnly
+              id="totalAmount"
+              value={`${totalAmount.toString()} USDT`}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />

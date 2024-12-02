@@ -41,7 +41,7 @@ function Word(props: { word: string | null; index: number }) {
                         ease: 'linear',
                     }
                 }}
-                className="bg-gray-700 p-2 border-2 rounded-lg text-center shadow-md hover:shadow-lg transition-shadow duration-300"
+                className="bg-gray-700 p-2 border-2 rounded-lg text-center shadow-md overflow-hidden"
             >
                 <span className="text-[#339192] font-bold mr-2">{props.index + 1}.</span>
                 {wordBlock}
@@ -68,7 +68,7 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
                 {t("thisIsYourSecretPhrase")}
             </TextBlock>
             <motion.div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {words.map((word, index) => <Word key={index} word={revealed ? word : null} index={index} />)}
                 </div>
                 <motion.button
@@ -287,7 +287,7 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
 
     return (
         <Dialog open={props.isOpen} onOpenChange={props.onClose}>
-            <DialogContent className="bg-gray-800">
+            <DialogContent className="bg-gray-800 max-h-screen overflow-y-scroll">
                 <DialogHeader className="flex flex-row justify-between items-center">
                     {canGoBack ?
                         <button onClick={() => setStage(stage - 1)} className="w-8 h-full text-gray-400 hover:text-white">

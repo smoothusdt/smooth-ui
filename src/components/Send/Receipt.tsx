@@ -5,9 +5,10 @@ import { PageContainer } from '../PageContainer'
 import { useWallet } from '@/hooks/useWallet'
 import { getTronScanLink } from '@/util'
 import { useLocation } from 'wouter'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { useTranslation } from 'react-i18next'
 import { usePreferences } from '@/hooks/usePreferences'
+import { InfoTooltip } from '../shared/InfoTooltip'
+import { WhatsNext } from './WhatsNext'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -143,7 +144,10 @@ export function Receipt() {
               </div>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <p className="text-sm text-gray-400 mb-1">{t("transactionId")}</p>
+              <div className="text-sm text-gray-400 mb-1">
+                <InfoTooltip content={t("transactionIdTooltip")} />
+                {t("transactionId")}
+              </div>
               <div className="flex items-center">
                 <p className="font-medium break-all flex-grow">{transaction.txID}</p>
                 <motion.button
@@ -178,19 +182,7 @@ export function Receipt() {
                 </motion.button>
               </div>
             </motion.div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <motion.button
-                  variants={itemVariants}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full"
-                ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("whatsNext")}</span>
-                </motion.button>
-              </PopoverTrigger>
-              <PopoverContent className="bg-gray-700 border-0" align="center">
-                hello
-              </PopoverContent>
-            </Popover>
+            {isSend && <WhatsNext />}
             <motion.a
               href={getTronScanLink(transaction.txID)}
               target="_blank"
