@@ -55,7 +55,8 @@ const resources = {
         recipientTooltip: "Recipient wallet address. Example: TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         networkTooltip: "The network (blockchain) in which you are sending your USDT. All transfers in Smooth USDT happen on the TRC-20 network.",
         networkFeeTooltip: "The fee that you pay to the network (blockchain) for processing your transfer.",
-        total: "Total amount:"
+        total: "Total amount:",
+        amountTooltip: "Maximum amount = Your Balance - {{networkFee}} USDT (network fee).",
       },
       receiveWindow: {
         receiveUsdt: "Receive USDT",
@@ -208,7 +209,8 @@ const resources = {
         recipientTooltip: "Адрес кошелька получателя. Например: TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
         networkTooltip: "Сеть (блокчейн) в которой вы отправляете USDT. Все переводы в Smooth USDT происходят в сети TRC-20.",
         networkFeeTooltip: "Комиссия которую вы платите сети (блокчейну) за обработку вашего перевода.",
-        total: "Общая сумма:"
+        total: "Общая сумма:",
+        amountTooltip: "Максимальная сумма = Ваш Баланс - {{networkFee}} USDT (комиссия сети)",
       },
       receiveWindow: {
         receiveUsdt: "Получить USDT",
