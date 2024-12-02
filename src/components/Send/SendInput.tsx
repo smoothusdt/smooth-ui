@@ -8,6 +8,7 @@ import { SmoothFee, tronweb } from '@/constants';
 import { useWallet } from '@/hooks/useWallet';
 import { useTranslation } from 'react-i18next';
 import { InfoTooltip } from '../shared/InfoTooltip';
+import { ScanButton } from './ScanButton';
 
 const stepVariants = {
     initial: { opacity: 0, x: 50 },
@@ -87,16 +88,24 @@ export function SendInput() {
                             <InfoTooltip content={t("recipientTooltip")} />
                             {t("recipientAddress")}
                         </div>
-                        <input
-                            type="text"
-                            id="recipient"
-                            value={recipient}
-                            onChange={(e) => setRecipient(e.target.value)}
-                            className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
-                        />
+                        <div className="relative flex">
+                            <input
+                                type="text"
+                                id="recipient"
+                                value={recipient}
+                                onChange={(e) => setRecipient(e.target.value)}
+                                className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
+                            />
+                            <div className="absolute right-0 h-full flex">
+                                <ScanButton onScanned={setRecipient} />
+                            </div>
+                        </div>
                     </motion.div>
                     <motion.div variants={itemVariants} animate={amountControls}>
-                        <p className="text-sm text-gray-400 mb-1">{t("amount")}</p>
+                        <div className="text-sm text-gray-400 mb-1">
+                            <InfoTooltip content={t("amountTooltip", { networkFee: SmoothFee.toString() })} />
+                            {t("amount")}
+                        </div>
                         <input
                             type="text"
                             id="recipient"
