@@ -10,6 +10,7 @@ import { CreatePin } from '../shared/CreatePin';
 import { VerifyPin } from '../shared/VerifyPin';
 import { useSetupFlow } from './useSetupFlow';
 import { AllSet } from '../shared/AllSet';
+import { useTranslation } from 'react-i18next';
 
 enum ImportWalletStage {
     INTRODUCTION,
@@ -20,23 +21,24 @@ enum ImportWalletStage {
 }
 
 function Introduction(props: { onNext: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
     return (
         <motion.div className="space-y-4">
             <FlyInBlock delay={0.2}>
-                <TextBlock title="When you should import a wallet">
-                    - Import your Smooth USDT wallet on a new device. <br />
-                    - Migrate from other wallet (like Trust Wallet, Exodus, TronLink) to Smooth USDT.
+                <TextBlock title={t("whenImport")}>
+                    {t("whenImportLine1")}<br />
+                    {t("whenImportLine2")}
                 </TextBlock>
             </FlyInBlock>
             <FlyInBlock delay={0.4}>
-                <TextBlock title="Right now you will:">
-                    1. Import your secret phrase.<br />
-                    2. Set up a pin code for your imported wallet.
+                <TextBlock title={t("stepsDescriptionTitle")}>
+                    {t("stepDescription1")}<br />
+                    {t("stepDescription2")}
                 </TextBlock>
             </FlyInBlock >
             <FlyInBlock delay={0.6}>
                 <CoolButton onClick={props.onNext}>
-                    Import Wallet
+                    {t("importWallet")}
                 </CoolButton>
             </FlyInBlock >
         </motion.div >
@@ -44,27 +46,28 @@ function Introduction(props: { onNext: () => void }) {
 }
 
 function ImportPhrase(props: { onImported: (phrase: string) => void }) {
+    const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
     const [rawPhrase, setRawPhrase] = useState("")
     const [errorMessage, setErrorMessage] = useState("")
 
     const onImport = async () => {
         const formatted = rawPhrase.trim().toLowerCase()
         if (formatted.split(" ").length !== 12) {
-            setErrorMessage("Secret phrase must consist of 12 words.")
+            setErrorMessage(t("secretPhraseMustHave12Words"))
             return;
         }
         try {
             const importedPhrase = TronWeb.fromMnemonic(formatted).mnemonic!.phrase
             props.onImported(importedPhrase)
         } catch {
-            setErrorMessage("Invalid secret phrase.")
+            setErrorMessage(t("invalidSecretPhrase"))
             return;
         }
     }
 
     return (
         <motion.div className="space-y-4">
-            <p className="text-xl">Enter your secret phrase:</p>
+            <p className="text-xl">{t("enterSecretPhrase")}</p>
             <textarea
                 autoFocus
                 rows={2}
@@ -74,13 +77,14 @@ function ImportPhrase(props: { onImported: (phrase: string) => void }) {
             />
             {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
             <CoolButton disabled={rawPhrase.length === 0} onClick={onImport}>
-                Import
+                {t("import")}
             </CoolButton>
         </motion.div>
     );
 }
 
 export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
     const [stage, setStage] = useState(ImportWalletStage.INTRODUCTION)
     const {
         pinCode,
@@ -126,14 +130,14 @@ export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
                         </button> : <div />
                     }
                     <DialogTitle>
-                        <p className="text-2xl">Create Wallet</p>
+                        <p className="text-2xl">{t("importWallet")}</p>
                     </DialogTitle>
                     <div className="w-4" /> {/* For alignment */}
                 </DialogHeader>
                 <motion.div
                     key={stage}
-                    initial={stage !== ImportWalletStage.INTRODUCTION && { x: 50, opacity: 0 }}
-                    animate={stage !== ImportWalletStage.INTRODUCTION && { x: 0, opacity: 1 }}
+                    initial={stage !== ImportWalletStage.INTRODUCTION && stage !== ImportWalletStage.ALLSET && { x: 50, opacity: 0 }}
+                    animate={stage !== ImportWalletStage.INTRODUCTION && stage !== ImportWalletStage.ALLSET  && { x: 0, opacity: 1 }}
                 >
                     {stageContent}
                 </motion.div>
