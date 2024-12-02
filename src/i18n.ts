@@ -84,7 +84,6 @@ const resources = {
         hideSecretPhrase: "Hide Secret Phrase",
         revealSecretPhrase: "Reveal Secret Phrase",
         copySecretPhrase: "Copy Secret Phrase",
-        iSaved: "I've saved it",
         word: "Word",
         verifySecretPhrase: "Verify that you saved your secret phrase correctly.",
         confirm: "Confirm",
@@ -103,7 +102,8 @@ const resources = {
         whatIsSecretPhraseLine2: "- It will be generated automatically.",
         walletCreated: "Wallet created!",
         copied: "Copied",
-        verification: "Verification"
+        verification: "Verification",
+        continue: "Continue"
       },
       importWalletFlow: {
         importWallet: "Import Wallet",
@@ -131,8 +131,8 @@ const resources = {
         continue: "Continue"
       },
       verifyPinWindow: {
-        verifyPin: "Verify your pin code",
-        verifyPinDescription: "You will be asked for your pin code every time you log in to Smooth USDT.",
+        verifyPin: "Verify pin code",
+        verifyPinDescription: "You will need your pin code every time you log in to your Smooth USDT wallet.",
         incorrectPin: "Incorrect pin",
         continue: "Continue"
       },
@@ -224,7 +224,6 @@ const resources = {
         hideSecretPhrase: "Скрыть секретную фразу",
         revealSecretPhrase: "Показать секретную фразу",
         copySecretPhrase: "Копировать секретную фразу",
-        iSaved: "Я сохранил(а)",
         word: "Слово",
         verifySecretPhrase: "Убедитесь что вы сохранили секретную фразу корректно.",
         confirm: "Подтвердить",
@@ -243,7 +242,8 @@ const resources = {
         whatIsSecretPhraseLine2: "- Она будет сгенерирована для вас автоматически.",
         walletCreated: "Кошелек создан!",
         copied: "Cкопировано",
-        verification: "Проверка"
+        verification: "Проверка",
+        continue: "Продолжить"
       },
       importWalletFlow: {
         importWallet: "Импортировать Кошелек",
@@ -271,8 +271,8 @@ const resources = {
         continue: "Продолжить"
       },
       verifyPinWindow: {
-        verifyPin: "Подтвердить ваш пин код",
-        verifyPinDescription: "Вам потребуется ваш пин код при каждом входе в Smooth USDT.",
+        verifyPin: "Подтвердите пин код",
+        verifyPinDescription: "Пин код будет необходим при каждом входе в ваш Smooth USDT кошелек.",
         incorrectPin: "Некорректный пин код",
         continue: "Продолжить"
       },

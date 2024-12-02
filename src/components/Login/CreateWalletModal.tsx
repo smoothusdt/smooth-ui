@@ -93,7 +93,7 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
                 </motion.button>
             </motion.div>
             <CoolButton onClick={props.onContinue}>
-                {t("iSaved")}
+                {t("continue")}
             </CoolButton>
         </motion.div>
     );
