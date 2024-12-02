@@ -11,6 +11,7 @@ import { CreatePin } from '../shared/CreatePin';
 import { VerifyPin } from '../shared/VerifyPin';
 import { useSetupFlow } from './useSetupFlow';
 import { AllSet } from '../shared/AllSet';
+import { useTranslation } from 'react-i18next';
 
 enum CreateWalletStage {
     INTRODUCTION,
@@ -50,6 +51,7 @@ function Word(props: { word: string | null; index: number }) {
 }
 
 function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     const words = props.secretPhrase.split(" ")
     const [revealed, setRevealed] = useState(false)
     const [copied, setCopied] = useState(false);
@@ -63,7 +65,7 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
     return (
         <motion.div className="space-y-4">
             <TextBlock title="Wallet created!">
-                This is your secret phrase. Save it in a secure place.
+                {t("thisIsYourSecretPhrase")}
             </TextBlock>
             <motion.div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
@@ -75,7 +77,7 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
                     className="w-full"
                 >
                     <span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500 transition-colors duration-300">
-                        {revealed ? "Hide" : "Reveal"} Secret Phrase
+                        {revealed ? t("hideSecretPhrase") : t("revealSecretPhrase")}
                     </span>
                 </motion.button>
                 <motion.button
@@ -85,13 +87,13 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
                     className="flex items-center justify-center w-full border-2 border-[#339192] text-white py-3 rounded-lg transition-all duration-300 bg-transparent shadow-lg hover:shadow-xl"
                 >
                     {copied ?
-                        <><Check size={20} className="mr-2" />Copied</> :
-                        <><Copy size={20} className="mr-2" />Copy Secret Phrase</>
+                        <><Check size={20} className="mr-2" />{t("copied")}</> :
+                        <><Copy size={20} className="mr-2" />{t("copySecretPhrase")}</>
                     }
                 </motion.button>
             </motion.div>
             <CoolButton onClick={props.onContinue}>
-                I've saved it
+                {t("iSaved")}
             </CoolButton>
         </motion.div>
     );
@@ -103,13 +105,13 @@ function PhraseConfirmRow(props: {
     setEnteredWord: (word: string) => void;
     animationControls: AnimationControls
 }) {
-
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     return (
         <motion.div
             className="flex justify-between py-2 items-center"
             animate={props.animationControls}
         >
-            <span className="text-gray-300 font-bold">Word #{props.wordIndex + 1}:</span>
+            <span className="text-gray-300 font-bold">{t("word")} #{props.wordIndex + 1}:</span>
             <input
                 type="text"
                 value={props.enteredWord}
@@ -124,6 +126,7 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
     const wordlist = props.secretPhrase.split(" ")
     if (wordlist.length !== 12) throw new Error("Secret phrase is expected to have 12 words")
 
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     const index1 = useRef(Math.floor((Math.random() * 179) % 4))
     const index2 = useRef(4 + Math.floor((Math.random() * 179) % 4))
     const index3 = useRef(8 + Math.floor((Math.random() * 179) % 4))
@@ -140,17 +143,17 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
 
     const onConfirm = () => {
         if (enteredWord1.trim().toLowerCase() !== wordlist[index1.current]) {
-            setErrorMessage("Word #1 is incorrect")
+            setErrorMessage(t("wordIsIncorrect", { index: index1.current + 1 }))
             controls1.start(shakeAnimation)
             return;
         }
         if (enteredWord2.trim().toLowerCase() !== wordlist[index2.current]) {
-            setErrorMessage("Word #2 is incorrect")
+            setErrorMessage(t("wordIsIncorrect", { index: index2.current + 1 }))
             controls2.start(shakeAnimation)
             return;
         }
         if (enteredWord3.trim().toLowerCase() !== wordlist[index3.current]) {
-            setErrorMessage("Word #3 is incorrect")
+            setErrorMessage(t("wordIsIncorrect", { index: index3.current + 1 }))
             controls3.start(shakeAnimation)
             return;
         }
@@ -164,7 +167,7 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
     return (
         <motion.div className="space-y-4">
             <TextBlock title="Verification">
-                Verify that you saved your secret phrase correctly.
+                {t("verifySecretPhrase")}
             </TextBlock>
             <motion.div className="space-y-4">
                 <div>
@@ -174,7 +177,7 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
                 </div>
                 {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
                 <CoolButton onClick={onConfirm} disabled={inputsAreEmpty}>
-                    Confirm
+                    {t("confirm")}
                 </CoolButton>
             </motion.div>
         </motion.div>
@@ -182,23 +185,24 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
 }
 
 function Introduction(props: { onGetStarted: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     return (
         <motion.div className="space-y-4">
             <FlyInBlock delay={0.2}>
-                <TextBlock title="Introduction">
-                    - Creating a crypto wallet is not as scary as it might sound.<br />
-                    - We'll help you understand this process.
+                <TextBlock title={t("introduction")}>
+                    {t("introductionLine1")}<br />
+                    {t("introductionLine2")}
                 </TextBlock>
             </FlyInBlock>
             <FlyInBlock delay={0.4}>
-                <TextBlock title="Right now you will:">
-                    1. Create a new Smooth USDT wallet.<br />
-                    2. Set up a pin code for your wallet.
+                <TextBlock title={t("stepsDescriptionTitle")}>
+                    {t("stepDescription1")}<br />
+                    {t("stepDescription2")}
                 </TextBlock>
             </FlyInBlock >
             <FlyInBlock delay={0.6}>
                 <CoolButton onClick={props.onGetStarted}>
-                    Get started
+                    {t("getStarted")}
                 </CoolButton>
             </FlyInBlock >
         </motion.div >
@@ -206,27 +210,27 @@ function Introduction(props: { onGetStarted: () => void }) {
 }
 
 function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     const [creatingPhrase, setCreatingPhrase] = useState(false)
 
     const onCreatePhrase = async () => {
         setCreatingPhrase(true)
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        
+
         const secretPhrase = TronWeb.createRandom().mnemonic!.phrase
         props.onCreated(secretPhrase)
-        // props.onCreated("bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass bananass")
     }
 
-    const buttonContent = creatingPhrase ? <><Loader className="animate-spin mr-2" />Creating...</> : <>Create My Wallet</>
+    const buttonContent = creatingPhrase ? <><Loader className="animate-spin mr-2" />{t("creating")}</> : <>{t("createWallet")}</>
 
     return (
         <motion.div className="space-y-4">
-            <TextBlock title="Secret phrase">
-                Your wallet will be secured by a secret phrase. You will need it to log in on a new device or if you clear your browser cache.
+            <TextBlock title={t("secretPhrase")}>
+                {t("walletSecurityDescription")}
             </TextBlock>
-            <TextBlock title="Secret phrase is like a password, but:">
-                - It is not recoverable if you lose it.<br />
-                - It will be generated automatically.
+            <TextBlock title={t("whatIsSecretPhraseTitle")}>
+                {t("whatIsSecretPhraseLine1")}.<br />
+                {t("whatIsSecretPhraseLine2")}
             </TextBlock>
             <CoolButton onClick={onCreatePhrase} disabled={creatingPhrase}>
                 {buttonContent}
@@ -236,6 +240,7 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
 }
 
 export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     const [stage, setStage] = useState(CreateWalletStage.INTRODUCTION)
     const {
         pinCode,
@@ -290,14 +295,14 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
                         </button> : <div />
                     }
                     <DialogTitle>
-                        <p className="text-2xl">Create Wallet</p>
+                        <p className="text-2xl">{t("createWallet")}</p>
                     </DialogTitle>
                     <div className="w-4" /> {/* For alignment */}
                 </DialogHeader>
                 <motion.div
                     key={stage}
-                    initial={stage !== CreateWalletStage.INTRODUCTION && { x: 50, opacity: 0 }}
-                    animate={stage !== CreateWalletStage.INTRODUCTION && { x: 0, opacity: 1 }}
+                    initial={stage !== CreateWalletStage.INTRODUCTION && stage !== CreateWalletStage.ALLSET && { x: 50, opacity: 0 }}
+                    animate={stage !== CreateWalletStage.INTRODUCTION && stage !== CreateWalletStage.ALLSET && { x: 0, opacity: 1 }}
                 >
                     {stageContent}
                 </motion.div>

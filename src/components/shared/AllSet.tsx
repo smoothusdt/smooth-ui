@@ -4,15 +4,17 @@ import { FlyInBlock } from "./FlyInBlock";
 import { TextBlock } from "./TextBlock";
 import { CheckCircle } from "lucide-react";
 import { CoolButton } from "./CoolButton";
+import { useTranslation } from "react-i18next";
 
 export function AllSet() {
+    const { t } = useTranslation("", { keyPrefix: "allSetWindow" })
     const [, navigate] = useLocation()
 
     return (
         <motion.div className="space-y-8">
             <FlyInBlock delay={0.2}>
-                <TextBlock title="All set">
-                    Your Smooth USDT wallet is ready to be used.
+                <TextBlock title={t("allSet")}>
+                    {t("walletReady")}
                 </TextBlock>
             </FlyInBlock>
             <FlyInBlock delay={0.4}>
@@ -22,7 +24,7 @@ export function AllSet() {
             </FlyInBlock >
             <FlyInBlock delay={0.6}>
                 <CoolButton onClick={() => navigate("/home")}>
-                    Start using
+                    {t("startUsing")}
                 </CoolButton>
             </FlyInBlock >
         </motion.div>

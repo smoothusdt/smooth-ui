@@ -5,8 +5,10 @@ import { TextBlock } from "./TextBlock";
 import { EnterPin } from "./EnterPin";
 import { CoolButton } from "./CoolButton";
 import { AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function VerifyPin(props: { correctPin: string; onVerified: () => void }) {
+    const { t } = useTranslation("", { keyPrefix: "verifyPinWindow" })
     const [pinVerificationError, setPinVerificationError] = useState(false)
     const pinAnimationControls = useAnimation()
 
@@ -28,20 +30,20 @@ export function VerifyPin(props: { correctPin: string; onVerified: () => void })
                 document.getElementById("pinVirtualInput")?.focus()
             }}
         >
-            <TextBlock title="Verify your pin code">
-                You will be asked for your pin code every time you log in to Smooth USDT.
+            <TextBlock title={t("verifyPin")}>
+                {t("verifyPinDescription")}
             </TextBlock>
             <EnterPin
                 pinLength={6}
                 onPinEntered={onPinVerify}
                 animationControls={pinAnimationControls}
             />
-            {pinVerificationError && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" />Incorrect pin</p>}
+            {pinVerificationError && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" />{t("incorrectPin")}</p>}
             <CoolButton
                 disabled
                 onClick={() => { }} // navigates automatically after pin is entered
             >
-                Continue
+                {t("continue")}
             </CoolButton>
         </motion.div>
     );

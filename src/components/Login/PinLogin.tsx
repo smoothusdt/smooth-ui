@@ -11,8 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { TextBlock } from '../shared/TextBlock';
 import { shakeAnimation } from '../animations';
 import { EnterPin } from '../shared/EnterPin';
+import { useTranslation } from 'react-i18next';
 
 function ForgotPinButton() {
+    const { t } = useTranslation("", { keyPrefix: "pinLoginWindow" })
     const [showDialog, setShowDialog] = useState(false)
     const { eraseSigner } = useSigner();
     const { dispatch } = useContext(WalletContext);
@@ -32,12 +34,12 @@ function ForgotPinButton() {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>
-                            <p className="text-2xl">Forgot pin code</p>
+                            <p className="text-2xl">{t("forgotPinCode")}</p>
                         </DialogTitle>
                     </DialogHeader>
-                    <TextBlock title="How to reset pin code">
-                        1. Log out.<br />
-                        2. Click "Import Wallet" and enter your secret phrase.
+                    <TextBlock title={t("howToReset")}>
+                        {t("resetStep1")}<br />
+                        {t("resetStep2")}
                     </TextBlock>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -45,14 +47,14 @@ function ForgotPinButton() {
                         onClick={onLogout}
                         className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#c44d4d] transition-colors"
                     >
-                        Log out
+                        {t("logOut")}
                     </motion.button>
                 </DialogContent>
             </Dialog>
             <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowDialog(true)}
-            ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">Forgot your pin code?</span>
+            ><span className="border-b-2 text-gray-400 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("forgotPinCodeQuestion")}</span>
             </motion.button>
         </>
     );
@@ -60,6 +62,7 @@ function ForgotPinButton() {
 
 
 export function PinLogin(props: { navigateAfterLogin: boolean }) {
+    const { t } = useTranslation("", { keyPrefix: "pinLoginWindow" })
     const pinAnimationControls = useAnimation()
     const [fetching, setFetching] = useState(false)
     const [remainingAttempts, setRemainingAttempts] = useState(-1)
@@ -121,7 +124,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
                     <p className="text-4xl font-bold mb-4">
                         Smooth USDT
                     </p>
-                    <p className="text-xl">Your pin code.</p>
+                    <p className="text-xl">{t("yourPinCode")}</p>
                 </div>
                 <EnterPin
                     pinLength={6}
@@ -130,7 +133,11 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
                     onPinEntered={onPinVerify}
                     animationControls={pinAnimationControls}
                 />
-                {remainingAttempts !== -1 && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words text-left"><AlertCircle className="inline mr-1" />Incorrect pin. You have {remainingAttempts} attempts left.</p>}
+                {remainingAttempts !== -1 &&
+                    <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words text-left"><AlertCircle className="inline mr-1" />
+                        {t("incorrectPin", { remainingAttempts })}
+                    </p>
+                }
                 <ForgotPinButton />
             </div>
         </div>

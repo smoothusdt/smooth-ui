@@ -3,8 +3,10 @@ import { getFreeUsdt } from '@/smoothApi';
 import { motion } from 'framer-motion'
 import { Loader } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function TestnetUsdtButton() {
+    const { t } = useTranslation()
     const { wallet, refreshBalance, refreshHistory } = useWallet();
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState(0)
@@ -29,11 +31,11 @@ export function TestnetUsdtButton() {
     let buttonContent;
     if (!isProcessing) {
         buttonContent = (
-            <>Get testnet USDT</>
+            <>{t("getTestnetUsdt")}</>
         );
     } else {
         buttonContent = (
-            <><Loader className="animate-spin" />Processing...</>
+            <><Loader className="animate-spin" />{t("processing")}</>
         );
     }
 
