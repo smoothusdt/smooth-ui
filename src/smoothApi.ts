@@ -8,26 +8,33 @@ export async function transferViaApi(
     {
         toBase58,
         transferAmount,
-        signTransaction
+        userAddress,
+        signTransaction,
     }: {
         toBase58: string,
         transferAmount: BigNumber, // in human format
+        userAddress: string,
         signTransaction: (transaction: Transaction<TriggerSmartContract>) => Promise<SignedTransaction<TriggerSmartContract>>
     }
 ): Promise<string> {
     const amountUint = humanToUint(transferAmount, USDTDecimals)
     const functionSelector = 'transfer(address,uint256)';
     const parameter = [{ type: 'address', value: toBase58 }, { type: 'uint256', value: amountUint }]
-    const tx = await tronweb.transactionBuilder.triggerSmartContract(USDTAddressBase58, functionSelector, {}, parameter);
+    const tx = await tronweb.transactionBuilder.triggerSmartContract(
+        USDTAddressBase58,
+        functionSelector,
+        {},
+        parameter,
+        userAddress
+    );
     const signedTx = await signTransaction(tx.transaction);
 
-    const signedTxStringified = JSON.stringify(signedTx)
-
-    console.log("Executing a transfer via api with data", { signedTxStringified })
+    console.log("Executing a transfer via api with data", signedTx)
     const response = await fetch(`${SmoothApiURL}/transfer`, {
         method: "POST",
         body: JSON.stringify({
-            signedTxStringified
+            userAddress,
+            signedTx
         }),
         headers: {
             "Content-Type": "application/json",
@@ -35,7 +42,6 @@ export async function transferViaApi(
     })
 
     const data = await response.json()
-
     const txID = data.txID;
     if (!txID) {
         let errorText = "Couldnt execute a transfer via api"

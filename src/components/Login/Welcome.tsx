@@ -6,17 +6,19 @@ import { useTranslation } from 'react-i18next'
 import { CreateWallet } from './CreateWalletModal'
 import { ImportWallet } from './ImportWalletModal'
 
-const Feature = ({ icon, text }: { icon: JSX.Element; text: string }) => (
-    <motion.div
-        className="flex space-x-2"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5 }}
-    >
-        {icon}
-        <span className="text-left">{text}</span>
-    </motion.div>
-)
+function Feature(props: { icon: JSX.Element; text: string; delay: number }) {
+    return (
+        <motion.div
+            className="flex space-x-2"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: props.delay }}
+        >
+            {props.icon}
+            <span className="text-left">{props.text}</span>
+        </motion.div>
+    );
+}
 
 export function Welcome() {
     const { t } = useTranslation()
@@ -32,12 +34,7 @@ export function Welcome() {
         >
             <CreateWallet isOpen={isCreatingWallet} onClose={() => setIsCreatingWallet(false)} />
             <ImportWallet isOpen={isImportingWallet} onClose={() => setIsImportingWallet(false)} />
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-center z-10"
-            >
+            <motion.div>
                 <motion.div
                     initial={{ scale: 0.5, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
@@ -47,7 +44,7 @@ export function Welcome() {
                     <SmoothLogo />
                 </motion.div>
                 <motion.h1
-                    className="text-4xl font-bold mb-4"
+                    className="text-4xl font-bold mb-4 text-center"
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
@@ -68,15 +65,15 @@ export function Welcome() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6, duration: 0.5 }}
                 >
-                    <Feature icon={<Send className="text-[#339192]" />} text={t("usdtFeesFeature")} />
-                    <Feature icon={<Wallet className="text-[#339192]" />} text={t("nonCustodialFeature")} />
-                    <Feature icon={<ShieldCheck className="text-[#339192]" />} text={t("securityFeature")} />
+                    <Feature icon={<Send className="text-[#339192]" />} text={t("usdtFeesFeature")} delay={0.8} />
+                    <Feature icon={<Wallet className="text-[#339192]" />} text={t("nonCustodialFeature")} delay={1} />
+                    <Feature icon={<ShieldCheck className="text-[#339192]" />} text={t("securityFeature")} delay={1.2} />
                 </motion.div>
                 <div className="space-y-4">
                     <motion.button
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, delay: 0.3 }}
+                        transition={{ duration: 0.2, delay: 1.4 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsCreatingWallet(true)}
@@ -87,7 +84,7 @@ export function Welcome() {
                     <motion.button
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, delay: 0.3 }}
+                        transition={{ duration: 0.2, delay: 1.6 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsImportingWallet(true)}
