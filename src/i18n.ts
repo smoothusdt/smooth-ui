@@ -78,6 +78,7 @@ const resources = {
       },
       createWalletFlow: {
         createWallet: "Create Wallet",
+        dialogTitle: "Create Wallet",
         thisIsYourSecretPhrase: "This is your secret phrase. Save it in a secure place.",
         secretPhrase: "Secret Phrase",
         hideSecretPhrase: "Hide Secret Phrase",
@@ -96,13 +97,17 @@ const resources = {
         getStarted: "Get started",
         wordIsIncorrect: "Word #{{index}} is incorrect",
         creating: "Creating...",
-        walletSecurityDescription: "Your wallet will be secured by a secret phrase. You will need it to log in on a new device or if you clear your browser cache.",
+        walletSecurityDescription: "Your wallet will be secured by a secret phrase. You will need it when to log in on a new device or if you forget your pin code.",
         whatIsSecretPhraseTitle: "Secret phrase is like a password, but:",
         whatIsSecretPhraseLine1: "- It is not recoverable if you lose it",
         whatIsSecretPhraseLine2: "- It will be generated automatically.",
+        walletCreated: "Wallet created!",
+        copied: "Copied",
+        verification: "Verification"
       },
       importWalletFlow: {
         importWallet: "Import Wallet",
+        dialogTitle: "Import Wallet",
         whenImport: "When you should import a wallet",
         whenImportLine1: "- Import your Smooth USDT wallet on a new device.",
         whenImportLine2: "- Migrate from other wallet (like Trust Wallet, Exodus, TronLink) to Smooth USDT.",
@@ -166,6 +171,8 @@ const resources = {
       historyComponent: {
         recentTransfers: "Последние переводы",
         emptyHistoryPlaceholder: "Здесь будут отображаться ваши переводы.",
+        getTestnetUsdt: "Получить тестовые USDT",
+        processing: "Обработка...",
         sent: "Отправлено",
         received: "Получено",
       },
@@ -209,6 +216,76 @@ const resources = {
         transferNotFound: "Перевод не найден",
         whatsNext: "Что дальше?",
       },
+      createWalletFlow: {
+        createWallet: "Создать Кошелек",
+        dialogTitle: "Создайте Кошелек",
+        thisIsYourSecretPhrase: "Это ваша секретная фраза. Сохраните ее в надежном месте.", // "Сохраните ее в надежном месте." ??????
+        secretPhrase: "Секретная фраза",
+        hideSecretPhrase: "Скрыть секретную фразу",
+        revealSecretPhrase: "Показать секретную фразу",
+        copySecretPhrase: "Копировать секретную фразу",
+        iSaved: "Я сохранил(а)",
+        word: "Слово",
+        verifySecretPhrase: "Убедитесь что вы сохранили секретную фразу корректно.",
+        confirm: "Подтвердить",
+        introduction: "Введение",
+        introductionLine1: "- Создание крипто кошелька это не так страшно как может казаться.",
+        introductionLine2: "- Мы поможем вам понять этот процесс.",
+        stepsDescriptionTitle: "Сейчас вы:",
+        stepDescription1: "1. Создадите новый Smooth USDT кошелек.",
+        stepDescription2: "2. Установите пин-код для вашего кошелька.",
+        getStarted: "Начать",
+        wordIsIncorrect: "Слово #{{index}} неправильное",
+        creating: "Создание...",
+        walletSecurityDescription: "Ваш кошелек будет защищен секретной фразой. Она вам понадобится при входе в кошелек на новом устройстве или если вы забудете пин код.",
+        whatIsSecretPhraseTitle: "Секретная фраза это как пароль, но:",
+        whatIsSecretPhraseLine1: "- Ее нельзя восстановить при потере.",
+        whatIsSecretPhraseLine2: "- Она будет сгенерирована для вас автоматически.",
+        walletCreated: "Кошелек создан!",
+        copied: "Cкопировано",
+        verification: "Проверка"
+      },
+      importWalletFlow: {
+        importWallet: "Импортировать Кошелек",
+        dialogTitle: "Импортируйте Кошелек",
+        whenImport: "В каких случаях стоит импортировать кошелек",
+        whenImportLine1: "- Импортируйте ваш Smooth USDT кошелек на новом устройтсве.",
+        whenImportLine2: "- Перейдите с вашего текущего кошелька (например Trust Wallet, Exodus, TronLink) на Smooth USDT.",
+        stepsDescriptionTitle: "Сейчас вы:",
+        stepDescription1: "1. Импортируете вашу секретную фразу.",
+        stepDescription2: "2. Установите пин код для вашего импортированного кошелька.",
+        secretPhraseMustHave12Words: "Секретная фраза должна состоять из 12 слов.",
+        invalidSecretPhrase: "Некорректная секретная фраза.",
+        enterSecretPhrase: "Введите вашу секретную фразу:",
+        import: "Импортировать",
+      },
+      allSetWindow: {
+        allSet: "Все готово",
+        walletReady: "Ваш Smooth USDT кошелек готов к использованию.",
+        startUsing: "Начать пользоваться"
+      },
+      createPinWindow: {
+        createPin: "Придумайте пин код",
+        createPinLine1: "- Ваш кошелек почти готов. Установите пин код для дополнительной защиты.",
+        createPinLine2: "- Если вы забудете ваш пин код, вы сможете его сбросить с помощью секретной фразы.",
+        continue: "Продолжить"
+      },
+      verifyPinWindow: {
+        verifyPin: "Подтвердить ваш пин код",
+        verifyPinDescription: "Вам потребуется ваш пин код при каждом входе в Smooth USDT.",
+        incorrectPin: "Некорректный пин код",
+        continue: "Продолжить"
+      },
+      pinLoginWindow: {
+        yourPinCode: "Ваш пин код.",
+        incorrectPin: "Некорректный пин код. У вас осталось {{remainingAttempts}} попытки.",
+        logOut: "Выйти",
+        forgotPinCode: "Забыли пин код",
+        howToReset: "Как сбросить пин код",
+        resetStep1: "1. Выйдите из кошелька.",
+        resetStep2: "2. Нажмите \"Импортировать Кошелек\" и введите вашу секретную фразу.",
+        forgotPinCodeQuestion: "Забыли ваш пин код?"
+      }
     },
   },
 };
