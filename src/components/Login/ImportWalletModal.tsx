@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useAnimation } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useState } from 'react';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
@@ -11,6 +11,8 @@ import { VerifyPin } from '../shared/VerifyPin';
 import { useSetupFlow } from './useSetupFlow';
 import { AllSet } from '../shared/AllSet';
 import { useTranslation } from 'react-i18next';
+import { TermsConsent } from '../shared/TermsConsent';
+import { shakeAnimation } from '../animations';
 
 enum ImportWalletStage {
     INTRODUCTION,
@@ -22,6 +24,19 @@ enum ImportWalletStage {
 
 function Introduction(props: { onNext: () => void }) {
     const { t } = useTranslation("", { keyPrefix: "importWalletFlow" })
+    const [agreedToTerms, setAgreedToTerms] = useState(false)
+    const [error, setError] = useState(false)
+    const termsControls = useAnimation()
+
+    const onImport = () => {
+        if (!agreedToTerms) {
+            setError(true)
+            termsControls.start(shakeAnimation)
+            return;
+        }
+        props.onNext()
+    }
+
     return (
         <motion.div className="space-y-4">
             <FlyInBlock delay={0.2}>
@@ -37,7 +52,10 @@ function Introduction(props: { onNext: () => void }) {
                 </TextBlock>
             </FlyInBlock >
             <FlyInBlock delay={0.6}>
-                <CoolButton onClick={props.onNext}>
+                <TermsConsent agreed={agreedToTerms} error={error} setAgreed={setAgreedToTerms} controls={termsControls} />
+            </FlyInBlock>
+            <FlyInBlock delay={0.8}>
+                <CoolButton disabled={!agreedToTerms} clickableWhileDisabled onClick={onImport}>
                     {t("importWallet")}
                 </CoolButton>
             </FlyInBlock >
