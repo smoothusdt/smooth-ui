@@ -21,7 +21,7 @@ function Feature(props: { icon: JSX.Element; text: string; delay: number }) {
 }
 
 export function Welcome() {
-    const { t } = useTranslation()
+    const { t } = useTranslation("", { keyPrefix: "welcomeWindow" })
     const [isCreatingWallet, setIsCreatingWallet] = useState(false)
     const [isImportingWallet, setIsImportingWallet] = useState(false)
 

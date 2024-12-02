@@ -9,7 +9,7 @@ import { useLocation } from 'wouter';
 import { TestnetUsdtButton } from './TestnetUsdtButton';
 
 function TransactionComponent(props: { transaction: HistoricalTransaction, index: number }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation("", { keyPrefix: "historyComponent" })
   const [, navigate] = useLocation();
   const { wallet } = useWallet();
 
@@ -44,7 +44,7 @@ function TransactionComponent(props: { transaction: HistoricalTransaction, index
 }
 
 export function TransactionHistory() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("", { keyPrefix: "historyComponent" })
   const { wallet } = useWallet();
 
   let historyBlock;

@@ -7,7 +7,7 @@ import { useWallet } from '@/hooks/useWallet'
 import { useTranslation } from 'react-i18next'
 
 export function Receive() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("", { keyPrefix: "receiveWindow" })
   const [copied, setCopied] = useState(false);
   const { wallet } = useWallet();
 
@@ -19,7 +19,7 @@ export function Receive() {
 
   return (
     <PageContainer title={t("receiveUsdt")}>
-      <div className="flex-grow flex flex-col items-center justify-start p-6 px-4">
+      <div className="flex-grow flex flex-col items-center justify-start p-4 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}

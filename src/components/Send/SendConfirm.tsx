@@ -22,7 +22,7 @@ const itemVariants = {
 }
 
 export function SendConfirm() {
-  const { t } = useTranslation()
+  const { t } = useTranslation("", { keyPrefix: "sendFlow" })
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
   const { signTransaction } = useSigner();
