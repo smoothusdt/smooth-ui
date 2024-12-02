@@ -19,7 +19,6 @@ export function Home() {
     refreshHistory()
   }, []);
 
-
   return (
     <AnimatePresence mode="wait">
       <motion.div

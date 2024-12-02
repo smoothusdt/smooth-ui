@@ -120,7 +120,7 @@ export function SignerProvider(props: { children: any }) {
     const signTransaction = async (transaction: Transaction<TriggerSmartContract>): Promise<SignedTransaction<TriggerSmartContract>> => {
         if (!secretPhrase) throw new Error("No secret phrase is loaded in signTransaction")
         const { address, privateKey } = TronWeb.fromMnemonic(secretPhrase)
-        const signedTx = await tronweb.trx.sign(transaction, privateKey);
+        const signedTx = await tronweb.trx.sign(transaction, privateKey.slice(2));
         console.log(`Signed transaction ${transaction.txID} with wallet ${address}. Signature: ${signedTx.signature}`);
         return signedTx
     }

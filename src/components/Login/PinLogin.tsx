@@ -95,7 +95,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
             }
         }
         const encryptionKeyHex = data.encryptionKeyHex
-        console.log("Successfully fetched encryption key:", encryptionKeyHex)
+        console.log("Successfully fetched encryption key.")
         const secretPhrase = await decrypt(encryptionKeyHex)
         const { address: tronUserAddress } = TronWeb.fromMnemonic(secretPhrase)
         logIn(tronUserAddress)

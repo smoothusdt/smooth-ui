@@ -38,6 +38,7 @@ export function SendConfirm() {
     const txID = await transferViaApi({
       toBase58: recipient,
       transferAmount: amount,
+      userAddress: wallet.tronAddress,
       signTransaction,
     })
     addTransactions([{ // add this transaction to local history
@@ -72,7 +73,7 @@ export function SendConfirm() {
               readOnly
               id="recipient"
               value={recipient}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
@@ -81,9 +82,9 @@ export function SendConfirm() {
             <input
               type="text"
               readOnly
-              id="recipient"
+              id="networkTitle"
               value="TRC-20"
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
@@ -92,9 +93,9 @@ export function SendConfirm() {
             <input
               type="text"
               readOnly
-              id="recipient"
+              id="amount"
               value={`${rawAmount} USDT`}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
@@ -103,9 +104,9 @@ export function SendConfirm() {
             <input
               type="text"
               readOnly
-              id="recipient"
+              id="networkFee"
               value={`${SmoothFee.toString()} USDT`}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
