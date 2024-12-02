@@ -8,7 +8,7 @@ import { useWallet } from '@/hooks/useWallet'
 import { useTranslation } from 'react-i18next'
 
 export function Home() {
-  const { t } = useTranslation()
+  const { t } = useTranslation("", { keyPrefix: "homeWindow" })
   const [showSettings, setShowSettings] = useState(false)
   const [, navigate] = useLocation();
   const {wallet, refreshHistory, refreshBalance} = useWallet();

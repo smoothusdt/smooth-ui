@@ -13,7 +13,7 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation("", { keyPrefix: "settingsWindow" })
     const { language, changeLanguage } = usePreferences();
     const { eraseSigner } = useSigner();
     const { dispatch } = useContext(WalletContext);

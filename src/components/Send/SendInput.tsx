@@ -25,7 +25,7 @@ const shakeAnimation = {
 }
 
 export function SendInput() {
-    const { t } = useTranslation();
+    const { t } = useTranslation("", { keyPrefix: "sendFlow" })
     const { wallet } = useWallet();
     const search = new URLSearchParams(window.location.search)
     const [recipient, setRecipient] = useState(search.get("recipient") || "")
