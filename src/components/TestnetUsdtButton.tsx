@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function TestnetUsdtButton() {
-    const { t } = useTranslation()
+    const { t } = useTranslation("", { keyPrefix: "historyComponent" })
     const { wallet, refreshBalance, refreshHistory } = useWallet();
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState(0)

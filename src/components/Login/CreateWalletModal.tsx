@@ -64,7 +64,7 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
 
     return (
         <motion.div className="space-y-4">
-            <TextBlock title="Wallet created!">
+            <TextBlock title={t("walletCreated")}>
                 {t("thisIsYourSecretPhrase")}
             </TextBlock>
             <motion.div className="space-y-4">
@@ -166,7 +166,7 @@ function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; })
 
     return (
         <motion.div className="space-y-4">
-            <TextBlock title="Verification">
+            <TextBlock title={t("verification")}>
                 {t("verifySecretPhrase")}
             </TextBlock>
             <motion.div className="space-y-4">
@@ -229,7 +229,7 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
                 {t("walletSecurityDescription")}
             </TextBlock>
             <TextBlock title={t("whatIsSecretPhraseTitle")}>
-                {t("whatIsSecretPhraseLine1")}.<br />
+                {t("whatIsSecretPhraseLine1")}<br />
                 {t("whatIsSecretPhraseLine2")}
             </TextBlock>
             <CoolButton onClick={onCreatePhrase} disabled={creatingPhrase}>
@@ -295,7 +295,7 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
                         </button> : <div />
                     }
                     <DialogTitle>
-                        <p className="text-2xl">{t("createWallet")}</p>
+                        <p className="text-2xl">{t("dialogTitle")}</p>
                     </DialogTitle>
                     <div className="w-4" /> {/* For alignment */}
                 </DialogHeader>

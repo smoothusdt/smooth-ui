@@ -110,7 +110,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
 
     return (
         <div
-            className="flex h-full w-full flex-col items-center pt-32 md:pt-48 px-16"
+            className="flex h-full w-full flex-col items-center pt-32 md:pt-48"
             onClick={() => {
                 // Ugly, but we need to keep the input always focused for pin entering.
                 document.getElementById("pinVirtualInput")?.focus()
@@ -134,7 +134,7 @@ export function PinLogin(props: { navigateAfterLogin: boolean }) {
                     animationControls={pinAnimationControls}
                 />
                 {remainingAttempts !== -1 &&
-                    <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words text-left"><AlertCircle className="inline mr-1" />
+                    <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words text-left w-80"><AlertCircle className="inline mr-1" />
                         {t("incorrectPin", { remainingAttempts })}
                     </p>
                 }

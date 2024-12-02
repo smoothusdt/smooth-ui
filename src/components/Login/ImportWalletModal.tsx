@@ -130,7 +130,7 @@ export function ImportWallet(props: { isOpen: boolean; onClose: () => void }) {
                         </button> : <div />
                     }
                     <DialogTitle>
-                        <p className="text-2xl">{t("importWallet")}</p>
+                        <p className="text-2xl">{t("dialogTitle")}</p>
                     </DialogTitle>
                     <div className="w-4" /> {/* For alignment */}
                 </DialogHeader>

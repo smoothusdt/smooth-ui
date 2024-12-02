@@ -56,7 +56,7 @@ export function Home() {
             className="text-center"
           >
             <h2 className="text-lg text-gray-400 mb-2">{t("yourBlance")}</h2>
-            <p className="text-5xl font-bold">{wallet.balance.toFixed(2)} USDT</p>
+            <p className="text-4xl md:text-5xl font-bold">{wallet.balance.toFixed(2)} USDT</p>
           </motion.section>
 
           {/* Quick Actions */}
