@@ -52,6 +52,10 @@ const resources = {
         errorNegativeAmount: "Amount cannot be negative.",
         errorLimitExceeded: "Maximum $1 USDT can be sent.",
         confirmTransfer: "Confirm Transfer",
+        recipientTooltip: "Recipient wallet address. Example: TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        networkTooltip: "The network (blockchain) in which you are sending your USDT. All transfers in Smooth USDT happen on the TRC-20 network.",
+        networkFeeTooltip: "The fee that you pay to the network (blockchain) for processing your transfer.",
+        total: "Total amount:"
       },
       receiveWindow: {
         receiveUsdt: "Receive USDT",
@@ -75,6 +79,9 @@ const resources = {
         viewOnTronscan: "View on Tronscan",
         transferNotFound: "Transfer Not Found",
         whatsNext: "What's next?",
+        transactionIdTooltip: "Unique transaction ID. With this ID both the sender and the recipient can find this transaction on the blockchain.",
+        whatsNextLine1: "Your USDT has been sent successfully and the transaction has been fully processed by the blockchain.",
+        whatsNextLine2: "Usually the recipient's wallet / crypto exchange needs a few minutes to detect and process the transfer.",
       },
       createWalletFlow: {
         createWallet: "Create Wallet",
@@ -94,7 +101,7 @@ const resources = {
         stepDescription1: "1. Create a new Smooth USDT wallet.",
         stepDescription2: "2. Set up a pin code for your wallet.",
         getStarted: "Get started",
-        wordIsIncorrect: "Word #{{index}} is incorrect",
+        wordIsIncorrect: "Word #{{index}} is incorrect.",
         creating: "Creating...",
         walletSecurityDescription: "Your wallet will be secured by a secret phrase. You will need it when to log in on a new device or if you forget your pin code.",
         whatIsSecretPhraseTitle: "Secret phrase is like a password, but:",
@@ -191,7 +198,11 @@ const resources = {
         errorEnterAmount: "Введите сумму.",
         errorNegativeAmount: "Сумма не может быть отрицательной.",
         errorLimitExceeded: "Максимум $1 USDT может быть отправлено.",
-        confirmTransfer: "Подтвердить перевод",
+        confirmTransfer: "Подтвердите перевод",
+        recipientTooltip: "Адрес кошелька получателя. Например: TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+        networkTooltip: "Сеть (блокчейн) в которой вы отправляете USDT. Все переводы в Smooth USDT происходят в сети TRC-20.",
+        networkFeeTooltip: "Комиссия которую вы платите сети (блокчейну) за обработку вашего перевода.",
+        total: "Общая сумма:"
       },
       receiveWindow: {
         receiveUsdt: "Получить USDT",
@@ -215,6 +226,10 @@ const resources = {
         viewOnTronscan: "Посмотреть на Tronscan",
         transferNotFound: "Перевод не найден",
         whatsNext: "Что дальше?",
+        transactionIdTooltip: "Уникальный ID транзакции. С помощью этого ID и отправитель, и получатель могут найти транзакцию на блокчейне.",
+        whatsNextLine1: "Ваши USDT были успешно отправлены и транзакция уже полностью обработана блокчейном.",
+        whatsNextLine2: "Обычно кошельку / бирже получателя требуется несколько минут чтобы обнаружить и обработать перевод.",
+
       },
       createWalletFlow: {
         createWallet: "Создать Кошелек",
@@ -234,7 +249,7 @@ const resources = {
         stepDescription1: "1. Создадите новый Smooth USDT кошелек.",
         stepDescription2: "2. Установите пин-код для вашего кошелька.",
         getStarted: "Начать",
-        wordIsIncorrect: "Слово #{{index}} неправильное",
+        wordIsIncorrect: "Слово #{{index}} неправильное.",
         creating: "Создание...",
         walletSecurityDescription: "Ваш кошелек будет защищен секретной фразой. Она вам понадобится при входе в кошелек на новом устройстве или если вы забудете пин код.",
         whatIsSecretPhraseTitle: "Секретная фраза это как пароль, но:",
