@@ -1,7 +1,5 @@
 # Smooth UI
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/f16f0d2d-8bf1-4289-a098-5b2a735f6944/deploy-status)](https://app.netlify.com/sites/smoothusdt/deploys)
-
 **Helping everyday people access USDT on Tron by removing the need to buy TRX tokens to pay for transactions. Live on Tron mainnet.**
 
 This is a web application which provides a simple, [diamo](https://daimo.com/) / [venmo](https://venmo.com/)-like experience to move USDT on Tron. This is done by accessing the [SmoothUSDT API](https://info.smoothusdt.com/). Live at [app.smoothusdt.com](https://app.smoothusdt.com/).
