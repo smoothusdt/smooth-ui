@@ -18,7 +18,7 @@ const MainnetConfig: NetworkConfigInterface = {
   polarBearBase58: "TUus5B7H2DjHiZQnodTo1fMqiwoXUqkmpo",
   tronscanApi: "https://apilist.tronscanapi.com/api",
   explorerUrl: 'https://tronscan.org/#',
-  smoothApiURL: 'https://smooth-api.onrender.com',
+  smoothApiURL: 'https://api.smoothusdt.com',
 };
 
 const ShastaConfig: NetworkConfigInterface = {
@@ -30,8 +30,7 @@ const ShastaConfig: NetworkConfigInterface = {
   tronProApiKey: import.meta.env.VITE_TRON_PRO_API_KEY,
   tronscanApi: "https://shastapi.tronscan.org/api",
   explorerUrl: 'https://shasta.tronscan.org/#',
-  // smoothApiURL: 'https://smooth-shasta.onrender.com'
-  smoothApiURL: "http://localhost:3000"
+  smoothApiURL: 'https://shasta-api.smoothusdt.com'
 };
 
 export let NetworkConfig: NetworkConfigInterface;
