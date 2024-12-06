@@ -1,12 +1,11 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { motion } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { usePrivy } from '@privy-io/react-auth'
 import { WalletContext } from '@/hooks/useWallet'
-import { Loader } from 'lucide-react'
 import { useTranslation } from "react-i18next";
 import { Language, usePreferences } from '@/hooks/usePreferences'
+import { useSigner } from '@/hooks/useSigner'
 
 interface SettingsModalProps {
     isOpen: boolean
@@ -14,29 +13,16 @@ interface SettingsModalProps {
 }
 
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation("", { keyPrefix: "settingsWindow" })
     const { language, changeLanguage } = usePreferences();
-    const [loggingOut, setLoggingOut] = useState(false)
-    const { logout: privyLogout } = usePrivy()
+    const { eraseSigner } = useSigner();
     const { dispatch } = useContext(WalletContext);
 
-    const onLogout = async () => {
-        setLoggingOut(true)
-        await privyLogout()
+    const onLogout = () => {
+        eraseSigner()
         dispatch({
             type: "LogOut"
         })
-    }
-
-    let logOutButtonContent;
-    if (loggingOut) {
-        logOutButtonContent = (
-            <><Loader className="animate-spin mr-2" />{t("loggingOut")}</>
-        );
-    } else {
-        logOutButtonContent = (
-            <>{t("logOut")}</>
-        );
     }
 
     return (
@@ -62,10 +48,9 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={onLogout}
-                        disabled={loggingOut}
-                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#c44d4d] transition-colors disabled:text-gray-300"
+                        className="flex items-center justify-center w-full bg-red-400 text-white py-3 rounded-lg hover:bg-[#c44d4d] transition-colors"
                     >
-                        {logOutButtonContent}
+                        {t("logOut")}
                     </motion.button>
                 </div>
             </DialogContent>

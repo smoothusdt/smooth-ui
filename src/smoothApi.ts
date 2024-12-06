@@ -1,130 +1,131 @@
-import { encodePacked, Hex, hexToNumber, keccak256, sliceHex, zeroAddress } from "viem";
-import { ChainID, SmoothAdminBase58, SmoothApiURL, SmoothFee, SmoothFeeCollector, tronweb, USDTAddressBase58, USDTDecimals } from "./constants";
-import { SmoothAdminAbi, SmoothProxyBytecode } from "./constants/smooth";
+import { PolarBearBase58, SmoothApiURL, SmoothFeeCollector, tronweb, USDTAddressBase58 } from "./constants";
 import { BigNumber } from "tronweb";
 import { humanToUint } from "./util";
+import { SignedTransaction, Transaction } from "node_modules/tronweb/lib/esm/types";
 
-function computeMessageDigest(
-    fromBase58: string,
-    toBase58: string,
-    transferAmount: BigNumber, // in human format
-    nonce: number,
-): Hex {
-    const adminHex = ("0x" +
-        tronweb.utils.address.toHex(SmoothAdminBase58).slice(2)) as Hex;
-    const usdtHex = ("0x" +
-        tronweb.utils.address.toHex(USDTAddressBase58).slice(2)) as Hex;
-    const fromHex = ("0x" +
-        tronweb.utils.address.toHex(fromBase58).slice(2)) as Hex;
-    const toHex = ("0x" + tronweb.utils.address.toHex(toBase58).slice(2)) as Hex;
-    const feeCollectorHex = ("0x" +
-        tronweb.utils.address.toHex(SmoothFeeCollector).slice(2)) as Hex;
-    const transferAmountUint = BigInt(humanToUint(transferAmount, USDTDecimals));
-    const feeAmountUint = BigInt(humanToUint(SmoothFee, USDTDecimals));
-
-    const encodePackedValues = encodePacked(
-        [
-            "string",
-            "uint256",
-            "address",
-            "address",
-            "address",
-            "address",
-            "uint256",
-            "address",
-            "uint256",
-            "uint256",
-        ],
-        [
-            "Smooth",
-            BigInt(ChainID),
-            adminHex,
-            usdtHex,
-            fromHex,
-            toHex,
-            transferAmountUint,
-            feeCollectorHex,
-            feeAmountUint,
-            BigInt(nonce),
-        ],
-    );
-
-    const digestHex = keccak256(encodePackedValues);
-    return digestHex;
+async function fetchTrxFees(recipient: string) {
+    const respone = await fetch(`${SmoothApiURL}/getFeeQuote?recipient=${recipient}`)
+    const data = await respone.json()
+    if (!data.success) throw new Error(`Couldnt fetch fee quote due to ${data.error}`)
+    
+    return {
+        mainTrxAmount: new BigNumber(data.trxForMainTransfer),
+        feeTrxAmount: new BigNumber(data.trxForFeeTransfer)
+    }
 }
-
-
-async function getWalletData(tronUserAddress: string): Promise<{ signerHex: Hex; nonce: number }> {
-    const smoothAdminContract = tronweb.contract(SmoothAdminAbi, SmoothAdminBase58);
-    const [rawSigner, rawNonce] = await smoothAdminContract.methods.wallets(tronUserAddress).call();
-    const signerHex = `0x${rawSigner.slice(2)}` as Hex // remove "41" prefix;
-    const nonce = Number(rawNonce)
-    return { signerHex, nonce }
-}
-
 
 // Signs a message and makes a gasless transfer through the api
 export async function transferViaApi(
     {
-        tronUserAddress,
         toBase58,
         transferAmount,
-        signerAddress,
-        signMessage
+        feeAmount,
+        userAddress,
+        signTransaction,
     }: {
-        tronUserAddress: string,
         toBase58: string,
         transferAmount: BigNumber, // in human format
-        signerAddress: Hex,
-        signMessage: (message: string) => Promise<string>
+        feeAmount: BigNumber, // in fee format
+        userAddress: string,
+        signTransaction: (transaction: Transaction) => Promise<SignedTransaction>
     }
 ): Promise<string> {
-    const { signerHex, nonce } = await getWalletData(tronUserAddress)
+    const {
+        mainTrxAmount,
+        feeTrxAmount
+    } = await fetchTrxFees(toBase58)
 
-    const messageDigest = computeMessageDigest(
-        tronUserAddress,
-        toBase58,
-        transferAmount,
-        nonce
-    )
-    const signature = await signMessage(messageDigest) as Hex
-    const r = sliceHex(signature, 0, 32);
-    const s = sliceHex(signature, 32, 64);
-    const v = hexToNumber(sliceHex(signature, 64));
-
-    let callArguments: any[] = [
+    const mainUsdtAmountUint = humanToUint(transferAmount)
+    const functionSelector = 'transfer(address,uint256)';
+    const { transaction: mainUsdtTransfer } = await tronweb.transactionBuilder.triggerSmartContract(
         USDTAddressBase58,
-        tronUserAddress,
-        toBase58,
-        humanToUint(transferAmount, USDTDecimals).toString(),
-        SmoothFeeCollector,
-        humanToUint(SmoothFee, USDTDecimals).toString(),
-        nonce,
-        v,
-        r,
-        s
-    ]
-
-    const isNewWallet = signerHex === zeroAddress;
-    if (isNewWallet) {
-        const newWalletArguments = [tronweb.address.fromHex(signerAddress), SmoothProxyBytecode]
-        callArguments = newWalletArguments.concat(callArguments)
+        functionSelector,
+        {},
+        [{ type: 'address', value: toBase58 }, { type: 'uint256', value: mainUsdtAmountUint }],
+        userAddress
+    );
+    const blockHeader = {
+        ref_block_bytes: mainUsdtTransfer.raw_data.ref_block_bytes,
+        ref_block_hash: mainUsdtTransfer.raw_data.ref_block_hash,
+        expiration: mainUsdtTransfer.raw_data.expiration,
+        timestamp: mainUsdtTransfer.raw_data.timestamp
     }
+    console.log("Main transfer txID:", mainUsdtTransfer.txID)
+    console.log("Main transfer transaction:", mainUsdtTransfer)
+    const { signature: mainUsdtTransferSignature } = await signTransaction(mainUsdtTransfer)
+    console.log("Main transfer signature:", mainUsdtTransferSignature)
 
-    console.log("Executing a transfer via api with data", { callArguments, isNewWallet })
-    const response = await fetch(`${SmoothApiURL}/transfer`, {
+    const feeUsdtAmountUint = humanToUint(feeAmount)
+    const { transaction: feeUsdtTransfer } = await tronweb.transactionBuilder.triggerSmartContract(
+        USDTAddressBase58,
+        functionSelector,
+        {
+            txLocal: true,
+            blockHeader
+        },
+        [{ type: 'address', value: SmoothFeeCollector }, { type: 'uint256', value: feeUsdtAmountUint }],
+        userAddress
+    );
+    console.log("Fee transfer txID:", feeUsdtTransfer.txID)
+    console.log("Fee transfer transaction:", feeUsdtTransfer)
+    const { signature: feeUsdtTransferSignature } = await signTransaction(feeUsdtTransfer)
+    console.log("Fee transfer signature:", feeUsdtTransferSignature)
+
+    const mainTrxAmountUint = humanToUint(mainTrxAmount)
+    const mainTrxTransfer = await tronweb.transactionBuilder.sendTrx(
+        PolarBearBase58,
+        mainTrxAmountUint,
+        userAddress,
+        {
+            blockHeader
+        }
+    )
+    const { signature: mainTrxTransferSignature } = await signTransaction(mainTrxTransfer)
+
+    const feeTrxAmountUint = humanToUint(feeTrxAmount)
+    const feeTrxTransfer = await tronweb.transactionBuilder.sendTrx(
+        PolarBearBase58,
+        feeTrxAmountUint,
+        userAddress,
+        {
+            blockHeader
+        }
+    )
+    const { signature: feeTrxTransferSignature } = await signTransaction(feeTrxTransfer)
+
+    const response = await fetch("http://localhost:3000/transfer", {
         method: "POST",
         body: JSON.stringify({
-            isNewWallet,
-            callArguments
+            from: userAddress,
+            mainTrxTransfer: {
+                to: PolarBearBase58,
+                amount: mainTrxAmount.toString(),
+                signature: mainTrxTransferSignature[0]
+            },
+            mainUsdtTransfer: {
+                to: toBase58,
+                amount: transferAmount.toString(),
+                signature: mainUsdtTransferSignature[0]
+            },
+            feeTrxTransfer: {
+                to: PolarBearBase58,
+                amount: feeTrxAmount.toString(),
+                signature: feeTrxTransferSignature[0]
+            },
+            feeUsdtTransfer: {
+                to: SmoothFeeCollector,
+                amount: feeAmount.toString(),
+                signature: feeUsdtTransferSignature[0]
+            },
+            blockHeader
         }),
         headers: {
             "Content-Type": "application/json",
         },
     })
 
+    console.log("API Transfer status code:", response.status)
     const data = await response.json()
-
     const txID = data.txID;
     if (!txID) {
         let errorText = "Couldnt execute a transfer via api"
@@ -153,7 +154,7 @@ export async function getFreeUsdt(recipient: string): Promise<string> {
         if (data.error) errorText = `Couldnt get free usdt via api due to ${data.error}`
         throw new Error(errorText)
     }
-    
+
     console.log("Got free usdt via appi. Transaction id:", txID)
     return txID
 }

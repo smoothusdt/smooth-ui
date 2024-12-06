@@ -3,49 +3,42 @@ import { PageContainer } from "../PageContainer";
 import { useState } from 'react';
 import { ArrowRight, Loader } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { SmoothFee } from '@/constants';
 import { transferViaApi } from '@/smoothApi';
 import { useWallet } from '@/hooks/useWallet';
-import { usePrivy } from '@privy-io/react-auth';
 import { BigNumber } from 'tronweb';
-import { Hex } from 'viem';
 import { useTranslation } from 'react-i18next';
-
-const stepVariants = {
-  initial: { opacity: 0, x: 50 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -50 }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-}
+import { useSigner } from '@/hooks/useSigner';
+import { InfoTooltip } from '../shared/InfoTooltip';
+import { itemVariants, stepVariants } from '../animations';
 
 export function SendConfirm() {
-  const { t } = useTranslation()
+  const { t } = useTranslation("", { keyPrefix: "sendFlow" })
   const [, navigate] = useLocation()
   const [sending, setSending] = useState(false)
+  const { signTransaction } = useSigner();
   const { wallet, addTransactions, refreshBalance } = useWallet();
-  const { user, signMessage } = usePrivy();
   const search = new URLSearchParams(window.location.search)
 
   const recipient = search.get("recipient")!
-  const rawAmount = search.get("amount")!
-  const amount = new BigNumber(rawAmount)
+  const rawTransferAmount = search.get("transferAmount")!
+  const rawFeeAmount = search.get("feeAmount")!
+
+  const transferAmount = new BigNumber(rawTransferAmount)
+  const feeAmount = new BigNumber(rawFeeAmount)
+  const totalAmount = transferAmount.plus(feeAmount)
 
   const onSend = async () => {
     setSending(true)
     const txID = await transferViaApi({
-      tronUserAddress: wallet.tronAddress,
       toBase58: recipient,
-      signerAddress: user?.wallet?.address! as Hex,
-      transferAmount: amount,
-      signMessage: (message) => signMessage(message, { showWalletUIs: false })
+      transferAmount: transferAmount,
+      feeAmount: feeAmount,
+      userAddress: wallet.tronAddress,
+      signTransaction,
     })
     addTransactions([{ // add this transaction to local history
-      amount,
-      fee: SmoothFee,
+      amount: transferAmount,
+      fee: feeAmount,
       from: wallet.tronAddress,
       to: recipient,
       timestamp: Date.now(),
@@ -55,7 +48,7 @@ export function SendConfirm() {
     navigate(`/tx-receipt?txID=${txID}&sentNow=true`)
   }
 
-  const buttonContent = sending ? <><Loader className="animate-spin mr-2" /> {t("sending")}</> : <>{t("send")} {rawAmount} USDT <ArrowRight size={20} className="ml-2" /></>
+  const buttonContent = sending ? <><Loader className="animate-spin mr-2" /> {t("sending")}</> : <>{t("send")} {rawTransferAmount} USDT <ArrowRight size={20} className="ml-2" /></>
 
   return (
     <PageContainer title={t("sendUsdt")}>
@@ -75,18 +68,21 @@ export function SendConfirm() {
               readOnly
               id="recipient"
               value={recipient}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">{t("network")}</p>
+            <div className="text-sm text-gray-400 mb-1">
+              <InfoTooltip content={t("networkTooltip")} />
+              {t("network")}
+            </div>
             <input
               type="text"
               readOnly
-              id="recipient"
+              id="networkTitle"
               value="TRC-20"
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
@@ -95,20 +91,34 @@ export function SendConfirm() {
             <input
               type="text"
               readOnly
-              id="recipient"
-              value={`${rawAmount} USDT`}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              id="amount"
+              value={`${rawTransferAmount} USDT`}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <p className="text-sm text-gray-400 mb-1">{t("networkFee")}</p>
+            <div className="text-sm text-gray-400 mb-1">
+              <InfoTooltip content={t("networkFeeTooltip")} />
+              {t("networkFee")}
+            </div>
             <input
               type="text"
               readOnly
-              id="recipient"
-              value={`${SmoothFee.toString()} USDT`}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] disabled:text-gray-300"
+              id="networkFee"
+              value={`${feeAmount.toString()} USDT`}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
+              disabled={sending}
+            />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <p className="text-sm text-gray-400 mb-1">{t("total")}</p>
+            <input
+              type="text"
+              readOnly
+              id="totalAmount"
+              value={`${totalAmount.toString()} USDT`}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
           </motion.div>

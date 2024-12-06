@@ -19,14 +19,6 @@ interface StoredWallet {
   balance: BigNumber
 }
 
-export function logIn(tronAddress: string) {
-  saveWalletToStorage({
-    balance: new BigNumber(0),
-    history: [],
-    tronAddress,
-  })
-}
-
 function loadWallet(): StoredWallet | undefined {
   const raw = window.localStorage.getItem(WalletStorageKey)
   if (!raw) return;
@@ -59,6 +51,8 @@ type Action =
 interface IWalletContext {
   wallet: StoredWallet | undefined
   dispatch: Dispatch<Action>
+  isWalletSet: boolean
+  logIn: (tronAddress: string) => void
 }
 
 // the value is set in WalletProvider always
@@ -101,10 +95,25 @@ function reducer(state: StoredWallet | undefined, action: Action): StoredWallet 
 export function WalletProvider(props: { children: any }) {
   const [wallet, dispatch] = useReducer(reducer, loadWallet())
 
+  const logIn = (tronAddress: string) => {
+    if (wallet?.tronAddress !== tronAddress) {
+      dispatch({
+        type: "SetupWallet",
+        wallet: {
+          tronAddress,
+          balance: new BigNumber(0),
+          history: []
+        }
+      })
+    }
+  }
+
   return (
     <WalletContext.Provider value={{
       wallet,
-      dispatch
+      dispatch,
+      isWalletSet: wallet !== undefined,
+      logIn
     }}>
       {props.children}
     </WalletContext.Provider>

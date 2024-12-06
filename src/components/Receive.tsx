@@ -7,7 +7,7 @@ import { useWallet } from '@/hooks/useWallet'
 import { useTranslation } from 'react-i18next'
 
 export function Receive() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("", { keyPrefix: "receiveWindow" })
   const [copied, setCopied] = useState(false);
   const { wallet } = useWallet();
 
@@ -19,7 +19,7 @@ export function Receive() {
 
   return (
     <PageContainer title={t("receiveUsdt")}>
-      <div className="flex-grow flex flex-col items-center justify-start p-6 px-4">
+      <div className="flex-grow flex flex-col items-center justify-start p-4 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -43,7 +43,39 @@ export function Receive() {
           className="bg-gray-800 p-4 rounded-lg w-full mb-4"
         >
           <p className="text-sm text-gray-400 mb-1">{t("yourWalletAddress")}</p>
-          <p className="font-medium break-all">{wallet.tronAddress}</p>
+          <div className="flex items-center">
+            <p className="font-medium break-all flex-grow">{wallet.tronAddress}</p>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={copyToClipboard}
+              className="ml-2 p-1 rounded-md bg-gray-700 hover:bg-gray-600 transition-colors"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {copied ? (
+                  <motion.div
+                    key="check"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Check size={16} className="text-green-400" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="copy"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Copy size={16} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          </div>
         </motion.div>
         <motion.button
           initial={{ opacity: 0, y: 20 }}

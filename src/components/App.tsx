@@ -3,14 +3,13 @@ import { Receive } from "@/components/Receive";
 import { Home } from "@/components/Home";
 
 import { useLocation } from "wouter";
-import { usePrivy } from "@privy-io/react-auth";
-import { Welcome } from "./Welcome";
-import { TermsOfUse } from "./TermsOfUse";
-import { useContext, useEffect } from "react";
+import { Welcome } from "./Login/Welcome";
+import { TermsOfUse } from "./Login/TermsOfUse";
 import { SendInput } from "./Send/SendInput";
 import { SendConfirm } from "./Send/SendConfirm";
 import { Receipt } from "./Send/Receipt";
-import { WalletContext } from "@/hooks/useWallet";
+import { PinLogin } from "./Login/PinLogin";
+import { isEncryptedPhraseSet, useSigner } from "@/hooks/useSigner";
 
 interface RouteConfig {
   component: () => JSX.Element;
@@ -51,39 +50,32 @@ const RoutesConfig: Record<string, RouteConfig> = {
 /** Entry point of UI. Should be wrapped in all providers. */
 export const App = () => {
   const [location, navigate] = useLocation();
-  const { ready, authenticated } = usePrivy();
   const screen = RoutesConfig[location];
-  const { wallet, dispatch } = useContext(WalletContext);
+  const { signerReady } = useSigner();
+  const encryptedPhraseSet = isEncryptedPhraseSet()
 
-  const isLoggedIn = wallet !== undefined
-
-  console.log({ location })
-
-  useEffect(() => {
-    console.log("Checking privy authentication status")
-    if (!ready) return;
-    if (!authenticated && screen.needsConnection) {
-      // This is needed if privy auth tokens expire over time.
-      // But if the user manually logs out, this will result in double call to logOut();
-      // Not critical atm, but not good.
-      dispatch({
-        type: "LogOut"
-      })
-    }
-  }, [ready, authenticated, location, screen]);
+  console.log("On screen:", location);
 
   if (!screen) {
-    throw new Error(`Page ${location} not recognised`);
+    throw new Error(`Screen ${location} not recognised`);
   }
 
-  if (screen.needsConnection && !isLoggedIn) {
-    navigate("/");
-    return <div />;
+
+  if (screen.needsConnection) {
+    // needs to go through the entire login flow.
+    if (!encryptedPhraseSet) {
+      navigate("/")
+      return;
+    }
+
+    // Ask for pin code without altering the URL.
+    if (!signerReady) {
+      return <PinLogin navigateAfterLogin={false} />
+    }
   }
 
-  if (location === "/" && isLoggedIn) {
-    navigate("/home")
-    return <div />;
+  if (location === "/" && encryptedPhraseSet && !signerReady) {
+    return <PinLogin navigateAfterLogin={true} />
   }
 
   return <screen.component />;

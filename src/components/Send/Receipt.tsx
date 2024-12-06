@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight, ArrowDownLeft, ExternalLink, Copy, Check, X } from 'lucide-react'
+import { ExternalLink, Copy, Check, X } from 'lucide-react'
 import { PageContainer } from '../PageContainer'
 import { useWallet } from '@/hooks/useWallet'
 import { getTronScanLink } from '@/util'
 import { useLocation } from 'wouter'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { useTranslation } from 'react-i18next'
+import { usePreferences } from '@/hooks/usePreferences'
+import { InfoTooltip } from '../shared/InfoTooltip'
+import { WhatsNext } from './WhatsNext'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -25,7 +27,8 @@ const itemVariants = {
 }
 
 export function Receipt() {
-  const { t } = useTranslation()
+  const { t } = useTranslation("", { keyPrefix: "receiptWindow" })
+  const { language } = usePreferences()
   const [copiedFields, setCopiedFields] = useState<{ [key: string]: boolean }>({})
   const { wallet, findTransaction } = useWallet();
   const [, navigate] = useLocation();
@@ -69,7 +72,7 @@ export function Receipt() {
   return (
     <PageContainer customBackComponent={customBackComponent} title={t("receipt")}>
       <motion.div
-        className="flex-grow flex flex-col items-center justify-start p-6"
+        className="flex-grow flex flex-col items-center justify-start md:p-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -80,11 +83,6 @@ export function Receipt() {
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              {isSend ? (
-                <ArrowUpRight size={24} className="text-primary mr-2" />
-              ) : (
-                <ArrowDownLeft size={24} className="text-green-400 mr-2" />
-              )}
               <span className="text-xl font-semibold">
                 {isSend ? t("sent") : t("received")}
               </span>
@@ -100,7 +98,7 @@ export function Receipt() {
           </div>
           <motion.div className="space-y-2" variants={itemVariants}>
             <p className="text-gray-400">{t("status")} <span className="text-white">{t("completed")}</span></p>
-            <p className="text-gray-400">{t("date")} <span className="text-white">{new Date(transaction.timestamp).toLocaleString()}</span></p>
+            <p className="text-gray-400">{t("date")} <span className="text-white">{new Date(transaction.timestamp).toLocaleString(language)}</span></p>
           </motion.div>
         </motion.div>
         <motion.div
@@ -146,7 +144,10 @@ export function Receipt() {
               </div>
             </motion.div>
             <motion.div variants={itemVariants}>
-              <p className="text-sm text-gray-400 mb-1">{t("transactionId")}</p>
+              <div className="text-sm text-gray-400 mb-1">
+                <InfoTooltip content={t("transactionIdTooltip")} />
+                {t("transactionId")}
+              </div>
               <div className="flex items-center">
                 <p className="font-medium break-all flex-grow">{transaction.txID}</p>
                 <motion.button
@@ -181,19 +182,7 @@ export function Receipt() {
                 </motion.button>
               </div>
             </motion.div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <motion.button
-                  variants={itemVariants}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full"
-                ><span className="text-gray-400 border-b-2 border-gray-400 hover:text-gray-500 hover:border-gray-500">{t("whatsNext")}</span>
-                </motion.button>
-              </PopoverTrigger>
-              <PopoverContent className="bg-gray-700 border-0" align="center">
-                hello
-              </PopoverContent>
-            </Popover>
+            {isSend && <WhatsNext />}
             <motion.a
               href={getTronScanLink(transaction.txID)}
               target="_blank"

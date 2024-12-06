@@ -11,9 +11,7 @@ interface IPreferences {
 function loadPreferences(): IPreferences | undefined {
     const raw = window.localStorage.getItem(PreferencesStorageKey)
     if (!raw) return;
-
     const decoded = JSON.parse(raw)
-
     return {
         language: decoded.language
     }
@@ -33,15 +31,18 @@ const PreferencesContext = createContext<IPreferencesContext>(undefined as any)
 export function PreferencesProvider(props: { children: any }) {
     const { i18n } = useTranslation();
     const [preferences, _setPreferencesState] = useState<IPreferences>(() => {
+        // Try to load existing preferences 
         const savedPreferences = loadPreferences()
         if (savedPreferences) return savedPreferences;
 
+        // Create preferences from scratch
         let language: Language = "en"
         if (navigator.language.toLowerCase().startsWith("ru")) {
             language = "ru"
         }
-
-        return { language };
+        const preferences: IPreferences = { language }
+        savePreferencesInStorage(preferences)
+        return preferences;
     })
 
     useEffect(() => {
