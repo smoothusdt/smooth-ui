@@ -7,7 +7,7 @@ async function fetchTrxFees(recipient: string) {
     const respone = await fetch(`${SmoothApiURL}/getFeeQuote?recipient=${recipient}`)
     const data = await respone.json()
     if (!data.success) throw new Error(`Couldnt fetch fee quote due to ${data.error}`)
-    
+
     return {
         mainTrxAmount: new BigNumber(data.trxForMainTransfer),
         feeTrxAmount: new BigNumber(data.trxForFeeTransfer)
@@ -44,7 +44,7 @@ export async function transferViaApi(
         [{ type: 'address', value: toBase58 }, { type: 'uint256', value: mainUsdtAmountUint }],
         userAddress
     );
-    const blockHeader = {
+    const baseBlockHeader = {
         ref_block_bytes: mainUsdtTransfer.raw_data.ref_block_bytes,
         ref_block_hash: mainUsdtTransfer.raw_data.ref_block_hash,
         expiration: mainUsdtTransfer.raw_data.expiration,
@@ -55,13 +55,24 @@ export async function transferViaApi(
     const { signature: mainUsdtTransferSignature } = await signTransaction(mainUsdtTransfer)
     console.log("Main transfer signature:", mainUsdtTransferSignature)
 
+    const mainTrxAmountUint = humanToUint(mainTrxAmount)
+    const mainTrxTransfer = await tronweb.transactionBuilder.sendTrx(
+        PolarBearBase58,
+        mainTrxAmountUint,
+        userAddress,
+        {
+            blockHeader: { ...baseBlockHeader, expiration: baseBlockHeader.expiration + 1 * 1000 },
+        }
+    )
+    const { signature: mainTrxTransferSignature } = await signTransaction(mainTrxTransfer)
+
     const feeUsdtAmountUint = humanToUint(feeAmount)
     const { transaction: feeUsdtTransfer } = await tronweb.transactionBuilder.triggerSmartContract(
         USDTAddressBase58,
         functionSelector,
         {
             txLocal: true,
-            blockHeader
+            blockHeader: { ...baseBlockHeader, expiration: baseBlockHeader.expiration + 2 * 1000 },
         },
         [{ type: 'address', value: SmoothFeeCollector }, { type: 'uint256', value: feeUsdtAmountUint }],
         userAddress
@@ -71,24 +82,13 @@ export async function transferViaApi(
     const { signature: feeUsdtTransferSignature } = await signTransaction(feeUsdtTransfer)
     console.log("Fee transfer signature:", feeUsdtTransferSignature)
 
-    const mainTrxAmountUint = humanToUint(mainTrxAmount)
-    const mainTrxTransfer = await tronweb.transactionBuilder.sendTrx(
-        PolarBearBase58,
-        mainTrxAmountUint,
-        userAddress,
-        {
-            blockHeader
-        }
-    )
-    const { signature: mainTrxTransferSignature } = await signTransaction(mainTrxTransfer)
-
     const feeTrxAmountUint = humanToUint(feeTrxAmount)
     const feeTrxTransfer = await tronweb.transactionBuilder.sendTrx(
         PolarBearBase58,
         feeTrxAmountUint,
         userAddress,
         {
-            blockHeader
+            blockHeader: {...baseBlockHeader, expiration: baseBlockHeader.expiration + 3 * 1000}
         }
     )
     const { signature: feeTrxTransferSignature } = await signTransaction(feeTrxTransfer)
@@ -100,7 +100,7 @@ export async function transferViaApi(
             mainTrxTransfer: {
                 to: PolarBearBase58,
                 amount: mainTrxAmount.toString(),
-                signature: mainTrxTransferSignature[0]
+                signature: mainTrxTransferSignature[0],
             },
             mainUsdtTransfer: {
                 to: toBase58,
@@ -117,7 +117,7 @@ export async function transferViaApi(
                 amount: feeAmount.toString(),
                 signature: feeUsdtTransferSignature[0]
             },
-            blockHeader
+            blockHeader: baseBlockHeader
         }),
         headers: {
             "Content-Type": "application/json",
