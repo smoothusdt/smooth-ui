@@ -93,7 +93,7 @@ export async function transferViaApi(
     )
     const { signature: feeTrxTransferSignature } = await signTransaction(feeTrxTransfer)
 
-    const response = await fetch("http://localhost:3000/transfer", {
+    const response = await fetch(`${SmoothApiURL}/transfer`, {
         method: "POST",
         body: JSON.stringify({
             from: userAddress,
