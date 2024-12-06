@@ -1,29 +1,22 @@
 import { motion, useAnimation } from 'framer-motion'
 import { PageContainer } from "../PageContainer";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { BigNumber } from 'tronweb';
-import { SmoothFee, tronweb } from '@/constants';
+import { SmoothApiURL, tronweb } from '@/constants';
 import { useWallet } from '@/hooks/useWallet';
 import { useTranslation } from 'react-i18next';
 import { InfoTooltip } from '../shared/InfoTooltip';
 import { ScanButton } from './ScanButton';
+import { itemVariants, shakeAnimation, stepVariants } from '../animations';
 
-const stepVariants = {
-    initial: { opacity: 0, x: 50 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -50 }
-}
+async function fetchUsdtFee(): Promise<BigNumber> {
+    const respone = await fetch(`${SmoothApiURL}/getFeeQuote`)
+    const data = await respone.json()
+    if (!data.success) throw new Error(`Couldnt fetch fee quote due to ${data.error}`)
 
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-}
-
-const shakeAnimation = {
-    x: [0, -10, 10, -10, 10, 0],
-    transition: { duration: 0.4 }
+    return new BigNumber(data.requestedUsdtFee).decimalPlaces(2)
 }
 
 export function SendInput() {
@@ -36,11 +29,18 @@ export function SendInput() {
     const [, navigate] = useLocation()
     const recipientControls = useAnimation()
     const amountControls = useAnimation()
+    const [smoothFee, setSmoothFee] = useState<BigNumber>()
 
-    const availableAmount = BigNumber.max(wallet.balance.minus(SmoothFee), 0)
+    let availableAmount: BigNumber | undefined = undefined
+    if (smoothFee !== undefined) availableAmount = BigNumber.max(wallet.balance.minus(smoothFee), 0)
+
+    useEffect(() => {
+        fetchUsdtFee().then((quote) => setSmoothFee(quote))
+    }, [])
 
     const onContinue = () => {
         // Validate inputs
+        if (availableAmount === undefined || smoothFee === undefined) return;
         if (!tronweb.isAddress(recipient)) {
             recipientControls.start(shakeAnimation)
             let msg: string;
@@ -69,7 +69,7 @@ export function SendInput() {
         // Cache values in case the user wants to come back and edit
         navigate(`/send?recipient=${recipient}&amount=${amount.toString()}`, { replace: true })
         // Navigate to the confirmation screeens
-        navigate(`/send/confirm?recipient=${recipient}&amount=${amount.toString()}`)
+        navigate(`/send/confirm?recipient=${recipient}&transferAmount=${amount.toString()}&feeAmount=${smoothFee.toString()}`)
     }
 
     return (
@@ -103,7 +103,7 @@ export function SendInput() {
                     </motion.div>
                     <motion.div variants={itemVariants} animate={amountControls}>
                         <div className="text-sm text-gray-400 mb-1">
-                            <InfoTooltip content={t("amountTooltip", { networkFee: SmoothFee.toString() })} />
+                            <InfoTooltip content={t("amountTooltip", { networkFee: smoothFee === undefined ? "-" : smoothFee.toString() })} />
                             {t("amount")}
                         </div>
                         <input
@@ -113,7 +113,7 @@ export function SendInput() {
                             onChange={(e) => setRawAmount(e.target.value)}
                             className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
                         />
-                        <p className="text-sm text-gray-400 my-1">{t("availableAmount")} {availableAmount.toFixed(2)} USDT.</p>
+                        <p className="text-sm text-gray-400 my-1">{t("availableAmount")} {availableAmount === undefined ? "-" : availableAmount.toFixed(2)} USDT.</p>
                     </motion.div>
                     {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
                     <motion.button

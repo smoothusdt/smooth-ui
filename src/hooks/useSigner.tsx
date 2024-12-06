@@ -1,5 +1,5 @@
 import { SignerStorageKey, tronweb } from "@/constants";
-import { SignedTransaction, Transaction, TriggerSmartContract } from "node_modules/tronweb/lib/esm/types";
+import { SignedTransaction, Transaction } from "node_modules/tronweb/lib/esm/types";
 import { createContext, useContext, useState } from "react";
 import { TronWeb } from "tronweb";
 import { bytesToHex, Hex, hexToBytes, keccak256 } from "viem";
@@ -43,7 +43,7 @@ export function getEncryptedPhrasehash(): Hex | undefined {
 interface ISignerContext {
     signerReady: boolean
     decrypt: (encryptionKeyHex: Hex) => Promise<string>;
-    signTransaction: (transaction: Transaction<TriggerSmartContract>) => Promise<SignedTransaction<TriggerSmartContract>>;
+    signTransaction: (transaction: Transaction) => Promise<SignedTransaction>;
     eraseSigner: () => void;
 }
 
@@ -117,7 +117,7 @@ export function SignerProvider(props: { children: any }) {
         return decoded // return the secret phrase to show it in wallet creation flow
     }
 
-    const signTransaction = async (transaction: Transaction<TriggerSmartContract>): Promise<SignedTransaction<TriggerSmartContract>> => {
+    const signTransaction = async (transaction: Transaction): Promise<SignedTransaction> => {
         if (!secretPhrase) throw new Error("No secret phrase is loaded in signTransaction")
         const { address, privateKey } = TronWeb.fromMnemonic(secretPhrase)
         const signedTx = await tronweb.trx.sign(transaction, privateKey.slice(2));

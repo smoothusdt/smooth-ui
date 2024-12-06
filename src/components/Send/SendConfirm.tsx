@@ -3,24 +3,13 @@ import { PageContainer } from "../PageContainer";
 import { useState } from 'react';
 import { ArrowRight, Loader } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { SmoothFee } from '@/constants';
 import { transferViaApi } from '@/smoothApi';
 import { useWallet } from '@/hooks/useWallet';
 import { BigNumber } from 'tronweb';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from '@/hooks/useSigner';
 import { InfoTooltip } from '../shared/InfoTooltip';
-
-const stepVariants = {
-  initial: { opacity: 0, x: 50 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -50 }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-}
+import { itemVariants, stepVariants } from '../animations';
 
 export function SendConfirm() {
   const { t } = useTranslation("", { keyPrefix: "sendFlow" })
@@ -31,21 +20,25 @@ export function SendConfirm() {
   const search = new URLSearchParams(window.location.search)
 
   const recipient = search.get("recipient")!
-  const rawAmount = search.get("amount")!
-  const amount = new BigNumber(rawAmount)
-  const totalAmount = amount.plus(SmoothFee)
+  const rawTransferAmount = search.get("transferAmount")!
+  const rawFeeAmount = search.get("feeAmount")!
+
+  const transferAmount = new BigNumber(rawTransferAmount)
+  const feeAmount = new BigNumber(rawFeeAmount)
+  const totalAmount = transferAmount.plus(feeAmount)
 
   const onSend = async () => {
     setSending(true)
     const txID = await transferViaApi({
       toBase58: recipient,
-      transferAmount: amount,
+      transferAmount: transferAmount,
+      feeAmount: feeAmount,
       userAddress: wallet.tronAddress,
       signTransaction,
     })
     addTransactions([{ // add this transaction to local history
-      amount,
-      fee: SmoothFee,
+      amount: transferAmount,
+      fee: feeAmount,
       from: wallet.tronAddress,
       to: recipient,
       timestamp: Date.now(),
@@ -55,7 +48,7 @@ export function SendConfirm() {
     navigate(`/tx-receipt?txID=${txID}&sentNow=true`)
   }
 
-  const buttonContent = sending ? <><Loader className="animate-spin mr-2" /> {t("sending")}</> : <>{t("send")} {rawAmount} USDT <ArrowRight size={20} className="ml-2" /></>
+  const buttonContent = sending ? <><Loader className="animate-spin mr-2" /> {t("sending")}</> : <>{t("send")} {rawTransferAmount} USDT <ArrowRight size={20} className="ml-2" /></>
 
   return (
     <PageContainer title={t("sendUsdt")}>
@@ -99,7 +92,7 @@ export function SendConfirm() {
               type="text"
               readOnly
               id="amount"
-              value={`${rawAmount} USDT`}
+              value={`${rawTransferAmount} USDT`}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />
@@ -113,7 +106,7 @@ export function SendConfirm() {
               type="text"
               readOnly
               id="networkFee"
-              value={`${SmoothFee.toString()} USDT`}
+              value={`${feeAmount.toString()} USDT`}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none disabled:text-gray-300"
               disabled={sending}
             />

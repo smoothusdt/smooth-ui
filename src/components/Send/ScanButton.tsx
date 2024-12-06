@@ -8,10 +8,8 @@ export function ScanButton(props: { onScanned: (value: string) => void }) {
 
     return (
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
-            <DialogTrigger>
-                <button className="h-full px-2 hover:text-gray-400 bg-gray-700 rounded-r-lg">
+            <DialogTrigger className="h-full px-2 hover:text-gray-400 bg-gray-700 rounded-r-lg">
                     <ScanLine />
-                </button>
             </DialogTrigger>
             <DialogContent className="bg-gray-800">
                 <DialogHeader className="flex flex-row justify-center">

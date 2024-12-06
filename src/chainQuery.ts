@@ -1,7 +1,5 @@
 import { BigNumber } from "tronweb";
 import {
-  SmoothAdminBase58,
-  SmoothFee,
   SmoothFeeCollector,
   TronscanApi,
   tronweb,
@@ -35,7 +33,7 @@ export async function fetchUsdtBalance(tronUserAddress: string): Promise<BigNumb
 }
 
 /**
- * Queries the last 10 USDT transfers for the given address
+ * Queries one tronscan page of USDT transfers
  */
 export async function queryUsdtHistory(
   userBase58: string,
@@ -53,31 +51,8 @@ export async function queryUsdtHistory(
     if (to === SmoothFeeCollector) continue; // don't show fee transfers
 
     const amountUint = parseInt(transfer.quant);
-    const amountHuman = uintToHuman(amountUint, USDTDecimals);
-
-    // Detect trigger info. This is not trivial :(
-    let triggerInfo = transfer.trigger_info;
-    const ref = triggerInfo["$ref"] as string | undefined;
-    if (ref) {
-      // This is an ugly cringe that we unfortunatelly have to do because
-      // tronscan uses some custom C# json encoding :(
-      // Related: https://blog.yumasoft.pl/2021/08/how-to-fix-json-net-circular-references-ref-in-javascript/
-      const refPrefix = "$.token\\_transfers[";
-      const refPostfix = "].trigger\\_info";
-      const trueIndex = parseInt(
-        ref.substring(refPrefix.length, ref.length - refPostfix.length),
-      );
-      triggerInfo = tokenTransfersRaw[trueIndex].trigger_info;
-    }
-
-    // Set the fee for outgoing transfers
-    let feeHuman = new BigNumber(0);
-    if (
-      from === userBase58 && // user is the sender
-      triggerInfo.contract_address === SmoothAdminBase58 // transferred via Smooth USDT
-    )
-      feeHuman = SmoothFee;
-
+    const amountHuman = uintToHuman(amountUint);
+  
     const txID = transfer.transaction_id;
     const tx: HistoricalTransaction = {
       txID,
@@ -85,7 +60,7 @@ export async function queryUsdtHistory(
       from,
       to,
       amount: amountHuman,
-      fee: feeHuman,
+      fee: new BigNumber(0),
     };
     history.push(tx);
   }
