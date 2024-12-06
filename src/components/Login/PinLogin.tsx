@@ -18,14 +18,13 @@ function ForgotPinButton() {
     const [showDialog, setShowDialog] = useState(false)
     const { eraseSigner } = useSigner();
     const { dispatch } = useContext(WalletContext);
-    const [, navigate] = useLocation()
 
     const onLogout = () => {
         eraseSigner()
         dispatch({
             type: "LogOut"
         })
-        navigate("/")
+        window.location.reload()
     }
 
     return (
