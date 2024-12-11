@@ -4,7 +4,6 @@ import { AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export function TermsConsent(props: {
-    newWallet: boolean,
     agreed: boolean;
     error: boolean;
     setAgreed: (value: boolean) => void;
@@ -24,7 +23,7 @@ export function TermsConsent(props: {
                     className="w-4 h-4 border-gray-600 data-[state=checked]:bg-[#339192] data-[state=checked]:border-[#339192] transition-all duration-300"
                 />
                 <p className="text-gray-300">
-                    {props.newWallet ? t("createIAgreeTo") : t("importIAgreeTo")}
+                    {t("iAgreeTo")}
                     {" "}
                     <a href="/terms-of-use" target="_blank" className="text-[#339192] hover:underline">
                         {t("termsOfUse")}

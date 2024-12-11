@@ -90,7 +90,6 @@ function ImportPhrase(props: { onImported: (phrase: string) => void }) {
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
             />
             <TermsConsent
-                newWallet={false}
                 agreed={agreedToTerms}
                 error={termsError}
                 setAgreed={setAgreedToTerms}
