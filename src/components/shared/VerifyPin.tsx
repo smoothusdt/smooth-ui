@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 export function VerifyPin(props: { correctPin: string; onVerified: () => void }) {
     const { t } = useTranslation("", { keyPrefix: "verifyPinWindow" })
     const [pinVerificationError, setPinVerificationError] = useState(false)
+    const [processing, setProcessing] = useState(false)
     const pinAnimationControls = useAnimation()
 
     const onPinVerify = (enteredPin: string) => {
@@ -19,6 +20,7 @@ export function VerifyPin(props: { correctPin: string; onVerified: () => void })
             return;
         }
 
+        setProcessing(true)
         props.onVerified()
     }
 
@@ -35,6 +37,7 @@ export function VerifyPin(props: { correctPin: string; onVerified: () => void })
             </TextBlock>
             <EnterPin
                 pinLength={6}
+                processing={processing}
                 onPinEntered={onPinVerify}
                 animationControls={pinAnimationControls}
             />

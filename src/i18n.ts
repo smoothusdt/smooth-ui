@@ -87,8 +87,7 @@ const resources = {
       termsConsentWindow: {
         agreeTo: "Agree to the Terms of Use.",
         termsOfUse: "Terms of Use",
-        createIAgreeTo: "By creating a wallet I agree to",
-        importIAgreeTo: "By importing a wallet I agree to",
+        iAgreeTo: "I agree to the",
       },
       createWalletFlow: {
         createWallet: "Create Wallet",
@@ -110,7 +109,7 @@ const resources = {
         getStarted: "Get started",
         wordIsIncorrect: "Word #{{index}} is incorrect.",
         creating: "Creating...",
-        walletSecurityDescription: "Your wallet will be secured by a secret phrase. You will need it when to log in on a new device or if you forget your pin code.",
+        walletSecurityDescription: "Your wallet will be secured by a secret phrase. You will need it to log in on a new device or if you forget your pin code.",
         whatIsSecretPhraseTitle: "Secret phrase is like a password, but:",
         whatIsSecretPhraseLine1: "- It is not recoverable if you lose it",
         whatIsSecretPhraseLine2: "- It will be generated automatically.",
@@ -241,8 +240,7 @@ const resources = {
       termsConsentWindow: {
         agreeTo: "Cогласитесь с Правилами Пользования.",
         termsOfUse: "Правилами Пользования",
-        importIAgreeTo: "Импортируя кошелек я соглашаюсь с",
-        createIAgreeTo: "Создавая кошелек я соглашаюсь с"
+        iAgreeTo: "Я соглашаюсь с"
       },
       createWalletFlow: {
         createWallet: "Создать Кошелек",

@@ -1,7 +1,7 @@
-import { AnimationControls, motion, useAnimation } from 'framer-motion'
+import { motion, useAnimation } from 'framer-motion'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { useRef, useState } from 'react';
-import { Loader, Check, Copy, ArrowLeft, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Loader, Check, Copy, ArrowLeft } from 'lucide-react';
 import { TronWeb } from 'tronweb';
 import { TextBlock } from '../shared/TextBlock';
 import { FlyInBlock } from '../shared/FlyInBlock';
@@ -18,7 +18,6 @@ enum CreateWalletStage {
     INTRODUCTION,
     CREATE_PHRASE,
     PHRASE_CREATED,
-    VERIFY_PHRASE,
     CREATE_PINCODE,
     VERIFY_PINCODE,
     ALLSET
@@ -100,91 +99,6 @@ function SecretPhrase(props: { secretPhrase: string; onContinue: () => void }) {
     );
 }
 
-function PhraseConfirmRow(props: {
-    wordIndex: number;
-    enteredWord: string;
-    setEnteredWord: (word: string) => void;
-    animationControls: AnimationControls
-}) {
-    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
-    return (
-        <motion.div
-            className="flex justify-between py-2 items-center"
-            animate={props.animationControls}
-        >
-            <span className="text-gray-300 font-bold">{t("word")} #{props.wordIndex + 1}:</span>
-            <input
-                type="text"
-                value={props.enteredWord}
-                onChange={(e) => props.setEnteredWord(e.target.value)}
-                className="px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192] transition-all duration-300 shadow-md hover:shadow-lg"
-            />
-        </motion.div>
-    );
-}
-
-function PhraseConfirm(props: { secretPhrase: string; onVerified: () => void; }) {
-    const wordlist = props.secretPhrase.split(" ")
-    if (wordlist.length !== 12) throw new Error("Secret phrase is expected to have 12 words")
-
-    const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
-    const index1 = useRef(Math.floor((Math.random() * 179) % 4))
-    const index2 = useRef(4 + Math.floor((Math.random() * 179) % 4))
-    const index3 = useRef(8 + Math.floor((Math.random() * 179) % 4))
-
-    const [enteredWord1, setEnteredWord1] = useState("")
-    const [enteredWord2, setEnteredWord2] = useState("")
-    const [enteredWord3, setEnteredWord3] = useState("")
-
-    const controls1 = useAnimation()
-    const controls2 = useAnimation()
-    const controls3 = useAnimation()
-
-    const [errorMessage, setErrorMessage] = useState("")
-
-    const onConfirm = () => {
-        if (enteredWord1.trim().toLowerCase() !== wordlist[index1.current]) {
-            setErrorMessage(t("wordIsIncorrect", { index: index1.current + 1 }))
-            controls1.start(shakeAnimation)
-            return;
-        }
-        if (enteredWord2.trim().toLowerCase() !== wordlist[index2.current]) {
-            setErrorMessage(t("wordIsIncorrect", { index: index2.current + 1 }))
-            controls2.start(shakeAnimation)
-            return;
-        }
-        if (enteredWord3.trim().toLowerCase() !== wordlist[index3.current]) {
-            setErrorMessage(t("wordIsIncorrect", { index: index3.current + 1 }))
-            controls3.start(shakeAnimation)
-            return;
-        }
-
-        // Else - success
-        props.onVerified()
-    }
-
-    const inputsAreEmpty = enteredWord1.length === 0 || enteredWord2.length === 0 || enteredWord3.length === 0
-
-    return (
-        <motion.div className="space-y-4">
-            <TextBlock title={t("verification")}>
-                {t("verifySecretPhrase")}
-            </TextBlock>
-            <motion.div className="space-y-4">
-                <div>
-                    <PhraseConfirmRow wordIndex={index1.current} enteredWord={enteredWord1} setEnteredWord={setEnteredWord1} animationControls={controls1} />
-                    <PhraseConfirmRow wordIndex={index2.current} enteredWord={enteredWord2} setEnteredWord={setEnteredWord2} animationControls={controls2} />
-                    <PhraseConfirmRow wordIndex={index3.current} enteredWord={enteredWord3} setEnteredWord={setEnteredWord3} animationControls={controls3} />
-                </div>
-                {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
-                <CoolButton onClick={onConfirm} disabled={inputsAreEmpty}>
-                    {t("confirm")}
-                </CoolButton>
-            </motion.div>
-        </motion.div>
-    );
-}
-
 function Introduction(props: { onGetStarted: () => void }) {
     const { t } = useTranslation("", { keyPrefix: "createWalletFlow" })
     return (
@@ -243,7 +157,6 @@ function CreatePhrase(props: { onCreated: (secretPhrase: string) => void }) {
                 {t("whatIsSecretPhraseLine2")}
             </TextBlock>
             <TermsConsent
-                newWallet={true}
                 agreed={agreedToTerms}
                 error={error}
                 setAgreed={setAgreedToTerms}
@@ -284,12 +197,8 @@ export function CreateWallet(props: { isOpen: boolean; onClose: () => void }) {
     } else if (stage === CreateWalletStage.PHRASE_CREATED) {
         stageContent = <SecretPhrase
             secretPhrase={secretPhrase!}
-            onContinue={() => setStage(CreateWalletStage.VERIFY_PHRASE)}
+            onContinue={() => setStage(CreateWalletStage.CREATE_PINCODE)}
         />
-    } else if (stage === CreateWalletStage.VERIFY_PHRASE) {
-        stageContent = <PhraseConfirm secretPhrase={secretPhrase!} onVerified={() => {
-            setStage(CreateWalletStage.CREATE_PINCODE)
-        }} />
     } else if (stage === CreateWalletStage.CREATE_PINCODE) {
         stageContent = <CreatePin onPinEntered={(pin: string) => {
             setPincode(pin)

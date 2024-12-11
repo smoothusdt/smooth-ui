@@ -114,6 +114,7 @@ export function SendInput() {
                             className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#339192]"
                         />
                         <p className="text-sm text-gray-400 my-1">{t("availableAmount")} {availableAmount === undefined ? "-" : availableAmount.toFixed(2)} USDT.</p>
+                        <p className="text-sm text-gray-400 my-1">{t("networkFee")} {smoothFee === undefined ? "-" : smoothFee.toFixed(2)} USDT.</p>
                     </motion.div>
                     {errorMessage && <p className="text-red-400 border-2 border-red-400 p-4 rounded-lg break-words"><AlertCircle className="inline mr-1" /> {errorMessage}</p>}
                     <motion.button
