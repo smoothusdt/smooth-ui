@@ -13,11 +13,8 @@ import { ErrorBoundary } from "react-error-boundary";
 // Initialize analytics
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
-if (window.location.hostname !== "localhost") {
-  posthog.init("phc_5uiEHZeK6zsn4EVTnM179CH1ldnSmMfmoMzLPjHSnZI", {
-    api_host: "https://us.i.posthog.com",
-  });
-}
+// Posthog needs to be initialized here. Disabled as I am not
+// working on Smooth USDT right now.
 
 // Initialize i18n
 import "./i18n";
